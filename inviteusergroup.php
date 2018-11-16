@@ -27,7 +27,12 @@ require_once("../../config.php");
 
 $bcid = required_param('bcid', PARAM_INT);   // Virtual Class ID.
 
-$PAGE->set_url('/mod/braincert/inviteusergroup.php', array('bcid' => $bcid));
+$groupids = optional_param_array('groups', null, PARAM_RAW);
+
+
+$PAGE->set_url('/mod/braincert/inviteusergroup.php', array('bcid' => $bcid, 'sesskey' => sesskey()));
+
+$action = new moodle_url('/mod/braincert/inviteusergroup.php', ['bcid' => $bcid, 'sesskey' => sesskey()]);
 
 $braincertrec = $DB->get_record('braincert', array('class_id' => $bcid));
 if (!$course = $DB->get_record('course', array('id' => $braincertrec->course))) {
@@ -49,9 +54,14 @@ global $DB, $CFG, $USER;
 
 $getgroups = $DB->get_records('groups', array('courseid' => $braincertrec->course));
 
-if ($_POST) {
+
+
+if ($groupids) {
+    require_sesskey();
     $getbody = $DB->get_record('braincert_manage_template', array('bcid' => $bcid));
-    $groupusers = $DB->get_records_sql('SELECT * FROM {groups_members} WHERE groupid IN ('.implode(",", $_POST["groups"]).')');
+    list($insql, $params) = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, 'groupid', false);
+    $sql = "SELECT * FROM {groups_members} WHERE groupid {$insql}";
+    $groupusers = $DB->get_records_sql($sql, $params);
     $module = $DB->get_record('modules', array('name' => 'braincert'));
     $cm = $DB->get_record('course_modules', array('instance' => $braincertrec->id,
                           'course' => $COURSE->id, 'module' => $module->id));
@@ -71,7 +81,7 @@ if ($_POST) {
             if ($mailresults == 1) {
                 echo get_string('emailsent', 'braincert');
             } else {
-                echo get_string('emailnotsent', 'braincert')." ".$emailuserrec->email
+                echo get_string('emailnotsent', 'braincert')." ".$emailuserrec->email."<br>";
             }
         }
     }
@@ -79,7 +89,7 @@ if ($_POST) {
 
 if (!empty($getgroups)) {
 ?>
-    <form action="" method="post">
+    <form action="<?php echo $action; ?>" method="post">
       <ul>
         <?php
         foreach ($getgroups as $getgroupskey => $getgroupsval) {

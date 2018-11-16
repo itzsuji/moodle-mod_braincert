@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Add the discount for paid class.
+ * Payments.
  *
  * @package    mod_braincert
  * @author BrainCert <support@braincert.com>

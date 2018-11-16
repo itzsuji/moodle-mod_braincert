@@ -26,6 +26,7 @@
 require_once("../../config.php");
 require_once($CFG->libdir.'/formslib.php');
 require_once('locallib.php');
+require_once($CFG->dirroot.'/mod/braincert/classes/addpricingscheme_form.php');
 
 
 $bcid = required_param('bcid', PARAM_INT);   // Virtual class.
@@ -65,85 +66,6 @@ echo $OUTPUT->heading(get_string('addpricingscheme', 'braincert'));
 $pricelistdata['task']     = 'listSchemes';
 $pricelistdata['class_id'] = $bcid;
 $pricelists = braincert_get_curl_info($pricelistdata);
-
-/**
- * class add addpricingscheme_form form
- * @copyright Dualcube (https://dualcube.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class addpricingscheme_form extends moodleform {
-    /**
-     * Define add discount form
-     */
-    public function definition() {
-        global $CFG, $DB, $bcid, $action, $pid, $pricelists;
-
-        $defaultprice      = '';
-        $defaultschemeday   = '';
-        $defaultaccesstype  = 0;
-        $defaultnumbertimes = '';
-        if ($action == 'edit') {
-            if (!empty($pricelists)) {
-                if (!isset($pricelists['Price'])) {
-                    foreach ($pricelists as $pricelist) {
-                        if (isset($pricelist['id'])) {
-                            if ($pricelist['id'] == $pid) {
-                                $defaultprice      = $pricelist['scheme_price'];
-                                $defaultschemeday   = $pricelist['scheme_days'];
-                                $defaultaccesstype  = $pricelist['times'];
-                                $defaultnumbertimes = $pricelist['numbertimes'];
-                            }
-                        }
-                    }
-                } else if (isset($pricelists['status']) && ($pricelists['status'] == 'error')) {
-                    echo $pricelists['error'];
-                }
-            }
-        }
-
-        $mform = $this->_form; // Don't forget the underscore!
-
-        $mform->addElement('hidden', 'pid', $pid);
-        $mform->setType('pid', PARAM_INT);
-
-        $mform->addElement('text', 'price', get_string('price', 'braincert'));
-        $mform->setType('price', PARAM_INT);
-        $mform->addRule('price', null, 'required', null, 'client');
-        $mform->addRule('price', '', 'numeric', null, 'client');
-        $mform->setDefault('price', $defaultprice);
-
-        $mform->addElement('text', 'schemedays', get_string('schemedays', 'braincert'));
-        $mform->setType('schemedays', PARAM_INT);
-        $mform->addRule('schemedays', null, 'required', null, 'client');
-        $mform->addRule('schemedays', '', 'numeric', null, 'client');
-        $mform->setDefault('schemedays', $defaultschemeday);
-
-        $accesstype = array();
-        $accesstype[] = $mform->createElement('radio', 'accesstype', '', get_string('unlimited', 'braincert'), 0);
-        $accesstype[] = $mform->createElement('radio', 'accesstype', '', get_string('limited', 'braincert'), 1);
-        $mform->addGroup($accesstype, 'access_type', get_string('accesstype', 'braincert'), array(' '), false);
-        $mform->setDefault('accesstype', $defaultaccesstype);
-
-        $mform->addElement('text', 'numbertimes', get_string('numbertimes', 'braincert'));
-        $mform->setType('numbertimes', PARAM_INT);
-        $mform->addRule('numbertimes', '', 'numeric', null, 'client');
-        $mform->disabledIf('numbertimes', 'accesstype', 'checked', 0);
-        $mform->setDefault('numbertimes', $defaultnumbertimes);
-
-        $this->add_action_buttons();
-    }
-
-    /**
-     * validation check
-     *
-     * @param array $data
-     * @param array $files
-     * @return array
-     */
-    public function validation($data, $files) {
-        return array();
-    }
-}
 
 $mform = new addpricingscheme_form($CFG->wwwroot.'/mod/braincert/addpricingscheme.php?bcid='.$bcid);
 
@@ -199,9 +121,9 @@ if (!empty($pricelists)) {
             $row[] = $pricelist['scheme_price'];
             $row[] = $pricelist['scheme_days'];
             if ($pricelist['times'] == 0) {
-                $row[] = 'unlimited';
+                $row[] = get_string('unlimited', 'braincert');
             } else {
-                $row[] = 'limited';
+                $row[] = get_string('limited', 'braincert');
             }
             $row[] = $pricelist['numbertimes'];
             $row[] = '<a href="'.$CFG->wwwroot.'/mod/braincert/addpricingscheme.php?action=edit&bcid='.$bcid.'&pid='
