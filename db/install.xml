@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="braincert" COMMENT="Default comment for braincert, please edit me" NEXT="braincert_manage_manage_template">
+    <TABLE NAME="braincert" COMMENT="Default comment for braincert, please edit me" NEXT="braincert_manage_template">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
@@ -19,9 +19,9 @@
         <FIELD NAME="end_time" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="start_time" NEXT="is_region"/>
         <FIELD NAME="is_region" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="end_time" NEXT="is_recurring"/>
         <FIELD NAME="is_recurring" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="is_region" NEXT="end_classes_count"/>
-        <FIELD NAME="end_classes_count" TYPE="int" LENGTH="10" SEQUENCE="false" PREVIOUS="is_recurring" NEXT="class_repeats"/>
-        <FIELD NAME="class_repeats" TYPE="int" LENGTH="10" SEQUENCE="false" PREVIOUS="end_classes_count" NEXT="weekdays"/>
-        <FIELD NAME="weekdays" TYPE="char" LENGTH="100" SEQUENCE="false" PREVIOUS="class_repeats" NEXT="change_language"/>
+        <FIELD NAME="end_classes_count" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="is_recurring" NEXT="class_repeats"/>
+        <FIELD NAME="class_repeats" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="end_classes_count" NEXT="weekdays"/>
+        <FIELD NAME="weekdays" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" PREVIOUS="class_repeats" NEXT="change_language"/>
         <FIELD NAME="change_language" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="weekdays" NEXT="bc_interface_language"/>
         <FIELD NAME="bc_interface_language" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="change_language" NEXT="record_type"/>
         <FIELD NAME="record_type" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="bc_interface_language" NEXT="classroomtype"/>
@@ -31,7 +31,7 @@
         <FIELD NAME="screen_sharing" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" PREVIOUS="isvideo" NEXT="private_chat"/>
         <FIELD NAME="private_chat" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" PREVIOUS="screen_sharing" NEXT="class_type"/>
         <FIELD NAME="class_type" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="private_chat" NEXT="currency"/>
-        <FIELD NAME="currency" TYPE="char" LENGTH="20" SEQUENCE="false" PREVIOUS="class_type" NEXT="maxattendees"/>
+        <FIELD NAME="currency" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false" PREVIOUS="class_type" NEXT="maxattendees"/>
         <FIELD NAME="maxattendees" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="currency" NEXT="groupingid"/>
         <FIELD NAME="groupingid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="maxattendees" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="groupingid"/>

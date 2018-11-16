@@ -33,12 +33,11 @@ $id = required_param('id', PARAM_INT);    // Course Module ID.
 $braincertid = optional_param('bcid', 0, PARAM_INT);  // Braincert ID.
 $all = optional_param('all', 1, PARAM_INT); // Cancel class details.
 $bcid = optional_param('bcid', 0, PARAM_INT); // Virtual Class ID.
+$task = optional_param('task', '', PARAM_RAW);
+$classid = optional_param('class_id', '', PARAM_RAW);
+$amount = optional_param('amount', '', PARAM_RAW);
+$paymentmode = optional_param('payment_mode', '', PARAM_RAW);
 
-if (isset($_REQUEST['task'])) {
-    $task = $_REQUEST['task'];
-} else {
-    $task = '';
-}
 
 if ($id) {
     if (!$cm = get_coursemodule_from_id('braincert', $id)) {
@@ -86,7 +85,7 @@ $PAGE->requires->js('/mod/braincert/js/video.js', true);
 if ($bcid > 0) {
     $getremovestatus = braincert_cancel_class($bcid, $all);
     if ($getremovestatus['status'] == "ok") {
-        echo "Class Removed Successfully.";
+        echo get_string('braincert_class_removed', 'braincert');
         redirect(new moodle_url('/mod/braincert/view.php?id='.$id));
     } else {
         echo $getremovestatus['error'];
@@ -95,10 +94,10 @@ if ($bcid > 0) {
 
 if ($task == "returnpayment") {
     $record = new stdClass();
-    $record->class_id = $_REQUEST['class_id'];
-    $record->mc_gross = $_REQUEST['amount'];
+    $record->class_id = $classid;
+    $record->mc_gross = $amount;
     $record->payer_id = $USER->id;
-    $record->payment_mode = $_REQUEST['payment_mode'];
+    $record->payment_mode = $paymentmode;
     $record->date_purchased = date('Y-m-d H:i:s', time());
     $insert = $DB->insert_record('virtualclassroom_purchase', $record);
     redirect($url);
@@ -286,7 +285,7 @@ if (!empty($braincertclass)) {
                                     </div>
                                     <div class="control-group">
                                         <label style="width: 140px; padding-top: 5px; float: left; text-align: right;">
-                                        Expiration Date
+                                        <?php echo get_string('expiration_date', 'braincert'); ?>
                                         </label>
                                         <div style="margin-left: 160px;">
                                             <select tabindex="7" class="card-expiry-month stripe-sensitive required"
@@ -318,9 +317,9 @@ if (!empty($braincertclass)) {
                                   class="stripe"><?php echo get_string('stripe', 'braincert'); ?></a>.
                                 </p>
                                 <p>
-                                 <img alt="Uses Secure SSL Technology"
+                                 <img alt="<?php echo get_string('usessecurely', 'braincert'); ?>"
                                   src="https://drpyjw32lhcoa.cloudfront.net/9d61ecb/img/lock.png">
-                                  <img alt="We accept Visa, Mastercard, Discover, and American Express"
+                                  <img alt="<?php echo get_string('acceptvisa', 'braincert'); ?>"
                                    src="https://drpyjw32lhcoa.cloudfront.net/9d61ecb/img/cards.png">
                                 </p>
                             </div>
@@ -484,7 +483,8 @@ if (!empty($braincertclass)) {
                 echo $getclassdetail['date']; ?>
             </p>
             <p><i class="fa fa-clock-o" aria-hidden="true"></i>
-                <?php echo $getclassdetail['start_time']." - ".$getclassdetail['end_time']." (".$duration." Minutes)"; ?></p>
+                <?php echo $getclassdetail['start_time']." - ".$getclassdetail['end_time']."
+                 (".$duration." ".get_string('minutes', 'braincert').")"; ?></p>
             <p><i class="fa fa-globe" aria-hidden="true"></i>
                 <?php echo "Time Zone: ".$getclassdetail['timezone_label']; ?></p>
         </div>

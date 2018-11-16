@@ -25,6 +25,7 @@
 
 require_once("../../config.php");
 require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->dirroot.'/mod/braincert/classes/managetemplate_form.php');
 
 GLOBAL $USER;
 
@@ -47,36 +48,6 @@ $PAGE->requires->css('/mod/braincert/css/styles.css', true);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('managetemplate', 'braincert'));
-
-/**
- * class add managetemplate_form
- * @copyright Dualcube (https://dualcube.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class managetemplate_form extends moodleform {
-    /**
-     * Define add discount form
-     */
-    public function definition() {
-
-        global $DB, $bcid;
-        $getbody = $DB->get_record('braincert_manage_template', array('bcid' => $bcid));
-        if ($getbody) {
-            $s = $getbody->emailsubject;
-            $m = $getbody->emailmessage;
-        } else {
-            $s = get_string('liveclassinvitationsubject', 'braincert');
-            $m = get_string('liveclassinvitationmessage', 'braincert');
-        }
-        $mform = $this->_form; // Don't forget the underscore!
-        $mform->addElement('text', 'emailsubject', get_string('emailsubject', 'braincert'));
-        $mform->setType('emailsubject', PARAM_RAW);
-        $mform->setDefault('emailsubject', $s);
-        $mform->addElement('editor', 'emailmessage', get_string('emailmessage', 'braincert'))->setValue(array('text' => $m));
-        $mform->setType('emailmessage', PARAM_RAW);
-        $this->add_action_buttons();
-    }
-}
 
 $mform = new managetemplate_form($CFG->wwwroot.'/mod/braincert/managetemplate.php?bcid='.$bcid);
 

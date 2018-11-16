@@ -406,7 +406,7 @@ function braincert_delete_instance($id) {
 
         $getremovestatus = braincert_get_curl_info($removedata);
         if ($getremovestatus['status'] == "ok") {
-            echo "Class Removed Successfully.";
+            echo get_string('braincert_class_removed', 'braincert');
         }
     }
 
