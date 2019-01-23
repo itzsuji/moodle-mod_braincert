@@ -208,5 +208,23 @@ $string['isvideo'] = 'Video Delivery';
 $string['videodelivery_group'] = 'Video Delivery';
 $string['videodelivery_group_help'] = 'Video Delivery Type';
 $string['buyingoption'] = 'Buying Option';
+$string['braincert_class_removed'] = 'Class Removed Successfully.';
+$string['expiration_date'] = 'Expiration Date';
+$string['usessecurely'] = 'Uses Secure SSL Technology';
+$string['acceptvisa'] = 'We accept Visa, Mastercard, Discover, and American Express';
+$string['minutes'] = 'Minutes';
+$string['discountupdated'] = 'Discount Updated Successfully.';
+$string['discountadded'] = 'Discount Added Successfully.';
+$string['limited'] = 'Limited';
+$string['unlimited'] = 'Unlimited';
+$string['removedsuccess'] = 'Removed Successfully';
+$string['fixedamount'] = 'Fixed Amount';
+$string['percentage'] = 'Percentage';
+
+
+
+
+
+
 
 
