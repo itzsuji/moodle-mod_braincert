@@ -39,7 +39,6 @@ $string['indicator:socialbreadth_help'] = 'This indicator is based on the social
 $string['braincert:addinstance'] = 'Add a New BrainCert';
 $string['braincert:braincert_view'] = 'View BrainCert';
 $string['braincerttext'] = 'BrainCert Text';
-$string['modulename'] = 'BrainCert';
 $string['modulename_help'] = 'BrainCert HTML5 Virtual Classroom is designed to deliver live classes, meetings, webinars, and collaborative group conferences to audience anywhere right from your Moodle site!<br><br>
 HTML5 Virtual Classroom features:<br>
 <ul>

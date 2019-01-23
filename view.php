@@ -75,10 +75,9 @@ $PAGE->set_context($context);
 
 $PAGE->requires->css('/mod/braincert/css/styles.css', true);
 if ($CFG->version < 2017051500) {
-?>
-    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-<?php
+    $PAGE->requires->css('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', true);
 }
+
 $PAGE->requires->js('/mod/braincert/js/jquery.min.js', true);
 $PAGE->requires->js('/mod/braincert/js/classsettings.js', true);
 $PAGE->requires->js('/mod/braincert/js/video.js', true);
