@@ -25,9 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018062302;       // The current module version (Date: YYYYMMDDXX).
+$plugin->version   = 2019012200;       // The current module version (Date: YYYYMMDDXX).
 $plugin->requires  = 2014111000;    // Requires this Moodle version.
 $plugin->component = 'mod_braincert'; // Full name of the plugin (used for diagnostics).
 $plugin->cron      = 0;
-$plugin->release = '1.0';
+$plugin->release = '1.1';
 $plugin->maturity = MATURITY_STABLE;
