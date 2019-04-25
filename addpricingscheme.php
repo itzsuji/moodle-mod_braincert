@@ -49,11 +49,12 @@ $PAGE->navbar->add($addprice);
 $PAGE->requires->css('/mod/braincert/css/styles.css', true);
 
 if ($action == 'delete') {
-    $data['task']      = 'removeprice';
+    require_sesskey();
+    $data['task']      = BRAINCERT_TASK_REMOVE_PRICE;
     $data['id']        = $pid;
     $removepricescheme = braincert_get_curl_info($data);
-    if ($removepricescheme['status'] == "ok") {
-        echo "Removed Successfully.";
+    if ($removepricescheme['status'] == BRAINCERT_STATUS_OK) {
+        echo get_string('removedsuccessfully', 'braincert');
         redirect(new moodle_url('/mod/braincert/addpricingscheme.php?bcid='.$bcid));
     } else {
         echo $removepricescheme['error'];
@@ -63,14 +64,14 @@ if ($action == 'delete') {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('addpricingscheme', 'braincert'));
 
-$pricelistdata['task']     = 'listSchemes';
+$pricelistdata['task']     = BRAINCERT_TASK_LIST_SCHEMES;
 $pricelistdata['class_id'] = $bcid;
 $pricelists = braincert_get_curl_info($pricelistdata);
 
 $mform = new addpricingscheme_form($CFG->wwwroot.'/mod/braincert/addpricingscheme.php?bcid='.$bcid);
 
 if ($pricingscheme = $mform->get_data()) {
-    $data['task']        = 'addSchemes';
+    $data['task']        = BRAINCERT_TASK_ADD_SCHEMES;
     $data['price']       = $pricingscheme->price;
     $data['scheme_days'] = $pricingscheme->schemedays;
     $data['times']       = $pricingscheme->accesstype;
@@ -82,11 +83,11 @@ if ($pricingscheme = $mform->get_data()) {
         $data['id']     = $pricingscheme->pid;
     }
     $getscheme = braincert_get_curl_info($data);
-    if ($getscheme['status'] == "ok") {
-        if ($getscheme['method'] == "updateprice") {
-            echo "Scheme Updated Successfully.";
-        } else if ($getscheme['method'] == "addprice") {
-            echo "Scheme Added Successfully.";
+    if ($getscheme['status'] == BRAINCERT_STATUS_OK) {
+        if ($getscheme['method'] == BRAINCERT_METHOD_PRICE_UPDATE) {
+            echo get_string('schemaupdated', 'braincert');
+        } elseif ($getscheme['method'] == BRAINCERT_METHOD_PRICE_ADD) {
+            echo get_string('schemaadded', 'braincert');
         }
     } else {
         echo $getscheme['error'];
@@ -96,7 +97,7 @@ if ($pricingscheme = $mform->get_data()) {
     $mform->display();
 }
 
-$pricelistdata['task']     = 'listSchemes';
+$pricelistdata['task']     = BRAINCERT_TASK_LIST_SCHEMES;
 $pricelistdata['class_id'] = $bcid;
 $pricelists = braincert_get_curl_info($pricelistdata);
 
@@ -112,9 +113,10 @@ $table->head[] = 'Actions';
 if (!empty($pricelists)) {
     if (isset($pricelists['Price'])) {
         echo $pricelists['Price'];
-    } else if (isset($pricelists['status']) && ($pricelists['status'] == 'error')) {
+    } elseif (isset($pricelists['status']) && ($pricelists['status'] == BRAINCERT_STATUS_ERROR)) {
         echo $pricelists['error'];
     } else {
+        $sesskey = sesskey();
         foreach ($pricelists as $pricelist) {
             $row = array ();
             $row[] = $pricelist['id'];
@@ -127,9 +129,11 @@ if (!empty($pricelists)) {
             }
             $row[] = $pricelist['numbertimes'];
             $row[] = '<a href="'.$CFG->wwwroot.'/mod/braincert/addpricingscheme.php?action=edit&bcid='.$bcid.'&pid='
-                     .$pricelist['id'].'" value="edit-'.$pricelist['id'].'">'.get_string('edit', 'braincert').'</a>'
-                     .' '.'<a href="'.$CFG->wwwroot.'/mod/braincert/addpricingscheme.php?action=delete&bcid='.$bcid
-                     .'&pid='.$pricelist['id'].'" value="delete-'.$pricelist['id'].'">'.get_string('delete', 'braincert').'</a>';
+                     . $pricelist['id'] . '" value="edit-' . $pricelist['id'] . '&sesskey=' . $sesskey . '">'
+                . get_string('edit', 'braincert') . '</a>'
+                .' '.'<a href="'.$CFG->wwwroot.'/mod/braincert/addpricingscheme.php?action=delete&bcid='.$bcid
+                     . '&pid=' . $pricelist['id'] . '" value="delete-' . $pricelist['id'] .
+                '&sesskey=' . $sesskey . '">' . get_string('delete', 'braincert') . '</a>';
             $table->data[] = $row;
         }
     }

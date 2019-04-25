@@ -49,23 +49,24 @@ global $DB;
 
 $getpayments = $DB->get_records('virtualclassroom_purchase', array('class_id' => $bcid));
 if ($getpayments) {
-
     $table = new html_table();
     $table->head = array ();
-    $table->head[] = 'Payment id';
-    $table->head[] = 'Class id';
-    $table->head[] = 'Amount';
-    $table->head[] = 'Payer Name';
-    $table->head[] = 'Payment mode';
-    $table->head[] = 'Payment Date';
+    $table->head[] = get_string('paymentid', 'braincert');
+    $table->head[] = get_string('classid', 'braincert');
+    $table->head[] = get_string('amount', 'braincert');
+    $table->head[] = get_string('payername', 'braincert');
+    $table->head[] = get_string('paymentmode', 'braincert');
+    $table->head[] = get_string('paymentdate', 'braincert');
 
     foreach ($getpayments as $getpaymentskey => $getpaymentsval) {
         $row = array ();
         $row[] = $getpaymentsval->id;
         $row[] = $getpaymentsval->class_id;
         $row[] = $getpaymentsval->mc_gross;
-        $row[] = $DB->get_record('user',
-                 array('id' => $getpaymentsval->payer_id))->firstname. " ".
+        $row[] = $DB->get_record(
+            'user',
+            array('id' => $getpaymentsval->payer_id)
+        )->firstname. " ".
                  $DB->get_record('user', array('id' => $getpaymentsval->payer_id))->lastname;
         $row[] = $getpaymentsval->payment_mode;
         $row[] = $getpaymentsval->date_purchased;
@@ -77,12 +78,10 @@ if ($getpayments) {
         echo html_writer::table($table);
         echo html_writer::end_tag('div');
     }
-
 } else {
     echo "<div class='alert alert-warning'>
 		        <strong>".get_string('nopayment', 'braincert')."</strong>
 		      </div>";
-
 }
 
 echo $OUTPUT->footer();

@@ -24,6 +24,7 @@
  */
 
 require_once("../../config.php");
+require_once('lib.php');
 require_once('locallib.php');
 
 $bcid = required_param('bcid', PARAM_INT);   // Virtual Class ID.
@@ -47,25 +48,26 @@ $PAGE->navbar->add($viewclassrecording);
 
 $PAGE->requires->css('/mod/braincert/css/styles.css', true);
 if ($CFG->version < 2017051500) {
-?>
-    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-<?php
+    $PAGE->requires->css('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', true);
 }
 $PAGE->requires->js('/mod/braincert/js/jquery.min.js', true);
 $PAGE->requires->js('/mod/braincert/js/video.js', true);
-if ($task == 'changestatusrecording') {
-    $data['task'] = 'changestatusrecording';
+
+if ($task == BRAINCERT_TASK_CHANGE_STATUS_RECORDING) {
+    require_sesskey();
+    $data['task'] = BRAINCERT_TASK_CHANGE_STATUS_RECORDING;
     $data['rid']  = $rid;
     $getstatusinfo = braincert_get_curl_info($data);
-    if ($getstatusinfo['status'] == "ok") {
+    if ($getstatusinfo['status'] == BRAINCERT_STATUS_OK) {
         redirect(new moodle_url('/mod/braincert/recording.php?bcid='.$bcid.'&action='.$action));
     }
 }
-if ($task == 'removeclassrecording') {
-    $data['task'] = 'removeclassrecording';
+if ($task == BRAINCERT_TASK_REMOVE_CLASS_RECORDING) {
+    require_sesskey();
+    $data['task'] = BRAINCERT_TASK_REMOVE_CLASS_RECORDING;
     $data['rid']  = $rid;
     $getremoveinfo = braincert_get_curl_info($data);
-    if ($getremoveinfo['status'] == "ok") {
+    if ($getremoveinfo['status'] == BRAINCERT_STATUS_OK) {
         redirect(new moodle_url('/mod/braincert/recording.php?bcid='.$bcid.'&action='.$action));
     }
 }
@@ -77,21 +79,22 @@ if ($action == 'managerecording') {
     echo $OUTPUT->heading(get_string('viewrecording', 'braincert'));
 }
 
-$data['task']     = 'getclassrecording';
+$data['task']     = BRAINCERT_TASK_GET_CLASS_RECORDING;
 $data['class_id'] = $bcid;
 
 $getrecordinglist = braincert_get_curl_info($data);
 
-if (isset($getrecordinglist['Recording']) && ($getrecordinglist['Recording'] == 'No video recording available')) {
+if (isset($getrecordinglist['Recording']) && ($getrecordinglist['Recording'] == BRAINCERT_NO_RECORDING_AVAILABLE)) {
     echo '<div class="alert alert-danger"><strong>'.$getrecordinglist['Recording'].'</strong></div>';
 } else {
     if ($action == 'managerecording') {
         $table = new html_table();
         $table->head = array ();
-        $table->head[] = 'Record ID';
-        $table->head[] = 'File Name';
-        $table->head[] = 'Date Created';
-        $table->head[] = 'Actions';
+        $table->head[] = get_string('recordid', 'braincert');
+        $table->head[] = get_string('filename', 'braincert');
+        $table->head[] = get_string('datecreated', 'braincert');
+        $table->head[] = get_string('actions', 'braincert');
+        $sesskey = sesskey();
         foreach ($getrecordinglist as $recordinglist) {
             $row = array ();
             if ($recordinglist['id']) {
@@ -107,12 +110,15 @@ if (isset($getrecordinglist['Recording']) && ($getrecordinglist['Recording'] == 
                 } else {
                     $fa = "fa-check";
                 }
-                $row[] = '<a download href="'.$recordinglist['record_url'].'"><i class="fa fa-download" aria-hidden="true"></i></a>
+                $row[] = '<a download href="'.$recordinglist['record_url'].'">
+                    <i class="fa fa-download" aria-hidden="true"></i></a>
                 <a href="'.$CFG->wwwroot.'/mod/braincert/recording.php?bcid='.$bcid.
-                '&action='.$action.'&task=changestatusrecording&rid='.$recordinglist['id'].'">
+                '&action=' . $action . '&task=changestatusrecording&rid=' . $recordinglist['id']
+                    . '&sesskey=' . $sesskey . '">
                 <i class="fa '.$fa.'" aria-hidden="true"></i></a>
                 <a href="'.$CFG->wwwroot.'/mod/braincert/recording.php?bcid='.$bcid.
-                '&action='.$action.'&task=removeclassrecording&rid='.$recordinglist['id'].'">
+                '&action=' . $action . '&task=removeclassrecording&rid=' . $recordinglist['id']
+                    . '&sesskey=' . $sesskey . '">
                 <i class="fa fa-trash-o" aria-hidden="true"></i></a>';
             }
             $table->data[] = $row;
@@ -130,7 +136,8 @@ if (isset($getrecordinglist['Recording']) && ($getrecordinglist['Recording'] == 
         <select name="videourl" id="videourl">
             <?php foreach ($getrecordinglist as $i => $recordinglist) { ?>
             <option value="<?php echo $recordinglist['record_path']?>">
-                <?php echo $recordinglist['fname'] ? $recordinglist['fname'] : get_string('recording', 'braincert').' - '.$i; ?>
+                <?php echo $recordinglist['fname'] ? $recordinglist['fname'] : get_string('recording', 'braincert')
+                    .' - '.$i; ?>
             </option>
             <?php } ?>    
         </select>

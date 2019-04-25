@@ -30,11 +30,13 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright Dualcube (https://dualcube.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class managetemplate_form extends moodleform {
+class managetemplate_form extends moodleform
+{
     /**
      * Define add discount form
      */
-    public function definition() {
+    public function definition()
+    {
 
         global $DB, $bcid;
         $getbody = $DB->get_record('braincert_manage_template', array('bcid' => $bcid));
@@ -47,9 +49,13 @@ class managetemplate_form extends moodleform {
         }
         $mform = $this->_form; // Don't forget the underscore!
         $mform->addElement('text', 'emailsubject', get_string('emailsubject', 'braincert'));
-        $mform->setType('emailsubject', PARAM_RAW);
+        $mform->setType('emailsubject', PARAM_TEXT);
         $mform->setDefault('emailsubject', $s);
-        $mform->addElement('editor', 'emailmessage', get_string('emailmessage', 'braincert'))->setValue(array('text' => $m));
+        $mform->addElement(
+            'editor',
+            'emailmessage',
+            get_string('emailmessage', 'braincert')
+        )->setValue(array('text' => $m));
         $mform->setType('emailmessage', PARAM_RAW);
         $this->add_action_buttons();
     }

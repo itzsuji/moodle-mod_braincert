@@ -25,12 +25,27 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    $settings->add(new admin_setting_heading('braincert_heading',
-      get_string('generalconfig', 'braincert'), get_string('explaingeneralconfig', 'braincert')));
+    $settings->add(new admin_setting_heading(
+        'braincert_heading',
+        get_string('generalconfig', 'braincert'),
+        get_string('explaingeneralconfig', 'braincert')
+    ));
 
-    $settings->add(new admin_setting_configtext('mod_braincert_apikey',
-      get_string('apikey', 'braincert'), get_string('configapikey', 'braincert'), '', PARAM_RAW, 50));
+    $settings->add(new admin_setting_configtext(
+        'mod_braincert_apikey',
+        get_string('apikey', 'braincert'),
+        get_string('configapikey', 'braincert'),
+        '',
+        PARAM_TEXT,
+        50
+    ));
 
-    $settings->add(new admin_setting_configtext('mod_braincert_baseurl',
-      get_string('baseurl', 'braincert'), get_string('configbaseurl', 'braincert'), 'https://api.braincert.com/v2', PARAM_RAW, 50));
+    $settings->add(new admin_setting_configtext(
+        'mod_braincert_baseurl',
+        get_string('baseurl', 'braincert'),
+        get_string('configbaseurl', 'braincert'),
+        'https://api.braincert.com/v2',
+        PARAM_URL,
+        50
+    ));
 }

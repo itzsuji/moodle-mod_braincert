@@ -31,12 +31,14 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright Dualcube (https://dualcube.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class addpricingscheme_form extends moodleform {
+class addpricingscheme_form extends moodleform
+{
     /**
      * Define add discount form
      */
-    public function definition() {
-        global $CFG, $DB, $bcid, $action, $pid, $pricelists;
+    public function definition()
+    {
+        global $action, $pid, $pricelists;
 
         $defaultprice      = '';
         $defaultschemeday   = '';
@@ -55,7 +57,7 @@ class addpricingscheme_form extends moodleform {
                             }
                         }
                     }
-                } else if (isset($pricelists['status']) && ($pricelists['status'] == 'error')) {
+                } elseif (isset($pricelists['status']) && ($pricelists['status'] == BRAINCERT_STATUS_ERROR)) {
                     echo $pricelists['error'];
                 }
             }
@@ -91,16 +93,5 @@ class addpricingscheme_form extends moodleform {
         $mform->setDefault('numbertimes', $defaultnumbertimes);
 
         $this->add_action_buttons();
-    }
-
-    /**
-     * validation check
-     *
-     * @param array $data
-     * @param array $files
-     * @return array
-     */
-    public function validation($data, $files) {
-        return array();
     }
 }
