@@ -32,12 +32,14 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright Dualcube (https://dualcube.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class adddiscount_form extends moodleform {
+class adddiscount_form extends moodleform
+{
     /**
      * Define add discount form
      */
-    public function definition() {
-        global $CFG, $DB, $braincertrec, $bcid, $did, $action, $discountlists;
+    public function definition()
+    {
+        global $braincertrec, $bcid, $did, $action, $discountlists;
         $isusecode        = 0;
         $defaultlimit     = '';
         $defaultcode      = '';
@@ -72,7 +74,7 @@ class adddiscount_form extends moodleform {
                             }
                         }
                     }
-                } else if (isset($discountlists['status']) && ($discountlists['status'] == 'error')) {
+                } elseif (isset($discountlists['status']) && ($discountlists['status'] == BRAINCERT_STATUS_ERROR)) {
                     echo $discountlists['error'];
                 }
             }
@@ -82,8 +84,14 @@ class adddiscount_form extends moodleform {
         $mform->addElement('hidden', 'did', $did);
         $mform->setType('did', PARAM_INT);
 
-        $mform->addElement('advcheckbox', 'is_use_discount_code', get_string('usediscountcode', 'braincert'), '',
-                array('group' => 1), array(0, 1));
+        $mform->addElement(
+            'advcheckbox',
+            'is_use_discount_code',
+            get_string('usediscountcode', 'braincert'),
+            '',
+            array('group' => 1),
+            array(0, 1)
+        );
         $mform->setDefault('is_use_discount_code', $isusecode);
 
         $mform->addElement('text', 'discount_limit', get_string('discountlimit', 'braincert'));
@@ -94,7 +102,7 @@ class adddiscount_form extends moodleform {
         $mform->setDefault('discount_limit', $defaultlimit);
 
         $mform->addElement('text', 'discount_code', get_string('discountcode', 'braincert'));
-        $mform->setType('discount_code', PARAM_RAW);
+        $mform->setType('discount_code', PARAM_TEXT);
         $mform->addHelpButton('discount_code', 'discountcode', 'braincert');
         $mform->disabledIf('discount_code', 'is_use_discount_code', 'notchecked');
         $mform->setDefault('discount_code', $defaultcode);
@@ -129,8 +137,14 @@ class adddiscount_form extends moodleform {
         $mform->addRule('start_date', null, 'required', null, 'client');
         $mform->setDefault('start_date', $defaultstartdate);
 
-        $mform->addElement('advcheckbox', 'is_never_expire', get_string('neverexpire', 'braincert'),
-                '', array('group' => 1), array(0, 1));
+        $mform->addElement(
+            'advcheckbox',
+            'is_never_expire',
+            get_string('neverexpire', 'braincert'),
+            '',
+            array('group' => 1),
+            array(0, 1)
+        );
         $mform->setDefault('is_never_expire', $isexpire);
 
         $mform->addElement('date_selector', 'end_date', get_string('end_date', 'braincert'), $dtoption);
@@ -138,7 +152,6 @@ class adddiscount_form extends moodleform {
         $mform->setDefault('end_date', $defaultenddate);
 
         $this->add_action_buttons();
-
     }
     /**
      * validation check
@@ -147,7 +160,8 @@ class adddiscount_form extends moodleform {
      * @param array $files
      * @return array
      */
-    public function validation($data, $files) {
+    public function validation($data, $files)
+    {
         $errors = parent::validation($data, $files);
         $currentdate = strtotime(date("Y-m-d"));
         if (isset($data['did']) && ($data['is_never_expire'] == 0)) {

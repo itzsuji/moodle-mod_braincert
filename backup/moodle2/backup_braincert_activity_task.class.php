@@ -35,17 +35,20 @@ require_once($CFG->dirroot . '/mod/braincert/backup/moodle2/backup_braincert_set
  * @copyright Dualcube (https://dualcube.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_braincert_activity_task extends backup_activity_task {
+class backup_braincert_activity_task extends backup_activity_task
+{
     /**
      * Define (add) particular settings this activity can have
      */
-    protected function define_my_settings() {
+    protected function define_my_settings()
+    {
         // No particular settings for this activity.
     }
     /**
      * Define (add) particular steps this activity can have
      */
-    protected function define_my_steps() {
+    protected function define_my_steps()
+    {
         $this->add_step(new backup_braincert_activity_structure_step('braincert_structure', 'braincert.xml'));
     }
     /**
@@ -54,7 +57,8 @@ class backup_braincert_activity_task extends backup_activity_task {
      *
      * @param string $content
      */
-    static public function encode_content_links($content) {
+    public static function encode_content_links($content)
+    {
          global $CFG;
 
         $base = preg_quote($CFG->wwwroot, "/");

@@ -46,10 +46,11 @@ $adddiscount = get_string('adddiscount', 'braincert');
 $PAGE->navbar->add($adddiscount);
 
 if ($action == 'delete') {
-    $data['task']      = 'removediscount';
+    require_sesskey();
+    $data['task']      = BRAINCERT_TASK_REMOVE_DISCOUNT;
     $data['discountid'] = $did;
     $removediscount = braincert_get_curl_info($data);
-    if ($removediscount['status'] == "ok") {
+    if ($removediscount['status'] == BRAINCERT_STATUS_OK) {
         echo get_string('removedsuccess', 'braincert');
         redirect(new moodle_url('/mod/braincert/adddiscount.php?bcid='.$bcid));
     } else {
@@ -60,7 +61,7 @@ if ($action == 'delete') {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('addclassdiscount', 'braincert'));
 
-$dislistdata['task']     = 'listdiscount';
+$dislistdata['task']     = BRAINCERT_TASK_LIST_DISCOUNT;
 $dislistdata['class_id'] = $bcid;
 $discountlists = braincert_get_curl_info($dislistdata);
 
@@ -68,7 +69,6 @@ $discountlists = braincert_get_curl_info($dislistdata);
 $mform = new adddiscount_form($CFG->wwwroot.'/mod/braincert/adddiscount.php?bcid='.$bcid);
 
 if ($classdiscount = $mform->get_data()) {
-
     $discountstartdate = date('Y-m-d', $classdiscount->start_date);
     $classdiscountstartdate = new DateTime($discountstartdate, new DateTimeZone($braincertrec->default_timezone));
     $discountstartdatetimestamp = $classdiscountstartdate->getTimestamp();
@@ -77,7 +77,7 @@ if ($classdiscount = $mform->get_data()) {
     $classdiscountenddate = new DateTime($discountenddate, new DateTimeZone($braincertrec->default_timezone));
     $discountenddatetimestamp = $classdiscountenddate->getTimestamp();
 
-    $data['task']           = 'addSpecials';
+    $data['task']           = BRAINCERT_TASK_ADD_SPECIALS;
     $data['class_id']  = $bcid;
     $data['discount']       = $classdiscount->discount;
     $data['start_date']     = date('Y-m-d', $discountstartdatetimestamp);
@@ -94,10 +94,10 @@ if ($classdiscount = $mform->get_data()) {
     }
 
     $getdiscount = braincert_get_curl_info($data);
-    if ($getdiscount['status'] == "ok") {
-        if ($getdiscount['method'] == "updateDiscount") {
+    if ($getdiscount['status'] == BRAINCERT_STATUS_OK) {
+        if ($getdiscount['method'] == BRAINCERT_METHOD_DISCOUNT_UPDATE) {
             echo get_string('discountupdated', 'braincert');
-        } else if ($getdiscount['method'] == "addDiscount") {
+        } elseif ($getdiscount['method'] == BRAINCERT_METHOD_DISCOUNT_ADD) {
             echo get_string('discountadded', 'braincert');
         }
     } else {
@@ -108,7 +108,7 @@ if ($classdiscount = $mform->get_data()) {
     $mform->display();
 }
 
-$dislistdata['task']     = 'listdiscount';
+$dislistdata['task']     = BRAINCERT_TASK_LIST_DISCOUNT;
 $dislistdata['class_id'] = $bcid;
 $discountlists = braincert_get_curl_info($dislistdata);
 
@@ -125,9 +125,10 @@ $table->head[] = get_string('actions', 'braincert');
 if (!empty($discountlists)) {
     if (isset($discountlists['Discount'])) {
         echo $discountlists['Discount'];
-    } else if (isset($discountlists['status']) && ($discountlists['status'] == 'error')) {
+    } elseif (isset($discountlists['status']) && ($discountlists['status'] == BRAINCERT_STATUS_ERROR)) {
         echo $discountlists['error'];
     } else {
+        $sesskey = sesskey();
         foreach ($discountlists as $discountlist) {
             $row = array ();
             $row[] = $discountlist['id'];
@@ -145,9 +146,11 @@ if (!empty($discountlists)) {
                 $row[] = get_string('unlimited', 'braincert');
             }
             $row[] = '<a href="'.$CFG->wwwroot.'/mod/braincert/adddiscount.php?action=edit&bcid='
-                     .$bcid.'&did='.$discountlist['id'].'" value="edit-'.$discountlist['id'].'">Edit</a>'
-                     .' '.'<a href="'.$CFG->wwwroot.'/mod/braincert/adddiscount.php?action=delete&bcid='
-                     .$bcid.'&did='.$discountlist['id'].'" value="delete-'.$discountlist['id'].'">Delete</a>';
+                     . $bcid . '&did=' . $discountlist['id'] . '" value="edit-' . $discountlist['id'] .
+                '&sesskey=' . $sesskey . '">' . get_string('edit', 'braincert') . '</a>'
+                .' '.'<a href="'.$CFG->wwwroot.'/mod/braincert/adddiscount.php?action=delete&bcid='
+                     . $bcid . '&did=' . $discountlist['id'] . '" value="delete-' . $discountlist['id'] .
+                '&sesskey=' . $sesskey . '">' . get_string('delete', 'braincert') . '</a>';
             $table->data[] = $row;
         }
     }

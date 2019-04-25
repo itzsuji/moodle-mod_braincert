@@ -24,6 +24,46 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+define('BRAINCERT_STATUS_OK', 'ok');
+define('BRAINCERT_STATUS_ERROR', 'error');
+define('BRAINCERT_STATUS_PAST', 'Past');
+define('BRAINCERT_STATUS_LIVE', 'Live');
+define('BRAINCERT_STATUS_UPCOMING', 'Upcoming');
+define('BRAINCERT_STATUS_NO_PRICE', 'No Price in this Class');
+define('BRAINCERT_CURRENCY_INR', 'INR');
+define('BRAINCERT_CURRENCY_INR_SYMBOL', '₹');
+define('BRAINCERT_CURRENCY_EUR', 'EUR');
+define('BRAINCERT_CURRENCY_EUR_SYMBOL', '€');
+define('BRAINCERT_CURRENCY_AUD', 'AUD');
+define('BRAINCERT_CURRENCY_AUD_SYMBOL', '$');
+define('BRAINCERT_CURRENCY_CAD', 'CAD');
+define('BRAINCERT_CURRENCY_CAD_SYMBOL', '$');
+define('BRAINCERT_CURRENCY_GBP', 'GBP');
+define('BRAINCERT_CURRENCY_GBP_SYMBOL', '£');
+define('BRAINCERT_METHOD_DISCOUNT_UPDATE', 'updateDiscount');
+define('BRAINCERT_METHOD_DISCOUNT_ADD', 'addDiscount');
+define('BRAINCERT_METHOD_PRICE_UPDATE', 'updateprice');
+define('BRAINCERT_METHOD_PRICE_ADD', 'addprice');
+define('BRAINCERT_METHOD_CLASS_UPDATE', 'updateclass');
+define('BRAINCERT_TASK_CLASS_LIST', 'listclass');
+define('BRAINCERT_TASK_REMOVE_DISCOUNT', 'removediscount');
+define('BRAINCERT_TASK_LIST_DISCOUNT', 'listdiscount');
+define('BRAINCERT_TASK_ADD_SPECIALS', 'addSpecials');
+define('BRAINCERT_TASK_REMOVE_PRICE', 'removeprice');
+define('BRAINCERT_TASK_LIST_SCHEMES', 'listSchemes');
+define('BRAINCERT_TASK_ADD_SCHEMES', 'addSchemes');
+define('BRAINCERT_TASK_GET_CLASS_REPORT', 'getclassreport');
+define('BRAINCERT_TASK_GET_CLASS_LAUNCH', 'getclasslaunch');
+define('BRAINCERT_TASK_SCHEDULE', 'schedule');
+define('BRAINCERT_TASK_REMOVE_CLASS', 'removeclass');
+define('BRAINCERT_TASK_CANCEL_CLASS', 'cancelclass');
+define('BRAINCERT_TASK_GET_CLASS_RECORDING', 'getclassrecording');
+define('BRAINCERT_TASK_CHANGE_STATUS_RECORDING', 'changestatusrecording');
+define('BRAINCERT_TASK_REMOVE_CLASS_RECORDING', 'removeclassrecording');
+define('BRAINCERT_TASK_GET_PAYMENT_INFO', 'getPaymentInfo');
+define('BRAINCERT_TASK_GET_PLAN', 'getplan');
+define('BRAINCERT_NO_RECORDING_AVAILABLE', 'No video recording available');
+
 
 require_once('locallib.php');
 global $defaulttimezone;
@@ -122,28 +162,29 @@ $defaulttimezone = array(
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, false if not, null if doesn't know
  */
-function braincert_supports($feature) {
-    switch($feature) {
+function braincert_supports($feature)
+{
+    switch ($feature) {
         case FEATURE_GROUPS:
-          return true;
+            return true;
         case FEATURE_GROUPINGS:
-          return true;
+            return true;
         case FEATURE_GROUPMEMBERSONLY:
-          return true;
+            return true;
         case FEATURE_MOD_INTRO:
-          return true;
+            return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS:
-          return true;
+            return true;
         case FEATURE_COMPLETION_HAS_RULES:
-          return true;
+            return true;
         case FEATURE_GRADE_HAS_GRADE:
-          return true;
+            return true;
         case FEATURE_GRADE_OUTCOMES:
-          return true;
+            return true;
         case FEATURE_BACKUP_MOODLE2:
-          return true;
+            return true;
         default:
-          return null;
+            return null;
     }
 }
 
@@ -156,7 +197,8 @@ function braincert_supports($feature) {
  * @param object $braincert
  * @return bool|int
  */
-function braincert_add_instance($braincert) {
+function braincert_add_instance($braincert)
+{
     global $DB, $CFG, $defaulttimezone;
 
     $timezone = $defaulttimezone[$braincert->braincert_timezone];
@@ -165,7 +207,7 @@ function braincert_add_instance($braincert) {
     $startdatetime = new DateTime($startdate.' '.$braincert->start_time, new DateTimeZone($timezone));
     $startdatetimestamp = $startdatetime->getTimestamp();
 
-    $data['task']           = 'schedule';
+    $data['task']           = BRAINCERT_TASK_SCHEDULE;
     $data['title']          = urlencode($braincert->name);
     $data['timezone']       = $braincert->braincert_timezone;
     $data['date']           = date('Y-m-d', $startdatetimestamp);
@@ -199,7 +241,7 @@ function braincert_add_instance($braincert) {
 
     $getschedule = braincert_get_curl_info($data);
 
-    if ($getschedule['status'] == "ok") {
+    if ($getschedule['status'] == BRAINCERT_STATUS_OK) {
         $braincertclass = new stdClass();
         $braincertclass->course                = $braincert->course;
         $braincertclass->name                  = $braincert->name;
@@ -244,8 +286,12 @@ function braincert_add_instance($braincert) {
 
         if ($CFG->version >= 2017051500) {
             $completiontimeexpected = !empty($braincert->completionexpected) ? $braincert->completionexpected : null;
-            \core_completion\api::update_completion_date_event($braincert->coursemodule,
-            'braincert', $bcid, $completiontimeexpected);
+            \core_completion\api::update_completion_date_event(
+                $braincert->coursemodule,
+                'braincert',
+                $bcid,
+                $completiontimeexpected
+            );
         }
         return $bcid;
     } else {
@@ -261,14 +307,15 @@ function braincert_add_instance($braincert) {
  * @param object $braincert
  * @return bool
  */
-function braincert_update_instance($braincert) {
+function braincert_update_instance($braincert)
+{
     global $DB, $CFG, $defaulttimezone;
 
     $timezone = $defaulttimezone[$braincert->braincert_timezone];
     $braincertclass = $DB->get_record('braincert', array('id' => $braincert->instance), '*', MUST_EXIST);
     $classid = $braincertclass->class_id;
 
-    $classdata['task']   = 'listclass';
+    $classdata['task']   = BRAINCERT_TASK_CLASS_LIST;
     $classdata['search'] = preg_replace('/\s+/', '', $braincertclass->name);
     $getclassdetails = braincert_get_curl_info($classdata);
 
@@ -278,8 +325,8 @@ function braincert_update_instance($braincert) {
 
     foreach ($getclassdetails['classes'] as $getclassdetail) {
         if ($getclassdetail['id'] == $braincertclass->class_id) {
-            if ($getclassdetail['status'] == 'Upcoming') {
-                $data['task']           = 'schedule';
+            if ($getclassdetail['status'] == BRAINCERT_STATUS_UPCOMING) {
+                $data['task']           = BRAINCERT_TASK_SCHEDULE;
                 $data['cid']            = $getclassdetail['id'];
                 $data['title']          = preg_replace('/\s+/', '', $braincert->name);
                 $data['timezone']       = $braincert->braincert_timezone;
@@ -314,7 +361,8 @@ function braincert_update_instance($braincert) {
 
                 $getschedule = braincert_get_curl_info($data);
             }
-            if (isset($getschedule['status']) && ($getschedule['status'] == "ok") && ($getschedule['method'] == "updateclass")) {
+            if (isset($getschedule['status']) && ($getschedule['status'] == BRAINCERT_STATUS_OK)
+                && ($getschedule['method'] == BRAINCERT_METHOD_CLASS_UPDATE)) {
                 $classid = $getschedule['class_id'];
 
                 $braincertclass = new stdClass();
@@ -372,13 +420,18 @@ function braincert_update_instance($braincert) {
                 $braincertclass->timemodified          = time();
 
                 if ($CFG->version >= 2017051500) {
-                    $completiontimeexpected = !empty($braincert->completionexpected) ? $braincert->completionexpected : null;
-                    \core_completion\api::update_completion_date_event($braincert->coursemodule,
-                    'braincert', $braincertclass->id, $completiontimeexpected);
+                    $completiontimeexpected = !empty($braincert->completionexpected) ?
+                        $braincert->completionexpected : null;
+                    \core_completion\api::update_completion_date_event(
+                        $braincert->coursemodule,
+                        'braincert',
+                        $braincertclass->id,
+                        $completiontimeexpected
+                    );
                 }
                 return $DB->update_record("braincert", $braincertclass);
             } else {
-                return $getclassdetail['status']." schedule class can not be update.";
+                return $getclassdetail['status'].' '. get_string('cannotupdated', 'braincert');
             }
         }
     }
@@ -392,7 +445,8 @@ function braincert_update_instance($braincert) {
  * @param int $id
  * @return bool
  */
-function braincert_delete_instance($id) {
+function braincert_delete_instance($id)
+{
     global $DB;
 
     if (! $braincert = $DB->get_record("braincert", array("id" => $id))) {
@@ -401,11 +455,11 @@ function braincert_delete_instance($id) {
     $result = true;
 
     if (isset($braincert->class_id)) {
-        $removedata['task']  = 'removeclass';
+        $removedata['task']  = BRAINCERT_TASK_REMOVE_CLASS;
         $removedata['cid']   = $braincert->class_id;
 
         $getremovestatus = braincert_get_curl_info($removedata);
-        if ($getremovestatus['status'] == "ok") {
+        if ($getremovestatus['status'] == BRAINCERT_STATUS_OK) {
             echo get_string('braincert_class_removed', 'braincert');
         }
     }
@@ -430,10 +484,12 @@ function braincert_delete_instance($id) {
  * @param object $coursemodule
  * @return cached_cm_info|null
  */
-function braincert_get_coursemodule_info($coursemodule) {
+function braincert_get_coursemodule_info($coursemodule)
+{
     global $DB;
 
-    if ($braincert = $DB->get_record('braincert', array('id' => $coursemodule->instance), 'id, name, intro, introformat')) {
+    if ($braincert = $DB->get_record('braincert', array(
+        'id' => $coursemodule->instance), 'id, name, intro, introformat')) {
         if (empty($braincert->name)) {
             // Braincert name missing, fix it.
             $braincert->name = "braincert{$braincert->id}";
@@ -454,6 +510,7 @@ function braincert_get_coursemodule_info($coursemodule) {
  *
  * @return array
  */
-function braincert_get_extra_capabilities() {
+function braincert_get_extra_capabilities()
+{
     return array('moodle/site:accessallgroups');
 }

@@ -27,7 +27,7 @@ require_once("../../config.php");
 
 $bcid = required_param('bcid', PARAM_INT);   // Virtual Class ID.
 
-$groupids = optional_param_array('groups', null, PARAM_RAW);
+$groupids = optional_param_array('groups', null, PARAM_TEXT);
 
 
 $PAGE->set_url('/mod/braincert/inviteusergroup.php', array('bcid' => $bcid, 'sesskey' => sesskey()));
@@ -69,7 +69,8 @@ if ($groupids) {
     $endtime = new DateTime($braincertrec->end_time);
     $interval = $starttime->diff($endtime);
     $durationinmin = ($interval->h * 60) + $interval->i;
-    $find = array('{owner_name}', '{class_name}', '{class_date_time}', '{class_time_zone}', '{class_duration}', '{class_join_url}');
+    $find = array('{owner_name}', '{class_name}', '{class_date_time}',
+        '{class_time_zone}', '{class_duration}', '{class_join_url}');
     $replace = array($USER->firstname.' '.$USER->lastname, $braincertrec->name,
                      date('d-m-Y', $braincertrec->start_date), $braincertrec->default_timezone,
                      $durationinmin, $CFG->wwwroot.'/mod/braincert/view.php?id='.$cm->id);
@@ -77,7 +78,13 @@ if ($groupids) {
     foreach ($groupusers as $groupuserskey => $groupusersval) {
         if ($emailuserrec = $DB->get_record('user', array('id' => $groupusersval->userid))) {
             $emailuser = $emailuserrec;
-            $mailresults = email_to_user($emailuser, $USER, $getbody->emailsubject, $getbody->emailmessage, $getbody->emailmessage);
+            $mailresults = email_to_user(
+                $emailuser,
+                $USER,
+                $getbody->emailsubject,
+                $getbody->emailmessage,
+                $getbody->emailmessage
+            );
             if ($mailresults == 1) {
                 echo get_string('emailsent', 'braincert');
             } else {
@@ -93,12 +100,13 @@ if (!empty($getgroups)) {
       <ul>
         <?php
         foreach ($getgroups as $getgroupskey => $getgroupsval) {
-            echo "<li><input type='checkbox' name='groups[]' value='".$getgroupsval->id."' >".$getgroupsval->name."</li>";
+            echo "<li><input type='checkbox' name='groups[]' value='".
+                $getgroupsval->id."' >".$getgroupsval->name."</li>";
         }
         ?>
       <div class="submitdiv">
-        <input type="submit" name="submit" value="Send Email">
-      </div>
+          <input type="submit" name="submit" value="<?php echo get_string('sendemail', 'braincert') ?>">
+          </div>
       </ul>
     </form>
 <?php

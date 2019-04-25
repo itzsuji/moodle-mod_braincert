@@ -27,7 +27,7 @@ require_once("../../config.php");
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/mod/braincert/classes/invite_by_email_form.php');
 
-GLOBAL $USER, $CFG, $COURSE;
+global $USER, $CFG, $COURSE;
 
 $bcid = required_param('bcid', PARAM_INT);   // Virtual Class ID.
 
@@ -60,7 +60,8 @@ if ($invitebyemail = $mform->get_data()) {
     $endtime = new DateTime($braincertrec->end_time);
     $interval = $starttime->diff($endtime);
     $durationinmin = ($interval->h * 60) + $interval->i;
-    $find = array('{owner_name}', '{class_name}', '{class_date_time}', '{class_time_zone}', '{class_duration}', '{class_join_url}');
+    $find = array('{owner_name}', '{class_name}', '{class_date_time}', '{class_time_zone}',
+        '{class_duration}', '{class_join_url}');
     $replace = array($USER->firstname.' '.$USER->lastname, $braincertrec->name,
                      date('d-m-Y', $braincertrec->start_date), $braincertrec->default_timezone,
                      $durationinmin, $CFG->wwwroot.'/mod/braincert/view.php?id='.$cm->id);
@@ -84,9 +85,11 @@ if ($invitebyemail = $mform->get_data()) {
         }
         $mailresults = email_to_user($emailuser, $USER, $invitebyemail->emailsubject, $emailmessage, $emailmessage);
         if ($mailresults == 1) {
-            echo '<div class="alert alert-success">'.get_string('emailsent', 'braincert').' - '.$emailid.'.</strong></div>';
+            echo '<div class="alert alert-success">'.get_string('emailsent', 'braincert').' - '
+                .$emailid.'.</strong></div>';
         } else {
-            echo '<div class="alert alert-danger">'.get_string('emailnotsent', 'braincert').' '.$emailid.'.</strong></div>';
+            echo '<div class="alert alert-danger">'.get_string('emailnotsent', 'braincert').' '
+                .$emailid.'.</strong></div>';
         }
     }
     $mform->display();

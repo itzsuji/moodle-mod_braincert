@@ -22,7 +22,6 @@
  * @copyright  BrainCert (https://www.braincert.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 require_once("../../config.php");
 
 $bcid = required_param('bcid', PARAM_INT);   // Virtual Class ID.
@@ -42,48 +41,47 @@ $PAGE->navbar->add($attendancereport);
 
 $PAGE->requires->css('/mod/braincert/css/styles.css', true);
 if ($CFG->version < 2017051500) {
-?>
-    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-<?php
+    $PAGE->requires->css('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', true);
 }
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('classattendees', 'braincert'));
 
-$data['task'] = 'listclass';
+$data['task'] = BRAINCERT_TASK_CLASS_LIST;
 $getclasslists = braincert_get_curl_info($data);
 
 foreach ($getclasslists['classes'] as $getclasslist) {
     if ($getclasslist['id'] == $bcid) {
         $classdurationmin = round($getclasslist['duration'] / 60);
-        $count = round( $classdurationmin / 5);
+        $count = round($classdurationmin / 5);
     }
 }
 
-$data['task']    = 'getclassreport';
+$data['task'] = BRAINCERT_TASK_GET_CLASS_REPORT;
 $data['classId'] = $bcid;
 
 $getclassattendees = braincert_get_curl_info($data);
 
-if (isset($getclassattendees['status']) && ($getclassattendees['status'] == "error")) {
-    echo '<div class="alert alert-danger"><strong>'.$getclassattendees['error'].'</strong></div>';
-} else if (isset($getclassattendees['Report'])) {
-    echo '<div class="alert alert-danger"><strong>'.$getclassattendees['Report'].'</strong></div>';
+if (isset($getclassattendees['status']) && ($getclassattendees['status'] == BRAINCERT_STATUS_ERROR)) {
+    echo '<div class="alert alert-danger"><strong>' . $getclassattendees['error'] . '</strong></div>';
+} elseif (isset($getclassattendees['Report'])) {
+    echo '<div class="alert alert-danger"><strong>' . $getclassattendees['Report'] . '</strong></div>';
 } else {
     if (isset($getclassattendees['0']['classId'])) {
         if (count($getclassattendees) > 0) {
-        ?>
+            ?>
             <div id="container" style="width: 100%;">
-              <canvas id="myChart" width="400" height="400"></canvas>
+                <canvas id="myChart" width="400" height="400"></canvas>
             </div>
-        <?php
+            <?php
         }
         $table = new html_table();
-        $table->head = array ();
+        $table->head = array();
         $table->head[] = get_string('id', 'braincert');
         $table->head[] = get_string('name', 'braincert');
         $table->head[] = get_string('duration', 'braincert');
         $table->head[] = get_string('timein', 'braincert');
-        $table->head[] = get_string('timeout', 'braincert');'Time out';
+        $table->head[] = get_string('timeout', 'braincert');
+        'Time out';
         $table->head[] = get_string('attendence', 'braincert');
         $i = 1;
         $grapharrayteacher = array();
@@ -95,15 +93,15 @@ if (isset($getclassattendees['status']) && ($getclassattendees['status'] == "err
             $grapharrayteacher[$i] = new stdClass();
             $grapharrayteacher[$i]->spenttime = intval($spenttime / 60);
             $grapharrayteacher[$i]->email = $userrec->email;
-            $row = array ();
+            $row = array();
             $row[] = $i;
-            $row[] = $userrec->username."<br>(".$userrec->email.")";
-            $row[] = $classattendee['duration']."(".$classattendee['percentage'].")";
+            $row[] = $userrec->username . "<br>(" . $userrec->email . ")";
+            $row[] = $classattendee['duration'] . "(" . $classattendee['percentage'] . ")";
             $timein = '';
             $timeout = '';
             foreach ($classattendee['session'] as $time) {
-                $timein .= "<i class='fa fa-calendar' aria-hidden='true'></i> ".$time['time_in']."<br>";
-                $timeout .= "<i class='fa fa-calendar' aria-hidden='true'></i> ".$time['time_out']."<br>";
+                $timein .= "<i class='fa fa-calendar' aria-hidden='true'></i> " . $time['time_in'] . "<br>";
+                $timeout .= "<i class='fa fa-calendar' aria-hidden='true'></i> " . $time['time_out'] . "<br>";
             }
             $row[] = $timein;
             $row[] = $timeout;
@@ -118,82 +116,90 @@ if (isset($getclassattendees['status']) && ($getclassattendees['status'] == "err
             echo html_writer::end_tag('div');
         }
     } else {
-        echo '<div class="alert alert-danger"><strong>'.get_string('norecordfound', 'braincert').'</strong></div>';
+        echo '<div class="alert alert-danger"><strong>' . get_string('norecordfound', 'braincert') . '</strong></div>';
     }
 }
+
 ?>
 <script src="<?php echo $CFG->wwwroot; ?>/mod/braincert/js/chart.bundle.js"></script>
 <style>
-canvas {
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-}
+    canvas {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+    }
 </style>
 <?php
 $colorarray = array("#ce0704", "#0315ab", "#7d2020",
-                    "#8e116b", "#43118e", "#114d8e",
-                    "#118e79", "#118e17", "#568e11",
-                    "#8e5e11", "#420807", "#9bb995", "#3a1b00");
+    "#8e116b", "#43118e", "#114d8e",
+    "#118e79", "#118e17", "#568e11",
+    "#8e5e11", "#420807", "#9bb995", "#3a1b00");
+
 ?>
 <script>
-var ctx = document.getElementById("myChart").getContext('2d');
-var barChartData = {
-  labels: [
+    var ctx = document.getElementById("myChart").getContext('2d');
+    var barChartData = {
+    labels: [
+<?php
+for ($i = 1; $i < $count; $i++) {
+    ?>
+    '<?php echo $i * 5; ?>-<?php echo $i * 5 + 5; ?>'
+    <?php if ($i != $count) {
+        ?>,<?php
+    }
+}
+
+?>],
+                datasets: [
+<?php
+$m = 0;
+foreach ($grapharrayteacher as $key => $value) {
+    $spenttime = floor($value->spenttime / 5);
+
+    ?>
+                    {
+                    label: "<?php echo $value->email; ?>",
+                            backgroundColor: '<?php echo $colorarray[$key] ?>',
+                            borderColor: '<?php echo $colorarray[$key] ?>',
+                            borderWidth: 1,
+                            data: [
     <?php
     for ($i = 1; $i < $count; $i++) {
-    ?>
-      '<?php echo $i * 5;?>-<?php echo $i * 5 + 5;?>'
-            <?php if ($i != $count) {
+        echo ($i == $spenttime) ? $value->spenttime : '""';
+        if ($i != $count) {
             ?>,<?php
-}
-    }?>],
-  datasets: [
-    <?php
-    $m = 0;
-    foreach ($grapharrayteacher as $key => $value) {
-        $spenttime = floor($value->spenttime / 5);
-    ?>
-    {
-    label: "<?php echo $value->email;?>",
-    backgroundColor: '<?php echo $colorarray[$key]?>',
-    borderColor: '<?php echo $colorarray[$key]?>',
-    borderWidth: 1,
-    data: [
-        <?php for ($i = 1; $i < $count; $i++) {
-            echo ($i == $spenttime) ? $value->spenttime : '""';
-            if ($i != $count) {
-            ?>,<?php
-            }
-}?>]
-      },
-        <?php
-        $m = $m + 25;
-    }
-        ?>
-  ]
-};
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: barChartData,
-
-    options: {
-        width:500,
-        height:300,
-        scaleShowGridLines: false,
-        showScale: false,
-        maintainAspectRatio: this.maintainAspectRatio,
-        barShowStroke: false,
-        responsive: true,
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
         }
     }
-});
+
+    ?>]
+                    },
+    <?php
+    $m = $m + 25;
+}
+
+?>
+                ]
+        };
+        var myChart = new Chart(ctx, {
+        type: 'bar',
+                data: barChartData,
+                options: {
+                width:500,
+                        height:300,
+                        scaleShowGridLines: false,
+                        showScale: false,
+                        maintainAspectRatio: this.maintainAspectRatio,
+                        barShowStroke: false,
+                        responsive: true,
+                        scales: {
+                        yAxes: [{
+                        ticks: {
+                        beginAtZero:true
+                        }
+                        }]
+                        }
+                }
+        });
 </script>
 <?php
 echo $OUTPUT->footer();

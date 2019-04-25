@@ -33,27 +33,43 @@ $string['dndresizewidth'] = 'Resize drag and drop width';
 $string['dnduploadbraincert'] = 'Add media to course page';
 $string['dnduploadbraincerttext'] = 'Add a BrainCert VC to the course page';
 $string['indicator:cognitivedepth'] = 'BrainCert cognitive';
-$string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a BrainCert resource.';
+$string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached '
+    . 'by the student in a BrainCert resource.';
 $string['indicator:socialbreadth'] = 'BrainCert social';
-$string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a BrainCert resource.';
+$string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth '
+    . 'reached by the student in a BrainCert resource.';
 $string['braincert:addinstance'] = 'Add a New BrainCert';
 $string['braincert:braincert_view'] = 'View BrainCert';
 $string['braincerttext'] = 'BrainCert Text';
-$string['modulename_help'] = 'BrainCert HTML5 Virtual Classroom is designed to deliver live classes, meetings, webinars, and collaborative group conferences to audience anywhere right from your Moodle site!<br><br>
+$string['modulename_help'] = 'BrainCert HTML5 Virtual Classroom is designed to deliver 
+    live classes, meetings, webinars, and collaborative group conferences 
+    to audience anywhere right from your Moodle site!<br><br>
 HTML5 Virtual Classroom features:<br>
 <ul>
 <li> WebRTC based Ultra HD audio and video conferencing with great resiliency and multiple full HD participants.</li>
 <li> Works across mobile, tablet and desktop devices without installing additional software or browser plugins. </li>
-<li> Support for WebRTC in macOS and iOS devices using Safari 11 browser. Android support using Opera, Chrome and Samsung internet browsers. Desktop support using Chrome and Firefox browsers.</li>
-<li> Available in 50 languages. Use API calls to force an interface language or allow attendees to select a language.</li>
-<li> Cloud-based session recording without the need to install any other software or browser plugins. Download recorded lessons as 720p HD file, share and play online for attendees. </li>
-<li> Server-side secure recording in the cloud. Record classes manually or automatically and download multiple recordings in a session or combine all in to one file - all using a simple API call.</li>
-<li> Group HTML5-based HD Screen Sharing in tabbed interface. Enhance your computer-based training classes by sharing entire screen or just a single application. No software downloads or installations necessary.</li>
-<li> Multiple interactive whiteboards. The staple of all classroom instruction is the whiteboard that supports drawing tool, LaTEX math equations, draw shapes & symbols, line tools, save snapshots, and share documents in multiple tabs.</li>
+<li> Support for WebRTC in macOS and iOS devices using Safari 11 browser. 
+Android support using Opera, Chrome and Samsung internet browsers. 
+Desktop support using Chrome and Firefox browsers.</li>
+<li> Available in 50 languages. Use API calls to force an interface language 
+or allow attendees to select a language.</li>
+<li> Cloud-based session recording without the need to install any other software or browser plugins. 
+Download recorded lessons as 720p HD file, share and play online for attendees. </li>
+<li> Server-side secure recording in the cloud. Record classes manually or automatically 
+and download multiple recordings in a session or combine all in to one file - all using a simple API call.</li>
+<li> Group HTML5-based HD Screen Sharing in tabbed interface. 
+Enhance your computer-based training classes by sharing entire screen or just a single application. 
+No software downloads or installations necessary.</li>
+<li> Multiple interactive whiteboards. The staple of all classroom instruction is the whiteboard that 
+supports drawing tool, LaTEX math equations, draw shapes & symbols, line tools, save snapshots, 
+and share documents in multiple tabs.</li>
 <li> Share documents & presentations. Stream Audio/Video files securely.</li>
-<li> Wolfram|Alpha gives you access to the world facts and data and calculates answers across a range of topics, including science, engineering, mathematics.
-<li> Equations editor, group chat, and powerful annotation feature to draw over uploaded documents & presentations. </li>
-<li> Responsive whiteboard fits any screen and browser resolution for seamless same viewing experience by all attendees.</li></ul>';
+<li> Wolfram|Alpha gives you access to the world facts and data and calculates 
+answers across a range of topics, including science, engineering, mathematics.
+<li> Equations editor, group chat, and powerful annotation feature to 
+draw over uploaded documents & presentations. </li>
+<li> Responsive whiteboard fits any screen and browser resolution 
+for seamless same viewing experience by all attendees.</li></ul>';
 $string['modulename_link'] = 'mod/braincert/view';
 $string['modulenameplural'] = 'BrainCert';
 $string['pluginadministration'] = 'Virtual Classroom administration';
@@ -64,7 +80,9 @@ $string['generalconfig'] = 'General configuration';
 $string['explaingeneralconfig'] = 'API Credentials:- Required for authentication';
 $string['apikey'] = 'BrainCert API Key';
 $string['baseurl'] = 'BrainCert Base URL';
-$string['configapikey'] = 'If this is your first time here, we recommend you to <a href="https://www.braincert.com/app/virtualclassroom?_wpnonce=5efc93dcfe">signup for your API</a> key first.';
+$string['configapikey'] = 'If this is your first time here, we recommend you '
+    . 'to <a href="https://www.braincert.com/app/virtualclassroom?_wpnonce=5efc93dcfe">'
+    . 'signup for your API</a> key first.';
 $string['configbaseurl'] = 'Default base URL: https://api.braincert.com/v2';
 $string['braincert_class'] = 'BrainCert Class';
 $string['title'] = 'Title';
@@ -91,27 +109,38 @@ $string['no'] = 'No';
 $string['repeat_class'] = 'When class repeats';
 $string['weekday'] = 'Select days to repeat';
 $string['change_language'] = 'Allow attendees to change interface language';
-$string['change_language_help'] = 'Allow attendees to change virtual classroom interface to the language of their choice. The default language is English.';
+$string['change_language_help'] = 'Allow attendees to change virtual classroom interface to '
+    . 'the language of their choice. The default language is English.';
 $string['set_language'] = 'Force Interface Language';
 $string['set_language_help'] = 'Select the interface language';
 $string['record_class'] = 'Record this class';
 $string['record_manually'] = 'start recording manually';
 $string['record_automatically'] = 'start recording automatically';
 $string['record_disable_rec_btn'] = 'start recording automatically and disable recording button';
-$string['record_class_help'] = 'No - Disable recording.<br>Enable following recording options in your live sessions and meetings.<ul><li>Instructor has to manually start/stop recording button.</li><li>Start recording automatically when class starts.</li><li>Start recording automatically when class starts and disable instructor from managing the recording button. Recording will be produced at the end of class time.</li></ul>';
+$string['record_class_help'] = 'No - Disable recording.<br>Enable following recording options in '
+    . 'your live sessions and meetings.<ul><li>Instructor has to manually start/stop recording button.</li>'
+    . '<li>Start recording automatically when class starts.</li>'
+    . '<li>Start recording automatically when class starts and disable instructor from managing the recording button. '
+    . 'Recording will be produced at the end of class time.</li></ul>';
 $string['classroom_type'] = 'Classroom type';
-$string['classroom_type_help'] = 'Allow loading the entire app with audio/video, attendee list, chat, or only selected features.';
+$string['classroom_type_help'] = 'Allow loading the entire app with audio/video, attendee list, '
+    . 'chat, or only selected features.';
 $string['classroom_type_zero'] = 'whiteboard + audio/video + attendee list + chat';
 $string['classroom_type_one'] = 'whiteboard + attendee list';
 $string['classroom_type_two'] = 'whiteboard + attendee list + chat';
 $string['is_corporate'] = 'Enable webcam and microphone upon entry';
-$string['is_corporate_help'] = 'If "NO", the classroom is moderated and the instructor has to pass microphone and webcam controls to attendees. If "Yes", attendees can enable microphone and webcam without permission from the instructor.';
+$string['is_corporate_help'] = 'If "NO", the classroom is moderated and the instructor '
+    . 'has to pass microphone and webcam controls to attendees. If "Yes", '
+    . 'attendees can enable microphone and webcam without permission from the instructor.';
 $string['screen_sharing'] = 'Enable Screen Sharing';
 $string['screen_sharing_help'] = 'Enable or disable screen sharing.';
 $string['private_chat'] = 'Enable Private Chat';
-$string['private_chat_help'] = 'Yes - All attendees should be able to private chat with each other.<br>No - Only instructor can private chat with students and students cannot private chat with each other.';
+$string['private_chat_help'] = 'Yes - All attendees should be able to '
+    . 'private chat with each other.<br>No - Only '
+    . 'instructor can private chat with students and students cannot private chat with each other.';
 $string['class_type'] = 'Class Type';
-$string['class_type_help'] = 'Set the price of your live class. You can set the price, create discount under class-management options.';
+$string['class_type_help'] = 'Set the price of your live class. '
+    . 'You can set the price, create discount under class-management options.';
 $string['free'] = 'Free';
 $string['paid'] = 'Paid';
 $string['currency'] = 'Currency';
@@ -179,7 +208,13 @@ $string['recordingslist'] = 'Recordings List';
 $string['recording'] = 'Recording';
 $string['nopayment'] = 'No Payment Record Found!';
 $string['liveclassinvitationsubject'] = 'Live Class Invitation';
-$string['liveclassinvitationmessage'] = '<p>{owner_name} has invited you to join the Live Class at BrainCert.</p><p>Class Name: {class_name}</p><p>Date/Time: {class_date_time}</p><p>Time Zone: {class_time_zone}</p><p>Duration: {class_duration}</p><p>Click on the link below to join the class:</p><p>{class_join_url}</p><p>Thank you.</p><br><p></p>';
+$string['liveclassinvitationmessage'] = '<p>{owner_name} has invited you to join the Live Class at '
+    . 'BrainCert.</p><p>Class Name: {class_name}</p>'
+    . '<p>Date/Time: {class_date_time}</p>'
+    . '<p>Time Zone: {class_time_zone}</p>'
+    . '<p>Duration: {class_duration}</p>'
+    . '<p>Click on the link below to join the class:</p>'
+    . '<p>{class_join_url}</p><p>Thank you.</p><br><p></p>';
 $string['emailsent'] = 'Email has been sent successfully';
 $string['emailnotsent'] = 'Sorry email could not be sent to';
 $string['nogroups'] = '<strong>Sorry!</strong> No groups available.';
@@ -219,11 +254,21 @@ $string['unlimited'] = 'Unlimited';
 $string['removedsuccess'] = 'Removed Successfully';
 $string['fixedamount'] = 'Fixed Amount';
 $string['percentage'] = 'Percentage';
-
-
-
-
-
-
-
-
+$string['removedsuccessfully'] = 'Removed Successfully.';
+$string['schemaupdated'] = 'Scheme Updated Successfully.';
+$string['schemaadded'] = 'Scheme Added Successfully.';
+$string['sendemail'] = 'Send Email';
+$string['paymentid'] = 'Payment id';
+$string['classid'] = 'Class id';
+$string['amount'] = 'Amount';
+$string['payername'] = 'Payer Name';
+$string['paymentmode'] = 'Payment mode';
+$string['paymentdate'] = 'Payment Date';
+$string['recordid'] = 'Record ID';
+$string['datecreated'] = 'Date Created';
+$string['filename'] = 'File Name';
+$string['colno'] = '#';
+$string['datetime'] = 'Date/Time';
+$string['action'] = 'Action';
+$string['privacy:metadata'] = 'The BrainCert does not store any user related data.';
+$string['cannotupdated'] = 'schedule class can not be updated.';

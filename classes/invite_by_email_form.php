@@ -31,13 +31,15 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright Dualcube (https://dualcube.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class invite_by_email_form extends moodleform {
+class invite_by_email_form extends moodleform
+{
     /**
      * Define add discount form
      */
-    public function definition() {
+    public function definition()
+    {
 
-        global $DB, $bcid, $CFG;
+        global $DB, $bcid;
 
         $mform = $this->_form; // Don't forget the underscore!
         $mform->addElement('textarea', 'emailto', get_string('emailto', 'braincert'));
@@ -51,11 +53,11 @@ class invite_by_email_form extends moodleform {
             $m = get_string('liveclassinvitationmessage', 'braincert');
         }
         $mform->addElement('text', 'emailsubject', get_string('emailsubject', 'braincert'));
-        $mform->setType('emailsubject', PARAM_RAW);
+        $mform->setType('emailsubject', PARAM_TEXT);
         $mform->setDefault('emailsubject', $s);
         $mform->addElement('editor', 'emailmessage', get_string('emailmessage', 'braincert'))->setValue(array('text' => $m));
         $mform->setType('emailmessage', PARAM_RAW);
-        $this->add_action_buttons($cancel = false, get_string('send', 'braincert'));
+        $this->add_action_buttons(false, get_string('send', 'braincert'));
     }
 
     /**
@@ -65,7 +67,8 @@ class invite_by_email_form extends moodleform {
      * @param array $files
      * @return array
      */
-    public function validation($data, $files) {
+    public function validation($data, $files)
+    {
         $errors = parent::validation($data, $files);
         $emaillists = explode(",", $data['emailto']);
         foreach ($emaillists as $emaillist) {

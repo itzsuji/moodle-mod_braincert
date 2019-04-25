@@ -1,8 +1,9 @@
 /* When the user clicks on the button,
 toggle between hiding and showing the dropdown content */
-function dropdownmenu(id) {
-    jQuery(".class_list").find(".drop_fr_icon").find(".dropdown-content").each(function(index) {
-        if (jQuery( this ).attr("id") == "dropdown-" + id) {
+function dropdownmenu(id)
+{
+    jQuery(".class_list").find(".drop_fr_icon").find(".dropdown-content").each(function (index) {
+        if (jQuery(this).attr("id") == "dropdown-" + id) {
             if (jQuery(this).hasClass("show")) {
                 jQuery(this).removeClass("show");
             } else {
@@ -17,7 +18,7 @@ function dropdownmenu(id) {
 }
 
 // Close the dropdown if the user clicks outside of it.
-window.onclick = function(event) {
+window.onclick = function (event) {
     if (!event.target.matches('.dropbtn')) {
         var dropdowns = document.getElementsByClassName("dropdown-content");
         var i;

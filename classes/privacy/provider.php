@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This page is the entry page into the online class
+ * View Attendance Report of virtual class.
  *
  * @package    mod_braincert
  * @author BrainCert <support@braincert.com>
@@ -23,4 +23,27 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_braincert\privacy;
+
 defined('MOODLE_INTERNAL') || die();
+
+/**
+ * The mod_braincert module does not store any data.
+ *
+ * @copyright  BrainCert (https://www.braincert.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider
+{
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason(): string
+    {
+        return 'privacy:metadata';
+    }
+}

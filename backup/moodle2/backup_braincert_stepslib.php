@@ -30,13 +30,15 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright Dualcube (https://dualcube.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_braincert_activity_structure_step extends backup_activity_structure_step {
+class backup_braincert_activity_structure_step extends backup_activity_structure_step
+{
     /**
      * Function describes the structure of a backup file.
      *
      * @return string
      */
-    protected function define_structure() {
+    protected function define_structure()
+    {
         // To know if we are including userinfo.
 
         // Define each element separated.

@@ -37,11 +37,13 @@ $PAGE->requires->css('/mod/braincert/css/styles.css', true);
  * @copyright Dualcube (https://dualcube.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_braincert_mod_form extends moodleform_mod {
+class mod_braincert_mod_form extends moodleform_mod
+{
     /**
      * Define add discount form
      */
-    public function definition() {
+    public function definition()
+    {
         global $PAGE, $CFG;
 
         if ($CFG->version >= 2016120500) {
@@ -316,7 +318,14 @@ class mod_braincert_mod_form extends moodleform_mod {
 
         $mform->addElement('select', 'braincert_timezone', get_string('bc_timezone', 'braincert'), $bctimezoneoptions);
         $mform->addHelpButton('braincert_timezone', 'bc_timezone', 'braincert');
-        $mform->addRule('braincert_timezone', get_string('timezone_required', 'braincert'), 'required', null, 'client', true);
+        $mform->addRule(
+            'braincert_timezone',
+            get_string('timezone_required', 'braincert'),
+            'required',
+            null,
+            'client',
+            true
+        );
         $mform->setDefault('braincert_timezone', 28);
 
         $mform->addElement('date_selector', 'start_date', get_string('start_date', 'braincert'), $dtoption);
@@ -338,7 +347,13 @@ class mod_braincert_mod_form extends moodleform_mod {
         $checkrecurring = array();
         $checkrecurring[] = $mform->createElement('radio', 'is_recurring', '', get_string('yes', 'braincert'), 1);
         $checkrecurring[] = $mform->createElement('radio', 'is_recurring', '', get_string('no', 'braincert'), 0);
-        $mform->addGroup($checkrecurring, 'recurring_class', get_string('recurring_class', 'braincert'), array(' '), false);
+        $mform->addGroup(
+            $checkrecurring,
+            'recurring_class',
+            get_string('recurring_class', 'braincert'),
+            array(' '),
+            false
+        );
         $mform->addHelpButton('recurring_class', 'recurring_class', 'braincert');
         $mform->setDefault('is_recurring', 0);
 
@@ -359,7 +374,13 @@ class mod_braincert_mod_form extends moodleform_mod {
         $allowtochangelang = array();
         $allowtochangelang[] = $mform->createElement('radio', 'change_language', '', get_string('yes', 'braincert'), 1);
         $allowtochangelang[] = $mform->createElement('radio', 'change_language', '', get_string('no', 'braincert'), 0);
-        $mform->addGroup($allowtochangelang, 'allow_to_change_lang', get_string('change_language', 'braincert'), array(' '), false);
+        $mform->addGroup(
+            $allowtochangelang,
+            'allow_to_change_lang',
+            get_string('change_language', 'braincert'),
+            array(' '),
+            false
+        );
         $mform->addHelpButton('allow_to_change_lang', 'change_language', 'braincert');
         $mform->setDefault('change_language', 1);
 
@@ -371,47 +392,125 @@ class mod_braincert_mod_form extends moodleform_mod {
         // Class Record Types.
         $recordclass = array();
         $recordclass[] = $mform->createElement('radio', 'record_type', '', get_string('no', 'braincert'), 0);
-        $recordclass[] = $mform->createElement('radio', 'record_type', '', get_string('record_manually', 'braincert'), 1);
-        $recordclass[] = $mform->createElement('radio', 'record_type', '', get_string('record_automatically', 'braincert'), 2);
-        $recordclass[] = $mform->createElement('radio', 'record_type', '', get_string('record_disable_rec_btn', 'braincert'), 3);
+        $recordclass[] = $mform->createElement(
+            'radio',
+            'record_type',
+            '',
+            get_string('record_manually', 'braincert'),
+            1
+        );
+        $recordclass[] = $mform->createElement(
+            'radio',
+            'record_type',
+            '',
+            get_string('record_automatically', 'braincert'),
+            2
+        );
+        $recordclass[] = $mform->createElement(
+            'radio',
+            'record_type',
+            '',
+            get_string('record_disable_rec_btn', 'braincert'),
+            3
+        );
         $mform->addGroup($recordclass, 'record_class', get_string('record_class', 'braincert'), array(' '), false);
         $mform->addHelpButton('record_class', 'record_class', 'braincert');
         $mform->setDefault('record_type', 0);
 
         // Video Delivery.
         $videodelivery = array();
-        $videodelivery[] = $mform->createElement('radio', 'isvideo', '', get_string('singlevideofile', 'braincert'), 1);
-        $videodelivery[] = $mform->createElement('radio', 'isvideo', '', get_string('multiplevideofile', 'braincert'), 0);
-        $mform->addGroup($videodelivery, 'videodelivery_group', get_string('isvideo', 'braincert'), array(' '), false);
+        $videodelivery[] = $mform->createElement(
+            'radio',
+            'isvideo',
+            '',
+            get_string('singlevideofile', 'braincert'),
+            1
+        );
+        $videodelivery[] = $mform->createElement(
+            'radio',
+            'isvideo',
+            '',
+            get_string('multiplevideofile', 'braincert'),
+            0
+        );
+        $mform->addGroup(
+            $videodelivery,
+            'videodelivery_group',
+            get_string('isvideo', 'braincert'),
+            array(' '),
+            false
+        );
         $mform->addHelpButton('videodelivery_group', 'videodelivery_group', 'braincert');
         $mform->setDefault('isvideo', 1);
 
         $classroomtype = array();
-        $classroomtype[] = $mform->createElement('radio', 'classroomtype', '', get_string('classroom_type_zero', 'braincert'), 0);
-        $classroomtype[] = $mform->createElement('radio', 'classroomtype', '', get_string('classroom_type_one', 'braincert'), 1);
-        $classroomtype[] = $mform->createElement('radio', 'classroomtype', '', get_string('classroom_type_two', 'braincert'), 2);
-        $mform->addGroup($classroomtype, 'classroom_type', get_string('classroom_type', 'braincert'), array(' '), false);
+        $classroomtype[] = $mform->createElement(
+            'radio',
+            'classroomtype',
+            '',
+            get_string('classroom_type_zero', 'braincert'),
+            0
+        );
+        $classroomtype[] = $mform->createElement(
+            'radio',
+            'classroomtype',
+            '',
+            get_string('classroom_type_one', 'braincert'),
+            1
+        );
+        $classroomtype[] = $mform->createElement(
+            'radio',
+            'classroomtype',
+            '',
+            get_string('classroom_type_two', 'braincert'),
+            2
+        );
+        $mform->addGroup(
+            $classroomtype,
+            'classroom_type',
+            get_string('classroom_type', 'braincert'),
+            array(' '),
+            false
+        );
         $mform->addHelpButton('classroom_type', 'classroom_type', 'braincert');
         $mform->setDefault('classroomtype', 0);
 
         $iscorporate = array();
         $iscorporate[] = $mform->createElement('radio', 'is_corporate', '', get_string('yes', 'braincert'), 1);
         $iscorporate[] = $mform->createElement('radio', 'is_corporate', '', get_string('no', 'braincert'), 0);
-        $mform->addGroup($iscorporate, 'enable_webcam_microphone', get_string('is_corporate', 'braincert'), array(' '), false);
+        $mform->addGroup(
+            $iscorporate,
+            'enable_webcam_microphone',
+            get_string('is_corporate', 'braincert'),
+            array(' '),
+            false
+        );
         $mform->addHelpButton('enable_webcam_microphone', 'is_corporate', 'braincert');
         $mform->setDefault('is_corporate', 0);
 
         $isscreenshare = array();
         $isscreenshare[] = $mform->createElement('radio', 'screen_sharing', '', get_string('yes', 'braincert'), 1);
         $isscreenshare[] = $mform->createElement('radio', 'screen_sharing', '', get_string('no', 'braincert'), 0);
-        $mform->addGroup($isscreenshare, 'enable_screen_sharing', get_string('screen_sharing', 'braincert'), array(' '), false);
+        $mform->addGroup(
+            $isscreenshare,
+            'enable_screen_sharing',
+            get_string('screen_sharing', 'braincert'),
+            array(' '),
+            false
+        );
         $mform->addHelpButton('enable_screen_sharing', 'screen_sharing', 'braincert');
         $mform->setDefault('screen_sharing', 1);
 
         $isprivatechat = array();
         $isprivatechat[] = $mform->createElement('radio', 'private_chat', '', get_string('yes', 'braincert'), 0);
         $isprivatechat[] = $mform->createElement('radio', 'private_chat', '', get_string('no', 'braincert'), 1);
-        $mform->addGroup($isprivatechat, 'enable_private_chat', get_string('private_chat', 'braincert'), array(' '), false);
+        $mform->addGroup(
+            $isprivatechat,
+            'enable_private_chat',
+            get_string('private_chat', 'braincert'),
+            array(' '),
+            false
+        );
         $mform->setDefault('private_chat', 1);
         $mform->addHelpButton('enable_private_chat', 'private_chat', 'braincert');
 
@@ -435,7 +534,6 @@ class mod_braincert_mod_form extends moodleform_mod {
         $this->standard_coursemodule_elements();
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
-
     }
 
     /**
@@ -446,97 +544,10 @@ class mod_braincert_mod_form extends moodleform_mod {
      *
      * @return string $errors
      */
-    public function validation($data, $files) {
+    public function validation($data, $files)
+    {
         $errors = parent::validation($data, $files);
-        $defaulttimezone = array(
-            '1'    => 'Asia/Dubai',
-            '2'    => 'Asia/Baghdad',
-            '3'    => 'Canada/Atlantic',
-            '4'    => 'Australia/Darwin',
-            '5'    => 'Australia/Canberra',
-            '6'    => 'Atlantic/Azores',
-            '7'    => 'Canada/Saskatchewan',
-            '8'    => 'Atlantic/Cape_Verde',
-            '9'    => 'Asia/Baku',
-            '10'   => 'Australia/Adelaide',
-            '11'   => 'America/Belize',
-            '12'   => 'Asia/Dhaka',
-            '13'   => 'Europe/Belgrade',
-            '14'   => 'Europe/Sarajevo',
-            '15'   => 'Pacific/Guadalcanal',
-            '16'   => 'America/Chicago',
-            '17'   => 'Asia/Hong_Kong',
-            '18'   => 'Etc/GMT-12',
-            '19'   => 'Africa/Addis_Ababa',
-            '20'   => 'Australia/Brisbane',
-            '21'   => 'Europe/Bucharest',
-            '22'   => 'America/Sao_Paulo',
-            '23'   => 'America/New_York',
-            '24'   => 'Africa/Cairo',
-            '25'   => 'Asia/Yekaterinburg',
-            '26'   => 'Pacific/Fiji',
-            '27'   => 'Europe/Helsinki',
-            '28'   => 'Europe/London',
-            '29'   => 'America/Godthab',
-            '30'   => 'Africa/Abidjan',
-            '31'   => 'Europe/Minsk',
-            '32'   => 'Pacific/Honolulu',
-            '33'   => 'Asia/Kolkata',
-            '34'   => 'Asia/Tehran',
-            '35'   => 'Asia/Jerusalem',
-            '37'   => 'America/Cancun',
-            '38'   => 'America/Chihuahua',
-            '39'   => 'America/Noronha',
-            '40'   => 'America/Denver',
-            '41'   => 'Asia/Rangoon',
-            '42'   => 'Asia/Novosibirsk',
-            '44'   => 'Pacific/Auckland',
-            '45'   => 'Canada/Newfoundland',
-            '46'   => 'Asia/Irkutsk',
-            '47'   => 'Asia/Kabul',
-            '48'   => 'America/Anchorage',
-            '49'   => 'Asia/Riyadh',
-            '50'   => 'Asia/Krasnoyarsk',
-            '51'   => 'America/Santiago',
-            '52'   => 'America/Los_Angeles',
-            '53'   => 'Europe/Brussels',
-            '54'   => 'Europe/Moscow',
-            '55'   => 'America/Argentina/Buenos_Aires',
-            '56'   => 'America/Bogota',
-            '57'   => 'America/La_Paz',
-            '58'   => 'Pacific/Samoa',
-            '59'   => 'Asia/Bangkok',
-            '60'   => 'Asia/Kuala_Lumpur',
-            '61'   => 'Africa/Blantyre',
-            '62'   => 'Asia/Colombo',
-            '63'   => 'Asia/Taipei',
-            '64'   => 'Australia/Hobart',
-            '65'   => 'Asia/Tokyo',
-            '67'   => 'America/Indiana/Indianapolis',
-            '68'   => 'America/Phoenix',
-            '69'   => 'Asia/Vladivostok',
-            '70'   => 'Australia/Perth',
-            '71'   => 'Africa/Algiers',
-            '72'   => 'Europe/Amsterdam',
-            '73'   => 'Asia/Karachi',
-            '74'   => 'Pacific/Guam',
-            '75'   => 'Asia/Yakutsk',
-            '76'   => 'America/Caracas',
-            '77'   => 'Asia/Seoul',
-            '83'   => 'Asia/Amman',
-            '84'   => 'Asia/Beirut',
-            '86'   => 'Africa/Windhoek',
-            '87'   => 'Asia/Tbilisi',
-            '88'   => 'Asia/Baku',
-            '89'   => 'Indian/Mauritius',
-            '90'   => 'Asia/Karachi',
-            '91'   => 'Asia/Kathmandu',
-            '94'   => 'America/Argentina/Buenos_Aires',
-            '95'   => 'America/Montevideo',
-            '96'   => 'America/Manaus',
-            '104'  => 'America/Tijuana',
-            '105'  => 'America/New_York'
-        );
+        global $defaulttimezone;
 
         $timezone = $data['braincert_timezone'];  // Timezone.
 

@@ -27,7 +27,7 @@ require_once("../../config.php");
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/mod/braincert/classes/managetemplate_form.php');
 
-GLOBAL $USER;
+global $USER;
 
 $bcid = required_param('bcid', PARAM_INT);   // Virtual Class ID.
 
@@ -52,7 +52,6 @@ echo $OUTPUT->heading(get_string('managetemplate', 'braincert'));
 $mform = new managetemplate_form($CFG->wwwroot.'/mod/braincert/managetemplate.php?bcid='.$bcid);
 
 if ($manageemailtemplate = $mform->get_data()) {
-
     $emailmessage = $manageemailtemplate->emailmessage['text'];
     $emailsubject = $manageemailtemplate->emailsubject;
     $checkrecord = $DB->get_record('braincert_manage_template', array('bcid' => $bcid));

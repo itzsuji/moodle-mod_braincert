@@ -40,13 +40,13 @@
 #page-mod-braincert-inviteusergroup form,
 #page-mod-braincert-inviteusergroup .submitdiv,
 #page-mod-braincert-view .allclassdiv {
-   margin-top: 20px;
+    margin-top: 20px;
 }
 #page-mod-braincert-inviteusergroup form ul {
     list-style: none;
 }
 #page-mod-braincert-attendance_report .attendeestable {
-   padding-top: 40px;
+    padding-top: 40px;
 }
 /*menu-button start*/
 
@@ -129,6 +129,10 @@
 
 .initialhide {
     display:none;
+}
+.ui-widget.ui-widget-content{
+    position: fixed !important;
+    top:5% !important;;
 }
 
 /*menu-button end*/
