@@ -272,3 +272,7 @@ $string['datetime'] = 'Date/Time';
 $string['action'] = 'Action';
 $string['privacy:metadata'] = 'The BrainCert does not store any user related data.';
 $string['cannotupdated'] = 'schedule class can not be updated.';
+$string['recording_layout'] = 'Recorded videos layout';
+$string['recording_layout_help'] = 'Set your recorded videos layout for class';
+$string['standard_view'] = 'Standard view (Whiteboard, Videos and Chat view with no icons)';
+$string['enhanced_view'] = 'Enhanced view (Entire browser tab with all the icons)';
