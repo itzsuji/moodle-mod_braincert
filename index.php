@@ -83,7 +83,7 @@ if ($isadmin) {
     foreach ($roles as $role) {
         if (!$isteacher && (($role->shortname == 'editingteacher') || ($role->shortname == 'teacher'))) {
             $isteacher = 1;
-        } elseif (!$isstudent && $role->shortname == 'student') {
+        } else if (!$isstudent && $role->shortname == 'student') {
             $isstudent = 1;
         }
     }
@@ -128,9 +128,9 @@ foreach ($thiscourseclassid as $getclasslist) {
         $duration = $getclasslist['duration'] / 60;
         if ($getclasslist['status'] == BRAINCERT_STATUS_PAST) {
             $class = "bc-alert bc-alert-danger";
-        } elseif ($getclasslist['status'] == BRAINCERT_STATUS_LIVE) {
+        } else if ($getclasslist['status'] == BRAINCERT_STATUS_LIVE) {
             $class = "bc-alert bc-alert-success";
-        } elseif ($getclasslist['status'] == BRAINCERT_STATUS_UPCOMING) {
+        } else if ($getclasslist['status'] == BRAINCERT_STATUS_UPCOMING) {
             $class = "bc-alert bc-alert-warning";
         }
         echo html_writer::start_tag('div', array('class' => 'row'));
@@ -179,7 +179,7 @@ foreach ($thiscourseclassid as $getclasslist) {
                     $isteacher
                 );
             }
-        } elseif ($isteacher && $getclasslist['status'] != BRAINCERT_STATUS_PAST) {
+        } else if ($isteacher && $getclasslist['status'] != BRAINCERT_STATUS_PAST) {
             $braincertclass = $DB->get_record('braincert', array('course' => $id, 'class_id' => $getclasslist['id']));
             if (!empty($braincertclass)) {
                 $data['task'] = BRAINCERT_TASK_GET_CLASS_LAUNCH;

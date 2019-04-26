@@ -57,7 +57,7 @@ class addpricingscheme_form extends moodleform
                             }
                         }
                     }
-                } elseif (isset($pricelists['status']) && ($pricelists['status'] == BRAINCERT_STATUS_ERROR)) {
+                } else if (isset($pricelists['status']) && ($pricelists['status'] == BRAINCERT_STATUS_ERROR)) {
                     echo $pricelists['error'];
                 }
             }

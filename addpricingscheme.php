@@ -86,7 +86,7 @@ if ($pricingscheme = $mform->get_data()) {
     if ($getscheme['status'] == BRAINCERT_STATUS_OK) {
         if ($getscheme['method'] == BRAINCERT_METHOD_PRICE_UPDATE) {
             echo get_string('schemaupdated', 'braincert');
-        } elseif ($getscheme['method'] == BRAINCERT_METHOD_PRICE_ADD) {
+        } else if ($getscheme['method'] == BRAINCERT_METHOD_PRICE_ADD) {
             echo get_string('schemaadded', 'braincert');
         }
     } else {
@@ -113,7 +113,7 @@ $table->head[] = 'Actions';
 if (!empty($pricelists)) {
     if (isset($pricelists['Price'])) {
         echo $pricelists['Price'];
-    } elseif (isset($pricelists['status']) && ($pricelists['status'] == BRAINCERT_STATUS_ERROR)) {
+    } else if (isset($pricelists['status']) && ($pricelists['status'] == BRAINCERT_STATUS_ERROR)) {
         echo $pricelists['error'];
     } else {
         $sesskey = sesskey();

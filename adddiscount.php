@@ -97,7 +97,7 @@ if ($classdiscount = $mform->get_data()) {
     if ($getdiscount['status'] == BRAINCERT_STATUS_OK) {
         if ($getdiscount['method'] == BRAINCERT_METHOD_DISCOUNT_UPDATE) {
             echo get_string('discountupdated', 'braincert');
-        } elseif ($getdiscount['method'] == BRAINCERT_METHOD_DISCOUNT_ADD) {
+        } else if ($getdiscount['method'] == BRAINCERT_METHOD_DISCOUNT_ADD) {
             echo get_string('discountadded', 'braincert');
         }
     } else {
@@ -125,7 +125,7 @@ $table->head[] = get_string('actions', 'braincert');
 if (!empty($discountlists)) {
     if (isset($discountlists['Discount'])) {
         echo $discountlists['Discount'];
-    } elseif (isset($discountlists['status']) && ($discountlists['status'] == BRAINCERT_STATUS_ERROR)) {
+    } else if (isset($discountlists['status']) && ($discountlists['status'] == BRAINCERT_STATUS_ERROR)) {
         echo $discountlists['error'];
     } else {
         $sesskey = sesskey();

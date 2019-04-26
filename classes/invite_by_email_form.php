@@ -55,7 +55,8 @@ class invite_by_email_form extends moodleform
         $mform->addElement('text', 'emailsubject', get_string('emailsubject', 'braincert'));
         $mform->setType('emailsubject', PARAM_TEXT);
         $mform->setDefault('emailsubject', $s);
-        $mform->addElement('editor', 'emailmessage', get_string('emailmessage', 'braincert'))->setValue(array('text' => $m));
+        $mform->addElement('editor', 'emailmessage', get_string('emailmessage', 'braincert')
+            )->setValue(array('text' => $m));
         $mform->setType('emailmessage', PARAM_RAW);
         $this->add_action_buttons(false, get_string('send', 'braincert'));
     }

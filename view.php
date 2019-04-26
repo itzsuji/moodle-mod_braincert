@@ -115,7 +115,7 @@ if ($isadmin) {
     foreach ($roles as $role) {
         if (!$isteacher && (($role->shortname == 'editingteacher') || ($role->shortname == 'teacher'))) {
             $isteacher = 1;
-        } elseif (!$isstudent && $role->shortname == 'student') {
+        } else if (!$isstudent && $role->shortname == 'student') {
             $isstudent = 1;
         }
     }
@@ -139,9 +139,9 @@ if (!empty($braincertclass)) {
     $duration = $getclassdetail['duration'] / 60;
     if ($getclassdetail['status'] == BRAINCERT_STATUS_PAST) {
         $class = "bc-alert bc-alert-danger";
-    } elseif ($getclassdetail['status'] == BRAINCERT_STATUS_LIVE) {
+    } else if ($getclassdetail['status'] == BRAINCERT_STATUS_LIVE) {
         $class = "bc-alert bc-alert-success";
-    } elseif ($getclassdetail['status'] == BRAINCERT_STATUS_UPCOMING) {
+    } else if ($getclassdetail['status'] == BRAINCERT_STATUS_UPCOMING) {
         $class = "bc-alert bc-alert-warning";
     }
 
