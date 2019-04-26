@@ -36,8 +36,7 @@ class addpricingscheme_form extends moodleform
     /**
      * Define add discount form
      */
-    public function definition()
-    {
+    public function definition() {
         global $action, $pid, $pricelists;
 
         $defaultprice      = '';

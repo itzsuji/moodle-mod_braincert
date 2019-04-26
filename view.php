@@ -170,19 +170,23 @@ if (!empty($braincertclass)) {
         if (isset($pricelist['Price']) && $pricelist['Price'] == BRAINCERT_STATUS_NO_PRICE && $isteacher) {
             dispaly_no_price_modal($pricelist['Price']);
         } else {
-            //displaying payment methods in modal
+            // Displaying payment methods in modal.
             display_payment_modal($pricelist, $currencysymbol, $paymentinfo);
-            //ending of payment modal
+            // Ending of payment modal.
         }
         paypal_payment_form($baseurl);
     }
     if ($getclassdetail) {
-        //displaying action menu for the calss
+        // Displaying action menu for the calss.
         echo html_writer::start_div('class_list');
-        echo action_list($getclassdetail, $id, $braincertclass, $cm, $isteacher, $isstudent);
+        if ($isteacher) {
+           echo action_menu_list(teacher_action_list($getclassdetail, $braincertclass, $cm), $getclassdetail['id']); 
+        } else if ($isstudent) {
+            echo action_menu_list(view_recording_button($getclassdetail['id']), $getclassdetail['id']);
+        }
         echo html_writer::end_div();
-        //end of action menu
-        //dispalying class details
+        // End of action menu.
+        // Dispalying class details.
         echo html_writer::start_div('class_div cl_list');
         dispaly_class_name_info($braincertclass, $getclassdetail, $class);
         display_class_info($getclassdetail, $duration);
@@ -204,7 +208,7 @@ if (!empty($braincertclass)) {
             );
         }
         echo html_writer::end_div();
-        //end of dispalying class details
+        // End of dispalying class details.
     }
 }
 if (!empty($braincertclass)) {

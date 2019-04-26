@@ -22,10 +22,7 @@
  * @copyright  BrainCert (https://www.braincert.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
 defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * class add discount form
@@ -34,49 +31,34 @@ defined('MOODLE_INTERNAL') || die();
  */
 class adddiscount_form extends moodleform
 {
+
     /**
      * Define add discount form
      */
-    public function definition()
-    {
-        global $braincertrec, $bcid, $did, $action, $discountlists;
-        $isusecode        = 0;
-        $defaultlimit     = '';
-        $defaultcode      = '';
-        $defaulttype      = 0;
-        $defaultdiscount  = '';
+    public function definition() {
+        global $braincertrec, $did, $action, $discountlists;
+        $isusecode = 0;
+        $defaultlimit = '';
+        $defaultcode = '';
+        $defaulttype = 0;
+        $defaultdiscount = '';
         $defaultstartdate = time();
-        $defaultenddate   = time();
-        $isexpire         = 0;
+        $defaultenddate = time();
+        $isexpire = 0;
 
-        if ($action == 'edit') {
-            if (!empty($discountlists)) {
-                if (!isset($discountlists['Discount'])) {
-                    foreach ($discountlists as $discountlist) {
-                        if (isset($discountlist['id'])) {
-                            if ($discountlist['id'] == $did) {
-                                $isusecode = $discountlist['is_use_discount_code'];
-                                if ($discountlist['is_use_discount_code'] == 1) {
-                                    $defaultlimit  = $discountlist['discount_limit'];
-                                    $defaultcode   = $discountlist['discount_code'];
-                                }
-                                if ($discountlist['discount_type'] == 'percentage') {
-                                    $defaulttype   = 1;
-                                } else {
-                                    $defaulttype   = 0;
-                                }
-                                $defaultdiscount   = $discountlist['special_price'];
-                                $defaultstartdate  = strtotime($discountlist['start_date']);
-                                $isexpire      = $discountlist['is_never_expire'];
-                                if ($discountlist['is_never_expire'] == 0) {
-                                    $defaultenddate = strtotime($discountlist['end_date']);
-                                }
-                            }
-                        }
-                    }
-                } else if (isset($discountlists['status']) && ($discountlists['status'] == BRAINCERT_STATUS_ERROR)) {
-                    echo $discountlists['error'];
-                }
+        if ($action == 'edit' && !empty($discountlists)) {
+            if (!isset($discountlists['Discount'])) {
+                $options = $this->set_discount_values($discountlists, $did);
+                $defaulttype = $options['defaulttype'];
+                $defaultdiscount = $options['defaultdiscount'];
+                $defaultstartdate = $options['defaultstartdate'];
+                $isexpire = $options['isexpire'];
+                $defaultenddate = $options['defaultenddate'];
+                $defaultlimit = $options['defaultlimit'];
+                $isusecode = $options['isusecode'];
+                $defaultcode = $options['defaultcode'];
+            } else if (isset($discountlists['status']) && ($discountlists['status'] == BRAINCERT_STATUS_ERROR)) {
+                echo $discountlists['error'];
             }
         }
 
@@ -85,12 +67,7 @@ class adddiscount_form extends moodleform
         $mform->setType('did', PARAM_INT);
 
         $mform->addElement(
-            'advcheckbox',
-            'is_use_discount_code',
-            get_string('usediscountcode', 'braincert'),
-            '',
-            array('group' => 1),
-            array(0, 1)
+            'advcheckbox', 'is_use_discount_code', get_string('usediscountcode', 'braincert'), '', array('group' => 1), array(0, 1)
         );
         $mform->setDefault('is_use_discount_code', $isusecode);
 
@@ -113,8 +90,8 @@ class adddiscount_form extends moodleform
             $currency = 'USD';
         }
         $discounttypeoptions = array(
-         '0' => '$ '.$currency,
-         '1' => '% percentage');
+            '0' => '$ ' . $currency,
+            '1' => '% percentage');
         $mform->addElement('select', 'discount_type', get_string('discounttype', 'braincert'), $discounttypeoptions);
         $mform->addRule('discount_type', null, 'required', null, 'client');
         $mform->addHelpButton('discount_type', 'discounttype', 'braincert');
@@ -129,8 +106,8 @@ class adddiscount_form extends moodleform
 
         $dtoption = array(
             'startyear' => 1970,
-            'stopyear'  => 2020,
-            'timezone'  => $braincertrec->braincert_timezone
+            'stopyear' => 2020,
+            'timezone' => $braincertrec->braincert_timezone
         );
         $mform->addElement('date_selector', 'start_date', get_string('dis_startdate', 'braincert'), $dtoption);
         $mform->addHelpButton('start_date', 'dis_startdate', 'braincert');
@@ -138,12 +115,7 @@ class adddiscount_form extends moodleform
         $mform->setDefault('start_date', $defaultstartdate);
 
         $mform->addElement(
-            'advcheckbox',
-            'is_never_expire',
-            get_string('neverexpire', 'braincert'),
-            '',
-            array('group' => 1),
-            array(0, 1)
+            'advcheckbox', 'is_never_expire', get_string('neverexpire', 'braincert'), '', array('group' => 1), array(0, 1)
         );
         $mform->setDefault('is_never_expire', $isexpire);
 
@@ -153,6 +125,31 @@ class adddiscount_form extends moodleform
 
         $this->add_action_buttons();
     }
+
+    private function set_discount_values($discountlists, $did) {
+        $discounts = array();
+        foreach ($discountlists as $discountlist) {
+            if (isset($discountlist['id']) && $discountlist['id'] == $did) {
+                $discounts['isusecode'] = $discountlist['is_use_discount_code'];
+                if ($discountlist['is_use_discount_code'] == 1) {
+                    $discounts['defaultlimit'] = $discountlist['discount_limit'];
+                    $discounts['defaultcode'] = $discountlist['discount_code'];
+                }
+                $discounts['defaulttype'] = 0;
+                if ($discountlist['discount_type'] == 'percentage') {
+                    $discounts['defaulttype'] = 1;
+                }
+                $discounts['defaultdiscount'] = $discountlist['special_price'];
+                $discounts['defaultstartdate'] = strtotime($discountlist['start_date']);
+                $discounts['isexpire'] = $discountlist['is_never_expire'];
+                if ($discountlist['is_never_expire'] == 0) {
+                    $discounts['defaultenddate'] = strtotime($discountlist['end_date']);
+                }
+            }
+        }
+        return $discounts;
+    }
+
     /**
      * validation check
      *
@@ -160,8 +157,7 @@ class adddiscount_form extends moodleform
      * @param array $files
      * @return array
      */
-    public function validation($data, $files)
-    {
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         $currentdate = strtotime(date("Y-m-d"));
         if (isset($data['did']) && ($data['is_never_expire'] == 0)) {

@@ -33,119 +33,176 @@ defined('MOODLE_INTERNAL') || die();
  * @param array $data
  * @return array
  */
-function braincert_get_curl_info($data)
-{
+function braincert_get_curl_info($data) {
     global $CFG;
-    require_once $CFG->libdir . '/filelib.php';
+    require_once($CFG->libdir . '/filelib.php');
 
     $key = $CFG->mod_braincert_apikey;
     $baseurl = $CFG->mod_braincert_baseurl;
 
     $urlfirstpart = $baseurl . "/" . $data['task'] . "?apikey=" . $key;
 
-    if ($data['task'] == BRAINCERT_TASK_SCHEDULE) {
-        $initurl = $urlfirstpart . "&title=" . $data['title'] . "&timezone=" . $data['timezone'] .
-            "&start_time=" . $data['start_time']. "&end_time=" . $data['end_time'] . "&date=" .
-            $data['date'] . "&isVideo=" . $data['isvideo'] . "&ispaid=" . $data['ispaid']
-            . "&is_recurring=" . $data['is_recurring'] . "&seat_attendees=" . $data['seat_attendees'] . "&record="
-            . $data['record']. "&isBoard=" . $data['isBoard'] . "&isLang=" . $data['isLang'] . "&isRegion=" .
-            $data['isRegion'] . "&isCorporate=". $data['isCorporate'] . "&isScreenshare="
-            . $data['isScreenshare'] . "&isPrivateChat=" . $data['isPrivateChat'];
-
-        if (($data['ispaid'] == 1) && isset($data['currency'])) {
-            $initurl = $initurl . "&currency=" . $data['currency'];
-        }
-        if (($data['is_recurring'] == 1) && isset($data['repeat'])) {
-            $initurl = $initurl . "&repeat=" . $data['repeat'] . "&end_classes_count=" . $data['end_classes_count'];
-            if ($data['repeat'] == 6) {
-                $initurl = $initurl . "&weekdays=" . $data['weekdays'];
-            }
-        }
-        if (isset($data['cid'])) {
-            $initurl = $initurl . "&cid=" . $data['cid'];
-        }
-    } else if ($data['task'] == BRAINCERT_TASK_GET_CLASS_LAUNCH) {
-        $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&userId=" . $data['userId'] . "&userName="
-            . urlencode($data['userName']) . "&isTeacher=" . $data['isTeacher'] . "&courseName="
-            . $data['courseName'] . "&lessonName=" . $data['lessonName'];
-    } else if ($data['task'] == BRAINCERT_TASK_CLASS_LIST) {
-        $initurl = $urlfirstpart;
-    } else if ($data['task'] == BRAINCERT_TASK_REMOVE_CLASS) {
-        $initurl = $urlfirstpart . "&cid=" . $data['cid'];
-    } else if ($data['task'] == BRAINCERT_TASK_CANCEL_CLASS) {
-        $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&isCancel=" . $data['isCancel'];
-    } else if ($data['task'] == BRAINCERT_TASK_ADD_SCHEMES) {
-        $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&price=" . $data['price'] . "&scheme_days="
-            . $data['scheme_days'] . "&times=" . $data['times'];
-        if (isset($data['numbertimes'])) {
-            $initurl = $initurl . "&numbertimes=" . $data['numbertimes'];
-        }
-        if (isset($data['id'])) {
-            $initurl = $initurl . "&id=" . $data['id'];
-        }
-    } else if ($data['task'] == BRAINCERT_TASK_REMOVE_PRICE) {
-        $initurl = $urlfirstpart . "&id=" . $data['id'];
-    } else if (($data['task'] == BRAINCERT_TASK_LIST_SCHEMES) || ($data['task'] == BRAINCERT_TASK_LIST_DISCOUNT)) {
-        $initurl = $urlfirstpart . "&class_id=" . $data['class_id'];
-    } else if ($data['task'] == BRAINCERT_TASK_ADD_SPECIALS) {
-        $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&discount=" . $data['discount']
-            . "&start_date=" . $data['start_date'] . "&discount_type=" . $data['discount_type'];
-        if (isset($data['end_date'])) {
-            $initurl = $initurl . "&end_date=" . $data['end_date'];
-        }
-        if (isset($data['discount_code']) && isset($data['discount_limit'])) {
-            $initurl = $initurl . "&discount_code=" . $data['discount_code'] . "&discount_limit="
-                . $data['discount_limit'];
-        }
-        if (isset($data['discountid'])) {
-            $initurl = $initurl . "&discountid=" . $data['discountid'];
-        }
-    } else if ($data['task'] == BRAINCERT_TASK_REMOVE_DISCOUNT) {
-        $initurl = $urlfirstpart . "&discountid=" . $data['discountid'];
-    } else if ($data['task'] == BRAINCERT_TASK_GET_CLASS_REPORT) {
-        $initurl = $urlfirstpart . "&classId=" . $data['classId'];
-    } else if ($data['task'] == BRAINCERT_TASK_GET_CLASS_RECORDING) {
-        $initurl = $urlfirstpart . "&class_id=" . $data['class_id'];
-    } else if (($data['task'] == BRAINCERT_TASK_CHANGE_STATUS_RECORDING) ||
-        ($data['task'] == BRAINCERT_TASK_REMOVE_CLASS_RECORDING)) {
-        $initurl = $urlfirstpart . "&id=" . $data['rid'];
-    } else {
-        $initurl = $urlfirstpart;
-    }
-    $location = '';
     if (($data['task'] == BRAINCERT_TASK_GET_PAYMENT_INFO) || ($data['task'] == BRAINCERT_TASK_GET_PLAN)) {
         $location = $baseurl;
     } else {
-        $location = $initurl;
+        $location = braincert_post_url($data, $urlfirstpart);
     }
 
-    $postData = '';
+    $postdata = '';
     if ($data['task'] == BRAINCERT_TASK_GET_PAYMENT_INFO) {
-        $postData = 'task=getPaymentInfo&apikey=' . $key;
+        $postdata = 'task=getPaymentInfo&apikey=' . $key;
     } else if ($data['task'] == BRAINCERT_TASK_GET_PLAN) {
-        $postData = 'task=getplan&apikey=' . $key;
+        $postdata = 'task=getplan&apikey=' . $key;
     }
 
     $options = array(
-        'CURLOPT_RETURNTRANSFER' => true,
-        'CURLOPT_SSL_VERIFYHOST' => false,
-        'CURLOPT_SSL_VERIFYPEER' => false,
+        'CURLOPT_RETURNTRANSFER' => true, 'CURLOPT_SSL_VERIFYHOST' => false, 'CURLOPT_SSL_VERIFYPEER' => false,
     );
 
     $curl = new curl();
-    $result = $curl->post($location, $postData, $options);
+    $result = $curl->post($location, $postdata, $options);
 
     $finalresult = json_decode($result, true);
     return $finalresult;
 }
 
 /**
+ *
+ * @param string $urlfirstpart
+ * @param array $data
+ * @return string
+ */
+function task_add_scheme_params($urlfirstpart, $data) {
+    $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&price=" . $data['price'] . "&scheme_days="
+        . $data['scheme_days'] . "&times=" . $data['times'];
+    if (isset($data['numbertimes'])) {
+        $initurl = $initurl . "&numbertimes=" . $data['numbertimes'];
+    }
+    if (isset($data['id'])) {
+        $initurl = $initurl . "&id=" . $data['id'];
+    }
+    return $initurl;
+}
+
+/**
+ *
+ * @param string $urlfirstpart
+ * @param array $data
+ * @return string
+ */
+function task_add_special_params($urlfirstpart, $data) {
+    $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&discount=" . $data['discount']
+        . "&start_date=" . $data['start_date'] . "&discount_type=" . $data['discount_type'];
+    if (isset($data['end_date'])) {
+        $initurl = $initurl . "&end_date=" . $data['end_date'];
+    }
+    if (isset($data['discount_code']) && isset($data['discount_limit'])) {
+        $initurl = $initurl . "&discount_code=" . $data['discount_code'] . "&discount_limit="
+            . $data['discount_limit'];
+    }
+    if (isset($data['discountid'])) {
+        $initurl = $initurl . "&discountid=" . $data['discountid'];
+    }
+    return $initurl;
+}
+
+/**
+ *
+ * @param string $urlfirstpart
+ * @param array $data
+ * @return string
+ */
+function task_scheduler_params($urlfirstpart, $data) {
+    $initurl = $urlfirstpart . "&title=" . $data['title'] . "&timezone=" . $data['timezone'] .
+        "&start_time=" . $data['start_time'] . "&end_time=" . $data['end_time'] . "&date=" .
+        $data['date'] . "&isVideo=" . $data['isvideo'] . "&ispaid=" . $data['ispaid']
+        . "&is_recurring=" . $data['is_recurring'] . "&seat_attendees=" . $data['seat_attendees'] . "&record="
+        . $data['record'] . "&isBoard=" . $data['isBoard'] . "&isLang=" . $data['isLang'] . "&isRegion=" .
+        $data['isRegion'] . "&isCorporate=" . $data['isCorporate'] . "&isScreenshare="
+        . $data['isScreenshare'] . "&isPrivateChat=" . $data['isPrivateChat'];
+
+    if (($data['ispaid'] == 1) && isset($data['currency'])) {
+        $initurl = $initurl . "&currency=" . $data['currency'];
+    }
+    if (isset($data['isRecordingLayout'])) {
+        $initurl = $initurl . "&isRecordingLayout=" . $data['isRecordingLayout'];
+    }
+    if (($data['is_recurring'] == 1) && isset($data['repeat'])) {
+        $initurl = $initurl . "&repeat=" . $data['repeat'] . "&end_classes_count=" . $data['end_classes_count'];
+        if ($data['repeat'] == 6) {
+            $initurl = $initurl . "&weekdays=" . $data['weekdays'];
+        }
+    }
+    if (isset($data['cid'])) {
+        $initurl = $initurl . "&cid=" . $data['cid'];
+    }
+
+    return $initurl;
+}
+
+/**
+ *
+ * @param array $data
+ * @param string $urlfirstpart
+ * @return string
+ */
+function braincert_post_url($data, $urlfirstpart) {
+    switch ($data['task']) {
+        case BRAINCERT_TASK_SCHEDULE:
+            $initurl = task_scheduler_params($urlfirstpart, $data);
+            break;
+        case BRAINCERT_TASK_GET_CLASS_LAUNCH:
+            $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&userId=" . $data['userId'] . "&userName="
+            . urlencode($data['userName']) . "&isTeacher=" . $data['isTeacher'] . "&courseName="
+            . $data['courseName'] . "&lessonName=" . $data['lessonName'];
+            break;
+        case BRAINCERT_TASK_CLASS_LIST:
+            $initurl = $urlfirstpart;
+            break;
+        case BRAINCERT_TASK_REMOVE_CLASS:
+            $initurl = $urlfirstpart . "&cid=" . $data['cid'];
+            break;
+        case BRAINCERT_TASK_CANCEL_CLASS:
+            $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&isCancel=" . $data['isCancel'];
+            break;
+        case BRAINCERT_TASK_ADD_SCHEMES:
+            $initurl = task_add_scheme_params($urlfirstpart, $data);
+            break;
+        case BRAINCERT_TASK_REMOVE_PRICE:
+            $initurl = $urlfirstpart . "&id=" . $data['id'];
+            break;
+        case BRAINCERT_TASK_LIST_SCHEMES:
+        case BRAINCERT_TASK_LIST_DISCOUNT:
+            $initurl = $urlfirstpart . "&class_id=" . $data['class_id'];
+            break;
+        case BRAINCERT_TASK_ADD_SPECIALS:
+            $initurl = task_add_special_params($urlfirstpart, $data);
+            break;
+        case BRAINCERT_TASK_REMOVE_DISCOUNT:
+            $initurl = $urlfirstpart . "&discountid=" . $data['discountid'];
+            break;
+        case BRAINCERT_TASK_GET_CLASS_REPORT:
+            $initurl = $urlfirstpart . "&classId=" . $data['classId'];
+            break;
+        case BRAINCERT_TASK_GET_CLASS_RECORDING:
+            $initurl = $urlfirstpart . "&class_id=" . $data['class_id'];
+            break;
+        case BRAINCERT_TASK_CHANGE_STATUS_RECORDING:
+        case BRAINCERT_TASK_REMOVE_CLASS_RECORDING:
+             $initurl = $urlfirstpart . "&id=" . $data['rid'];
+            break;
+        default:
+            $initurl = $urlfirstpart;
+            break;
+    }
+    return $initurl;
+}
+/**
  * braincert_get_plan.
  *
  * @return array
  */
-function braincert_get_plan()
-{
+function braincert_get_plan() {
     $data['task'] = BRAINCERT_TASK_GET_PLAN;
     $result = braincert_get_curl_info($data);
     return $result;
@@ -156,8 +213,7 @@ function braincert_get_plan()
  *
  * @return array
  */
-function braincert_get_class_list()
-{
+function braincert_get_class_list() {
     $data['task'] = BRAINCERT_TASK_CLASS_LIST;
     $result = braincert_get_curl_info($data);
     return $result;
@@ -169,10 +225,9 @@ function braincert_get_class_list()
  * @param int $classid
  * @return int
  */
-function braincert_get_class($classid)
-{
+function braincert_get_class($classid) {
     global $CFG;
-    require_once $CFG->libdir . '/filelib.php';
+    require_once($CFG->libdir . '/filelib.php');
     $curl = new curl();
     $options = array(
         'CURLOPT_RETURNTRANSFER' => true,
@@ -195,8 +250,7 @@ function braincert_get_class($classid)
  * @param int $classid
  * @return array
  */
-function braincert_remove_class($classid)
-{
+function braincert_remove_class($classid) {
     $data['task'] = BRAINCERT_TASK_REMOVE_CLASS;
     $data['cid'] = $classid;
     $result = braincert_get_curl_info($data);
@@ -210,8 +264,7 @@ function braincert_remove_class($classid)
  * @param int $all
  * @return array
  */
-function braincert_cancel_class($classid, $all)
-{
+function braincert_cancel_class($classid, $all) {
     $data['task'] = BRAINCERT_TASK_CANCEL_CLASS;
     $data['class_id'] = $classid;
     $data['isCancel'] = $all;
@@ -225,8 +278,7 @@ function braincert_cancel_class($classid, $all)
  * @param int $classid
  * @return array
  */
-function braincert_get_class_report($classid)
-{
+function braincert_get_class_report($classid) {
     $data['task'] = BRAINCERT_TASK_GET_CLASS_REPORT;
     $data['classId'] = $classid;
     $result = braincert_get_curl_info($data);
@@ -238,8 +290,7 @@ function braincert_get_class_report($classid)
  *
  * @return array
  */
-function braincert_get_payment_info()
-{
+function braincert_get_payment_info() {
     $data['task'] = BRAINCERT_TASK_GET_PAYMENT_INFO;
     $result = braincert_get_curl_info($data);
     return $result;
@@ -251,8 +302,7 @@ function braincert_get_payment_info()
  * @param array $item
  * @return array
  */
-function braincert_get_launch_url($item)
-{
+function braincert_get_launch_url($item) {
     $data['task'] = BRAINCERT_TASK_GET_CLASS_LAUNCH;
     $data['userId'] = $item['userid'];
     $data['userName'] = $item['username'];
@@ -271,8 +321,7 @@ function braincert_get_launch_url($item)
  * @param int $classid
  * @return array
  */
-function braincert_get_class_recording($classid)
-{
+function braincert_get_class_recording($classid) {
     $data['task'] = BRAINCERT_TASK_GET_CLASS_RECORDING;
     $data['class_id'] = $classid;
     $result = braincert_get_curl_info($data);
@@ -285,8 +334,7 @@ function braincert_get_class_recording($classid)
  * @param int $rid
  * @return array
  */
-function braincert_change_status_recording($rid)
-{
+function braincert_change_status_recording($rid) {
     $data['task'] = BRAINCERT_TASK_CHANGE_STATUS_RECORDING;
     $data['rid'] = $rid;
     $result = braincert_get_curl_info($data);
@@ -299,8 +347,7 @@ function braincert_change_status_recording($rid)
  * @param int $rid
  * @return array
  */
-function braincert_remove_recording($rid)
-{
+function braincert_remove_recording($rid) {
     $data['task'] = BRAINCERT_TASK_REMOVE_CLASS_RECORDING;
     $data['rid'] = $rid;
     $result = braincert_get_curl_info($data);
@@ -313,8 +360,7 @@ function braincert_remove_recording($rid)
  * @param array $item
  * @return array
  */
-function braincert_add_price($item)
-{
+function braincert_add_price($item) {
     $data['task'] = BRAINCERT_TASK_ADD_SCHEMES;
     $data['price'] = $item['price'];
     $data['scheme_days'] = $item['schemedays'];
@@ -336,8 +382,7 @@ function braincert_add_price($item)
  * @param int $classid
  * @return array
  */
-function braincert_get_price_list($classid)
-{
+function braincert_get_price_list($classid) {
     $data['task'] = BRAINCERT_TASK_LIST_SCHEMES;
     $data['class_id'] = $classid;
     $result = braincert_get_curl_info($data);
@@ -350,8 +395,7 @@ function braincert_get_price_list($classid)
  * @param int $pid
  * @return array
  */
-function braincert_remove_price($pid)
-{
+function braincert_remove_price($pid) {
     $data['task'] = BRAINCERT_TASK_REMOVE_PRICE;
     $data['id'] = $pid;
     $result = braincert_get_curl_info($data);
@@ -364,8 +408,7 @@ function braincert_remove_price($pid)
  * @param array $item
  * @return array
  */
-function braincert_add_discount($item)
-{
+function braincert_add_discount($item) {
     $data['task'] = BRAINCERT_TASK_ADD_SPECIALS;
     $data['class_id'] = $item['classid'];
     $data['discount'] = $item['discount'];
@@ -391,8 +434,7 @@ function braincert_add_discount($item)
  * @param int $classid
  * @return array
  */
-function braincert_discount_list($classid)
-{
+function braincert_discount_list($classid) {
     $data['task'] = BRAINCERT_TASK_LIST_DISCOUNT;
     $data['class_id'] = $classid;
     $result = braincert_get_curl_info($data);
@@ -405,12 +447,29 @@ function braincert_discount_list($classid)
  * @param int $did
  * @return array
  */
-function braincert_remove_discount($did)
-{
+function braincert_remove_discount($did) {
     $data['task'] = BRAINCERT_TASK_REMOVE_DISCOUNT;
     $data['discountid'] = $did;
     $result = braincert_get_curl_info($data);
     return $result;
+}
+
+function action_menu_list($menuitmes, $classid) {
+     $output = html_writer::start_tag('div', array('class' => 'span6 drop_fr_icon'));
+    $output .= html_writer::start_tag('div', array('class' => 'dropdown'));
+    $output .= html_writer::tag('a', '<i class="fa fa-cog" aria-hidden="true"></i><b class="caret"></b>', array(
+            'class' => 'dropbtn', 'id' => 'dropbtn', 'href' => 'javascript:void(0);',
+            'onclick' => 'dropdownmenu(' . $classid . ')',
+    ));
+    $output .= html_writer::start_tag(
+        'div',
+        array('class' => 'dropdown-content', 'id' => 'dropdown-' . $classid)
+    );
+    $output .= $menuitmes;
+    $output .= html_writer::end_tag('div');
+    $output .= html_writer::end_tag('div');
+    $output .= html_writer::end_tag('div');
+    return $output;
 }
 
 /**
@@ -418,102 +477,90 @@ function braincert_remove_discount($did)
  *
  * @global global $CFG
  * @param array $getclasslist
- * @param int $id
  * @param object $braincertrec
  * @param object $cm
  * @param boolean $isteacher
  * @param boolean $isstudent
  * @return string
  */
-function action_list($getclasslist, $id, $braincertrec, $cm, $isteacher = false, $isstudent = false)
-{
-    global $CFG, $PAGE;
+function teacher_action_list($getclasslist, $braincertrec, $cm) {
+     global $CFG, $PAGE;
     $output = '';
-    if (!$isteacher && !$isstudent) {
-        return $output;
-    }
-    $output .= html_writer::start_tag('div', array('class' => 'span6 drop_fr_icon'));
-    $output .= html_writer::start_tag('div', array('class' => 'dropdown'));
-    $output .= html_writer::tag('a', '<i class="fa fa-cog" aria-hidden="true"></i><b class="caret"></b>', array(
-            'class' => 'dropbtn', 'id' => 'dropbtn', 'href' => 'javascript:void(0);',
-            'onclick' => 'dropdownmenu(' . $getclasslist['id'] . ')',
+    $output .= html_writer::tag('a', '<i class="fa fa-users" aria-hidden="true"></i>'
+            . get_string('attendancereport', 'braincert'), array(
+            'href' => $CFG->wwwroot . '/mod/braincert/attendance_report.php?bcid=' . $getclasslist['id'],
     ));
-    $output .= html_writer::start_tag(
-        'div',
-        array('class' => 'dropdown-content', 'id' => 'dropdown-' . $getclasslist['id'])
-    );
-    if ($isteacher) {
-        $output .= html_writer::tag('a', '<i class="fa fa-users" aria-hidden="true"></i>'
-                . get_string('attendancereport', 'braincert'), array(
-                'href' => $CFG->wwwroot . '/mod/braincert/attendance_report.php?bcid=' . $getclasslist['id'],
-                ));
+    $output .= html_writer::tag('a', '<i class="fa fa-minus-circle" aria-hidden="true"></i>'
+            . get_string('cancelclass', 'braincert'), array(
+            'href' => $PAGE->url . '&bcid=' . $getclasslist['id'],
+            'onclick' => 'return confirm("' . get_string("areyousure", "braincert") . '")'
+    ));
+    if ($braincertrec->is_recurring == 1) {
         $output .= html_writer::tag('a', '<i class="fa fa-minus-circle" aria-hidden="true"></i>'
-                . get_string('cancelclass', 'braincert'), array(
-                'href' => $PAGE->url . '&bcid=' . $getclasslist['id'],
-                'onclick' => 'return confirm("' . get_string("areyousure", "braincert") . '")'
-                ));
-        if ($braincertrec->is_recurring == 1) {
-            $output .= html_writer::tag('a', '<i class="fa fa-minus-circle" aria-hidden="true"></i>'
-                    . get_string('cancelclassall', 'braincert'), array(
-                    'href' => $PAGE->url. '&all=2&bcid='
-                    . $getclasslist['id'],
-                    'onclick' => 'return confirm("' . get_string("areyousureall", "braincert") . '")'
-                    ));
-        }
-        $output .= html_writer::tag('hr', '');
-        $output .= html_writer::tag('a', '<i class="fa fa-envelope" aria-hidden="true"></i>'
-                . get_string('inviteemail', 'braincert'), array(
-                'href' => $CFG->wwwroot . '/mod/braincert/inviteemail.php?bcid=' . $getclasslist['id'],
-                ));
-        if ($cm->groupmode != 0) {
-            $output .= html_writer::tag('a', '<i class="fa fa-envelope" aria-hidden="true"></i>'
-                    . get_string('inviteusergroup', 'braincert'), array(
-                    'href' => $CFG->wwwroot . '/mod/braincert/inviteusergroup.php?bcid=' . $getclasslist['id'],
-                    ));
-        }
-        if ($getclasslist['ispaid'] == 1) {
-            $output .= html_writer::tag('a', '<i class="fa fa-shopping-cart" aria-hidden="true"></i>'
-                    . get_string('shoppingcart', 'braincert'), array(
-                    'href' => $CFG->wwwroot . '/mod/braincert/addpricingscheme.php?bcid=' . $getclasslist['id'],
-                    ));
-            $output .= html_writer::tag('a', '<i class="fa ticket" aria-hidden="true"></i>'
-                    . get_string('discounts', 'braincert'), array(
-                    'href' => $CFG->wwwroot . '/mod/braincert/adddiscount.php?bcid=' . $getclasslist['id'],
-                    ));
-            $output .= html_writer::tag('a', '<i class="fa cc-paypal" aria-hidden="true"></i>'
-                    . get_string('payments', 'braincert'), array(
-                    'href' => $CFG->wwwroot . '/mod/braincert/payments.php?bcid=' . $getclasslist['id'],
-                    ));
-        }
-        $output .= html_writer::tag('hr', '');
+                . get_string('cancelclassall', 'braincert'), array(
+                'href' => $PAGE->url . '&all=2&bcid='
+                . $getclasslist['id'],
+                'onclick' => 'return confirm("' . get_string("areyousureall", "braincert") . '")'
+        ));
     }
+    $output .= html_writer::tag('hr', '');
+    $output .= html_writer::tag('a', '<i class="fa fa-envelope" aria-hidden="true"></i>'
+            . get_string('inviteemail', 'braincert'), array(
+            'href' => $CFG->wwwroot . '/mod/braincert/inviteemail.php?bcid=' . $getclasslist['id'],
+    ));
+    if ($cm->groupmode != 0) {
+        $output .= html_writer::tag('a', '<i class="fa fa-envelope" aria-hidden="true"></i>'
+                . get_string('inviteusergroup', 'braincert'), array(
+                'href' => $CFG->wwwroot . '/mod/braincert/inviteusergroup.php?bcid=' . $getclasslist['id'],
+        ));
+    }
+    if ($getclasslist['ispaid'] == 1) {
+        $output .= html_writer::tag('a', '<i class="fa fa-shopping-cart" aria-hidden="true"></i>'
+                . get_string('shoppingcart', 'braincert'), array(
+                'href' => $CFG->wwwroot . '/mod/braincert/addpricingscheme.php?bcid=' . $getclasslist['id'],
+        ));
+        $output .= html_writer::tag('a', '<i class="fa ticket" aria-hidden="true"></i>'
+                . get_string('discounts', 'braincert'), array(
+                'href' => $CFG->wwwroot . '/mod/braincert/adddiscount.php?bcid=' . $getclasslist['id'],
+        ));
+        $output .= html_writer::tag('a', '<i class="fa cc-paypal" aria-hidden="true"></i>'
+                . get_string('payments', 'braincert'), array(
+                'href' => $CFG->wwwroot . '/mod/braincert/payments.php?bcid=' . $getclasslist['id'],
+        ));
+    }
+    $output .= html_writer::tag('hr', '');
+    $output .= view_recording_button($getclasslist['id']);
     $output .= html_writer::tag(
+            'a', '<i class="fa fa-play-circle-o" aria-hidden="true"></i>'
+            . get_string('managerecording', 'braincert'), array(
+            'href' => $CFG->wwwroot . '/mod/braincert/recording.php?action=managerecording&bcid=' .
+            $getclasslist['id'],
+            )
+    );
+    $output .= html_writer::tag('a', '<i class="fa fa-envelope" aria-hidden="true"></i>' .
+            get_string('managetemplate', 'braincert'), array(
+            'href' => $CFG->wwwroot . '/mod/braincert/managetemplate.php?bcid=' . $getclasslist['id'],
+    ));
+    return $output;
+}
+
+/**
+ *
+ * @global global $CFG
+ * @param int $classid
+ * @return string
+ */
+function view_recording_button ($classid) {
+    global $CFG;
+    $output = html_writer::tag(
         'a',
         '<i class="fa fa-play-circle-o" aria-hidden="true"></i>'
             . get_string('viewclassrecording', 'braincert'),
         array(
             'href' => $CFG->wwwroot . '/mod/braincert/recording.php?action=viewrecording&bcid='
-            . $getclasslist['id'],
+            . $classid,
             )
     );
-    if ($isteacher) {
-        $output .= html_writer::tag(
-            'a',
-            '<i class="fa fa-play-circle-o" aria-hidden="true"></i>'
-                . get_string('managerecording', 'braincert'),
-            array(
-                'href' => $CFG->wwwroot . '/mod/braincert/recording.php?action=managerecording&bcid=' .
-                $getclasslist['id'],
-                )
-        );
-        $output .= html_writer::tag('a', '<i class="fa fa-envelope" aria-hidden="true"></i>' .
-                get_string('managetemplate', 'braincert'), array(
-                'href' => $CFG->wwwroot . '/mod/braincert/managetemplate.php?bcid=' . $getclasslist['id'],
-                ));
-    }
-    $output .= html_writer::end_tag('div');
-    $output .= html_writer::end_tag('div');
-    $output .= html_writer::end_tag('div');
     return $output;
 }
 
@@ -523,7 +570,7 @@ function action_list($getclasslist, $id, $braincertrec, $cm, $isteacher = false,
  * @param array $item
  * @param object $braincertclass
  * @param object $cm
- * @param array $getuserpaymentdetails
+ * @param array $paymentdetails
  * @param boolean $ispaid
  * @param boolean $isadmin
  * @param boolean $isteacher
@@ -532,7 +579,7 @@ function action_list($getclasslist, $id, $braincertrec, $cm, $isteacher = false,
 function get_launch_button(
     $braincertclass,
     $cm,
-    $getuserpaymentdetails,
+    $paymentdetails,
     $ispaid = 0,
     $isadmin = false,
     $isteacher = false,
@@ -551,7 +598,7 @@ function get_launch_button(
         if ($isadmin || $isteacher) {
             $output .= create_launch_button($launchurl);
         } else {
-            if ($ispaid == 0 || ($ispaid == 1 && $getuserpaymentdetails)) {
+            if ($ispaid == 0 || ($ispaid == 1 && $paymentdetails)) {
                 if ($cm->groupmode != 1) {
                     $output .= create_launch_button($launchurl);
                 } else {
@@ -559,7 +606,7 @@ function get_launch_button(
                         'groupings_groups',
                         array('groupingid' => $cm->groupingid)
                     );
-                    foreach ($getbraincertgroup as $getbraincertgroupkey => $getbraincertgroupval) {
+                    foreach ($getbraincertgroup as $getbraincertgroupval) {
                         $getgroupmembers = $DB->get_records(
                             'groups_members',
                             array(
@@ -584,8 +631,7 @@ function get_launch_button(
  * @param string $url
  * @return type
  */
-function create_launch_button($url)
-{
+function create_launch_button($url) {
     return '<a target="_blank" class="btn btn-primary" id="launch-btn"'
         . ' href="' . $url . '" return false;>' . get_string('launch', 'braincert') . '</a>';
 }
@@ -593,14 +639,13 @@ function create_launch_button($url)
 /**
  *
  * @param string $baseurl
- * @param int $paypal_id
+ * @param int $paypalid
  * @param string $itemname
  * @param string $currencycode
  * @param url $url
  * @return string of HTML tags
  */
-function paypal_form($baseurl, $paypal_id, $itemname, $currencycode, $url)
-{
+function paypal_form($baseurl, $paypalid, $itemname, $currencycode, $url) {
     $paypalurl = 'https://www.';
     $paypalurl .= strpos($baseurl, 'braincert.org') !== false ?
         'sandbox.paypal.com/cgi-bin/webscr' : 'paypal.com/cgi-bin/webscr';
@@ -610,7 +655,7 @@ function paypal_form($baseurl, $paypal_id, $itemname, $currencycode, $url)
     $form .= html_writer::empty_tag('input', array(
         'type' => 'hidden', 'name' => 'amount', 'id' => 'one_time_amount', 'value' => ''
         ));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'business', 'value' => $paypal_id));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'business', 'value' => $paypalid));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'item_name', 'value' => $itemname));
     $form .= html_writer::empty_tag('input', array(
         'type' => 'hidden', 'name' => 'currency_code', 'value' => $currencycode
@@ -635,8 +680,7 @@ function paypal_form($baseurl, $paypal_id, $itemname, $currencycode, $url)
  * @param object $course
  * @return string of HTML tags
  */
-function get_vaiw_all_class_link($course)
-{
+function get_vaiw_all_class_link($course) {
     global $CFG;
     $return = html_writer::start_div('allclassdiv');
     $return .= html_writer::link(
@@ -649,12 +693,11 @@ function get_vaiw_all_class_link($course)
 
 /**
  *
- * @param int $class_id
+ * @param int $classid
  * @param boolean $isteacher
  */
-function display_class_recording($class_id, $isteacher = false)
-{
-    $getrecordinglist = braincert_get_class_recording($class_id);
+function display_class_recording($classid, $isteacher = false) {
+    $getrecordinglist = braincert_get_class_recording($classid);
     if (!isset($getrecordinglist['Recording']) &&
         isset($getrecordinglist['status']) && ($getrecordinglist['status'] != BRAINCERT_STATUS_ERROR)
     ) {
@@ -700,8 +743,7 @@ function display_class_recording($class_id, $isteacher = false)
  *
  * @param string $baseurl
  */
-function paypal_payment_form($baseurl)
-{
+function paypal_payment_form($baseurl) {
     echo html_writer::script('', 'https://www.paypalobjects.com/js/external/dg.js');
     if (strpos($baseurl, 'braincert.org') !== false) {
         $paypalurl = 'https://www.sandbox.paypal.com/webapps/adaptivepayment/flow/pay';
@@ -728,17 +770,16 @@ function paypal_payment_form($baseurl)
  * @global global $DB
  * @global global $USER
  * @param object $cm
- * @param int $classId
+ * @param int $classid
  */
-function dispaly_buy_button($cm, $classId)
-{
+function dispaly_buy_button($cm, $classid) {
     global $DB, $USER;
     $getbraincertgroup = $DB->get_records(
         'groupings_groups',
         array('groupingid' => $cm->groupingid)
     );
     if ($getbraincertgroup) {
-        foreach ($getbraincertgroup as $getbraincertgroupkey => $getbraincertgroupval) {
+        foreach ($getbraincertgroup as $getbraincertgroupval) {
             $getgroupmembers = $DB->get_records(
                 'groups_members',
                 array(
@@ -746,25 +787,24 @@ function dispaly_buy_button($cm, $classId)
                 )
             );
             if ($getgroupmembers) {
-                echo get_buy_button($classId);
+                echo get_buy_button($classid);
             }
         }
     } else {
-        echo get_buy_button($classId);
+        echo get_buy_button($classid);
     }
 }
 
 /**
  *
- * @param int $classId
+ * @param int $classid
  * @return string
  */
-function get_buy_button($classId)
-{
+function get_buy_button($classid) {
 
     $button = html_writer::start_tag('button', array(
             'class' => 'btn btn-danger btn-sm',
-            'onclick' => 'buyingbtn(' . $classId . ')', 'id' => 'buy-btn'
+            'onclick' => 'buyingbtn(' . $classid . ')', 'id' => 'buy-btn'
     ));
     $button .= html_writer::start_tag('h4');
     $button .= html_writer::tag('i', '', array('class' => 'fa fa-shopping-cart', 'aria-hidden' => 'true'));
@@ -779,8 +819,7 @@ function get_buy_button($classId)
  * @param array $getclassdetail
  * @param int $duration
  */
-function display_class_info($getclassdetail, $duration)
-{
+function display_class_info($getclassdetail, $duration) {
     date_default_timezone_set($getclassdetail['timezone_country']);
     echo html_writer::start_div('course_info');
     echo html_writer::start_tag('p');
@@ -803,8 +842,7 @@ function display_class_info($getclassdetail, $duration)
  *
  * @param string $message
  */
-function dispaly_no_price_modal($message)
-{
+function dispaly_no_price_modal($message) {
     echo html_writer::start_div('modal pricedescription', array('id' => 'modal-content-buying'));
     echo html_writer::start_div('modal-content', array('style' => 'overflow: hidden;'));
     echo html_writer::tag('span', '<b>' . $message . '</b>');
@@ -818,8 +856,7 @@ function dispaly_no_price_modal($message)
  * @param array $pricelist
  * @param string $currencysymbol
  */
-function display_class_pricing_table($pricelist, $currencysymbol)
-{
+function display_class_pricing_table($pricelist, $currencysymbol) {
     echo html_writer::start_tag('table', array('class' => 'table table-bordered', 'id' => 'cartcontainer'));
     echo html_writer::start_tag('thead', array('class' => 'alert alert-info'));
     echo html_writer::start_tag('tr', array('class' => 'success'));
@@ -832,7 +869,7 @@ function display_class_pricing_table($pricelist, $currencysymbol)
     echo html_writer::start_tag('tbody');
     $xx = 0;
     if (!isset($pricelist['Price'])) {
-        foreach ($pricelist as $i => $value) {
+        foreach ($pricelist as $value) {
             $price = $value['scheme_price'];
             $optionid = $value['id'];
             $subprice = $price;
@@ -880,8 +917,7 @@ function display_class_pricing_table($pricelist, $currencysymbol)
  * @param string $currencysymbol
  * @param array $paymentinfo
  */
-function display_payment_modal($pricelist, $currencysymbol, $paymentinfo)
-{
+function display_payment_modal($pricelist, $currencysymbol, $paymentinfo) {
     global $CFG;
     echo html_writer::start_div('modal pricedescription initialhide', array('id' => 'modal-content-buying'));
     echo html_writer::start_div('modal-content', array('style' => 'overflow: hidden;'));
@@ -893,97 +929,16 @@ function display_payment_modal($pricelist, $currencysymbol, $paymentinfo)
                          border-color: #ebccd1;border-radius: 5px;
                          margin-bottom: 10px;padding: 8px;'));
     display_class_pricing_table($pricelist, $currencysymbol);
-    //payment container div start
+    // Payment container div start.
     echo html_writer::start_div('modal-content', array('id' => 'paymentcontainer'));
 
     if ($paymentinfo['type'] == '1') {
-        echo html_writer::start_div('row');
-        echo html_writer::start_div('span5');
-
-        echo html_writer::start_tag('fieldset');
-
-        echo html_writer::tag('p', '', array('style' => 'display:none', 'class' => 'alert payment-message'));
-        echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => "access_token",
-            'id' => "access_token", 'value' => $paymentinfo['access_token']));
-        echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => "item_number",
-            'id' => "item_number", 'value' => ''));
-
-        echo html_writer::start_div('control-group');
-        echo html_writer::label(get_string('cardholdername', 'braincert'), null, false, array(
-            'style' => 'width: 140px; padding-top: 5px; float: left;text-align: right;'
-        ));
-        echo html_writer::start_div('', array('style' => 'margin-left: 160px;'));
-        echo html_writer::empty_tag('input', array('type' => 'text', 'tabindex' => '4',
-            'class' => 'required', 'name' => 'full_name', 'id' => 'full_name'));
-        echo html_writer::end_div();
-        echo html_writer::end_div();
-
-        //card details fields
-        echo html_writer::start_div('control-group');
-        echo html_writer::label(get_string('cardnumber', 'braincert') . '&nbsp;&amp;&nbsp;'
-            . get_string('ccv', 'braincert'), null, false, array(
-            'style' => 'width: 140px; padding-top: 5px; float: left; text-align: right;'
-        ));
-        echo html_writer::start_div('', array('style' => 'margin-left: 160px;'));
-        echo html_writer::empty_tag('input', array('type' => 'text', 'tabindex' => '5',
-            'name' => 'card-number', 'class' => 'card-number stripe-sensitive required',
-            'autocomplete' => 'off', 'style' => 'width: 130px;', 'maxlength' => '16'));
-        echo html_writer::empty_tag('input', array('type' => 'text', 'tabindex' => '6',
-            'name' => 'card-cvc', 'class' => 'card-cvc stripe-sensitive required',
-            'autocomplete' => 'off', 'style' => 'width: 50px;', 'maxlength' => '16'));
-        echo html_writer::tag('i', '', array('class' => 'icon-lock'));
-        echo html_writer::end_div();
-        echo html_writer::end_div();
-        //end
-        //card expiration date field
-        echo html_writer::start_div('control-group');
-        echo html_writer::label(get_string('expiration_date', 'braincert'), null, false, array(
-            'style' => 'width: 140px; padding-top: 5px; float: left; text-align: right;'
-        ));
-        echo html_writer::start_div('', array('style' => 'margin-left: 160px;'));
-        echo html_writer::select(range(1, 12), 'card-expiry-month', '', false, array(
-            'tabindex' => '7', 'class' => 'card-expiry-month stripe-sensitive required',
-            'style' => 'width: 60px;'));
-        echo html_writer::span(' / ');
-        $start_year = date('y');
-
-        echo html_writer::select(range($start_year, $start_year + 10), 'card-expiry-year', '', false, array(
-            'tabindex' => '8', 'class' => 'card-expiry-year stripe-sensitive required', 'style' => 'width: 80px;'));
-        echo html_writer::end_div();
-        echo html_writer::end_div();
-        //end
-
-        echo html_writer::end_tag('fieldset');
-
-        echo html_writer::end_div();
-
-        ?>
-        <?php
-        echo html_writer::start_div('span3 helptext');
-        echo html_writer::start_tag('p');
-        echo get_string('securely', 'braincert');
-        echo html_writer::link('https://stripe.com', get_string('stripe', 'braincert'), array(
-            'target' => '_blank', 'class' => 'stripe'
-            ));
-        echo html_writer::end_tag('p');
-        echo html_writer::start_tag('p');
-        echo html_writer::img(
-            'https://drpyjw32lhcoa.cloudfront.net/9d61ecb/img/lock.png',
-            get_string('usessecurely', 'braincert')
-        );
-        echo html_writer::img(
-            'https://drpyjw32lhcoa.cloudfront.net/9d61ecb/img/cards.png',
-            get_string('acceptvisa', 'braincert')
-        );
-        echo html_writer::end_tag('p');
-        echo html_writer::end_div();
-
-        echo html_writer::end_div();
+        card_payment_fields($paymentinfo);
     } else {
         echo html_writer::img($CFG->wwwroot . '/mod/braincert/images/secured-by-paypal.jpg', '');
     }
     echo html_writer::end_div();
-    //payment container div start
+    // Payment container div start.
     echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'class_final_amount',
         'id' => 'class_final_amount', 'value' => ''));
     echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'class_price_id',
@@ -1013,13 +968,99 @@ function display_payment_modal($pricelist, $currencysymbol, $paymentinfo)
 }
 
 /**
+ * 
+ * @param array $paymentinfo
+ */
+function card_payment_fields ($paymentinfo) {
+    echo html_writer::start_div('row');
+    echo html_writer::start_div('span5');
+
+    echo html_writer::start_tag('fieldset');
+
+    echo html_writer::tag('p', '', array('style' => 'display:none', 'class' => 'alert payment-message'));
+    echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => "access_token",
+        'id' => "access_token", 'value' => $paymentinfo['access_token']));
+    echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => "item_number",
+        'id' => "item_number", 'value' => ''));
+
+    echo html_writer::start_div('control-group');
+    echo html_writer::label(get_string('cardholdername', 'braincert'), null, false, array(
+        'style' => 'width: 140px; padding-top: 5px; float: left;text-align: right;'
+    ));
+    echo html_writer::start_div('', array('style' => 'margin-left: 160px;'));
+    echo html_writer::empty_tag('input', array('type' => 'text', 'tabindex' => '4',
+        'class' => 'required', 'name' => 'full_name', 'id' => 'full_name'));
+    echo html_writer::end_div();
+    echo html_writer::end_div();
+
+    // Card details fields.
+    echo html_writer::start_div('control-group');
+    echo html_writer::label(get_string('cardnumber', 'braincert') . '&nbsp;&amp;&nbsp;'
+        . get_string('ccv', 'braincert'), null, false, array(
+        'style' => 'width: 140px; padding-top: 5px; float: left; text-align: right;'
+    ));
+    echo html_writer::start_div('', array('style' => 'margin-left: 160px;'));
+    echo html_writer::empty_tag('input', array('type' => 'text', 'tabindex' => '5',
+        'name' => 'card-number', 'class' => 'card-number stripe-sensitive required',
+        'autocomplete' => 'off', 'style' => 'width: 130px;', 'maxlength' => '16'));
+    echo html_writer::empty_tag('input', array('type' => 'text', 'tabindex' => '6',
+        'name' => 'card-cvc', 'class' => 'card-cvc stripe-sensitive required',
+        'autocomplete' => 'off', 'style' => 'width: 50px;', 'maxlength' => '16'));
+    echo html_writer::tag('i', '', array('class' => 'icon-lock'));
+    echo html_writer::end_div();
+    echo html_writer::end_div();
+    // End.
+    // Card expiration date field.
+    echo html_writer::start_div('control-group');
+    echo html_writer::label(get_string('expiration_date', 'braincert'), null, false, array(
+        'style' => 'width: 140px; padding-top: 5px; float: left; text-align: right;'
+    ));
+    echo html_writer::start_div('', array('style' => 'margin-left: 160px;'));
+    echo html_writer::select(range(1, 12), 'card-expiry-month', '', false, array(
+        'tabindex' => '7', 'class' => 'card-expiry-month stripe-sensitive required',
+        'style' => 'width: 60px;'));
+    echo html_writer::span(' / ');
+    $startyear = date('y');
+
+    echo html_writer::select(range($startyear, $startyear + 10), 'card-expiry-year', '', false, array(
+        'tabindex' => '8', 'class' => 'card-expiry-year stripe-sensitive required', 'style' => 'width: 80px;'));
+    echo html_writer::end_div();
+    echo html_writer::end_div();
+    // End.
+
+    echo html_writer::end_tag('fieldset');
+
+    echo html_writer::end_div();
+
+    echo html_writer::start_div('span3 helptext');
+    echo html_writer::start_tag('p');
+    echo get_string('securely', 'braincert');
+    echo html_writer::link('https://stripe.com', get_string('stripe', 'braincert'), array(
+        'target' => '_blank', 'class' => 'stripe'
+        ));
+    echo html_writer::end_tag('p');
+    echo html_writer::start_tag('p');
+    echo html_writer::img(
+        'https://drpyjw32lhcoa.cloudfront.net/9d61ecb/img/lock.png',
+        get_string('usessecurely', 'braincert')
+    );
+    echo html_writer::img(
+        'https://drpyjw32lhcoa.cloudfront.net/9d61ecb/img/cards.png',
+        get_string('acceptvisa', 'braincert')
+    );
+    echo html_writer::end_tag('p');
+    echo html_writer::end_div();
+
+    echo html_writer::end_div();
+}
+
+/**
  *
  * @param object $braincertclass
  * @param array $getclassdetail
  * @param string $class
  */
-function dispaly_class_name_info($braincertclass, $getclassdetail, $class)
-{
+function dispaly_class_name_info($braincertclass, $getclassdetail, $class) {
     echo html_writer::start_tag('h4');
     echo html_writer::tag('i', '', array('class' => 'fa fa-bullhorn', 'aria-hidden' => true));
     echo html_writer::tag('strong', $braincertclass->name, array('class' => 'class-heading'));
@@ -1047,4 +1088,34 @@ function dispaly_class_name_info($braincertclass, $getclassdetail, $class)
     }
     echo html_writer::end_span();
     echo html_writer::end_tag('h4');
+}
+
+/**
+ *
+ * @global global $DB
+ * @global global $USER
+ * @global type $COURSE
+ * @global global $CFG
+ * @param boject $braincertrec
+ * @param sting $template
+ */
+function invitation_email_body($braincertrec, $template) {
+    global $DB, $USER, $COURSE, $CFG;
+    $module = $DB->get_record('modules', array('name' => 'braincert'));
+    $cm = $DB->get_record('course_modules', array('instance' => $braincertrec->id,
+        'course' => $COURSE->id,
+        'module' => $module->id));
+
+    $starttime = new DateTime($braincertrec->start_time);
+    $endtime = new DateTime($braincertrec->end_time);
+    $interval = $starttime->diff($endtime);
+    $durationinmin = ($interval->h * 60) + $interval->i;
+
+    $find = array('{owner_name}', '{class_name}', '{class_date_time}',
+        '{class_time_zone}', '{class_duration}', '{class_join_url}');
+
+    $replace = array($USER->firstname . ' ' . $USER->lastname, $braincertrec->name,
+        date('d-m-Y', $braincertrec->start_date), $braincertrec->default_timezone,
+        $durationinmin, $CFG->wwwroot . '/mod/braincert/view.php?id=' . $cm->id);
+    return str_replace($find, $replace, $template);
 }

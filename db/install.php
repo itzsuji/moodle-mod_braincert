@@ -30,8 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @see upgrade_plugins_modules()
  */
-function xmldb_braincert_install()
-{
+function xmldb_braincert_install() {
 }
 
 /**
@@ -39,6 +38,5 @@ function xmldb_braincert_install()
  *
  * @see upgrade_plugins_modules()
  */
-function xmldb_braincert_install_recovery()
-{
+function xmldb_braincert_install_recovery() {
 }

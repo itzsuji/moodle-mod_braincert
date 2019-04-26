@@ -36,8 +36,7 @@ class restore_braincert_activity_structure_step extends restore_activity_structu
     /**
      * Define the structure for restoring braincert.
      */
-    protected function define_structure()
-    {
+    protected function define_structure() {
         $paths = array();
         $paths[] = new restore_path_element('braincert', '/activity/braincert');
         return $this->prepare_activity_structure($paths);
@@ -47,8 +46,7 @@ class restore_braincert_activity_structure_step extends restore_activity_structu
      *
      * @param string $data
      */
-    protected function process_braincert($data)
-    {
+    protected function process_braincert($data) {
         global $DB;
 
         $data = (object)$data;
@@ -78,8 +76,7 @@ class restore_braincert_activity_structure_step extends restore_activity_structu
     /**
      * Executing activities.
      */
-    protected function after_execute()
-    {
+    protected function after_execute() {
         // Add braincert related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_braincert', 'intro', null);
     }

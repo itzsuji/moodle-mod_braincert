@@ -22,7 +22,6 @@
  * @copyright  BrainCert (https://www.braincert.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 define('BRAINCERT_STATUS_OK', 'ok');
 define('BRAINCERT_STATUS_ERROR', 'error');
@@ -68,124 +67,110 @@ define('BRAINCERT_NO_RECORDING_AVAILABLE', 'No video recording available');
 require_once('locallib.php');
 global $defaulttimezone;
 $defaulttimezone = array(
-    '1'    => 'Asia/Dubai',
-    '2'    => 'Asia/Baghdad',
-    '3'    => 'Canada/Atlantic',
-    '4'    => 'Australia/Darwin',
-    '5'    => 'Australia/Canberra',
-    '6'    => 'Atlantic/Azores',
-    '7'    => 'Canada/Saskatchewan',
-    '8'    => 'Atlantic/Cape_Verde',
-    '9'    => 'Asia/Baku',
-    '10'   => 'Australia/Adelaide',
-    '11'   => 'America/Belize',
-    '12'   => 'Asia/Dhaka',
-    '13'   => 'Europe/Belgrade',
-    '14'   => 'Europe/Sarajevo',
-    '15'   => 'Pacific/Guadalcanal',
-    '16'   => 'America/Chicago',
-    '17'   => 'Asia/Hong_Kong',
-    '18'   => 'Etc/GMT-12',
-    '19'   => 'Africa/Addis_Ababa',
-    '20'   => 'Australia/Brisbane',
-    '21'   => 'Europe/Bucharest',
-    '22'   => 'America/Sao_Paulo',
-    '23'   => 'America/New_York',
-    '24'   => 'Africa/Cairo',
-    '25'   => 'Asia/Yekaterinburg',
-    '26'   => 'Pacific/Fiji',
-    '27'   => 'Europe/Helsinki',
-    '28'   => 'Europe/London',
-    '29'   => 'America/Godthab',
-    '30'   => 'Africa/Abidjan',
-    '31'   => 'Europe/Minsk',
-    '32'   => 'Pacific/Honolulu',
-    '33'   => 'Asia/Kolkata',
-    '34'   => 'Asia/Tehran',
-    '35'   => 'Asia/Jerusalem',
-    '37'   => 'America/Cancun',
-    '38'   => 'America/Chihuahua',
-    '39'   => 'America/Noronha',
-    '40'   => 'America/Denver',
-    '41'   => 'Asia/Rangoon',
-    '42'   => 'Asia/Novosibirsk',
-    '44'   => 'Pacific/Auckland',
-    '45'   => 'Canada/Newfoundland',
-    '46'   => 'Asia/Irkutsk',
-    '47'   => 'Asia/Kabul',
-    '48'   => 'America/Anchorage',
-    '49'   => 'Asia/Riyadh',
-    '50'   => 'Asia/Krasnoyarsk',
-    '51'   => 'America/Santiago',
-    '52'   => 'America/Los_Angeles',
-    '53'   => 'Europe/Brussels',
-    '54'   => 'Europe/Moscow',
-    '55'   => 'America/Argentina/Buenos_Aires',
-    '56'   => 'America/Bogota',
-    '57'   => 'America/La_Paz',
-    '58'   => 'Pacific/Samoa',
-    '59'   => 'Asia/Bangkok',
-    '60'   => 'Asia/Kuala_Lumpur',
-    '61'   => 'Africa/Blantyre',
-    '62'   => 'Asia/Colombo',
-    '63'   => 'Asia/Taipei',
-    '64'   => 'Australia/Hobart',
-    '65'   => 'Asia/Tokyo',
-    '67'   => 'America/Indiana/Indianapolis',
-    '68'   => 'America/Phoenix',
-    '69'   => 'Asia/Vladivostok',
-    '70'   => 'Australia/Perth',
-    '71'   => 'Africa/Algiers',
-    '72'   => 'Europe/Amsterdam',
-    '73'   => 'Asia/Karachi',
-    '74'   => 'Pacific/Guam',
-    '75'   => 'Asia/Yakutsk',
-    '76'   => 'America/Caracas',
-    '77'   => 'Asia/Seoul',
-    '83'   => 'Asia/Amman',
-    '84'   => 'Asia/Beirut',
-    '86'   => 'Africa/Windhoek',
-    '87'   => 'Asia/Tbilisi',
-    '88'   => 'Asia/Baku',
-    '89'   => 'Indian/Mauritius',
-    '90'   => 'Asia/Karachi',
-    '91'   => 'Asia/Kathmandu',
-    '94'   => 'America/Argentina/Buenos_Aires',
-    '95'   => 'America/Montevideo',
-    '96'   => 'America/Manaus',
-    '104'  => 'America/Tijuana',
-    '105'  => 'America/New_York'
+    '1' => 'Asia/Dubai',
+    '2' => 'Asia/Baghdad',
+    '3' => 'Canada/Atlantic',
+    '4' => 'Australia/Darwin',
+    '5' => 'Australia/Canberra',
+    '6' => 'Atlantic/Azores',
+    '7' => 'Canada/Saskatchewan',
+    '8' => 'Atlantic/Cape_Verde',
+    '9' => 'Asia/Baku',
+    '10' => 'Australia/Adelaide',
+    '11' => 'America/Belize',
+    '12' => 'Asia/Dhaka',
+    '13' => 'Europe/Belgrade',
+    '14' => 'Europe/Sarajevo',
+    '15' => 'Pacific/Guadalcanal',
+    '16' => 'America/Chicago',
+    '17' => 'Asia/Hong_Kong',
+    '18' => 'Etc/GMT-12',
+    '19' => 'Africa/Addis_Ababa',
+    '20' => 'Australia/Brisbane',
+    '21' => 'Europe/Bucharest',
+    '22' => 'America/Sao_Paulo',
+    '23' => 'America/New_York',
+    '24' => 'Africa/Cairo',
+    '25' => 'Asia/Yekaterinburg',
+    '26' => 'Pacific/Fiji',
+    '27' => 'Europe/Helsinki',
+    '28' => 'Europe/London',
+    '29' => 'America/Godthab',
+    '30' => 'Africa/Abidjan',
+    '31' => 'Europe/Minsk',
+    '32' => 'Pacific/Honolulu',
+    '33' => 'Asia/Kolkata',
+    '34' => 'Asia/Tehran',
+    '35' => 'Asia/Jerusalem',
+    '37' => 'America/Cancun',
+    '38' => 'America/Chihuahua',
+    '39' => 'America/Noronha',
+    '40' => 'America/Denver',
+    '41' => 'Asia/Rangoon',
+    '42' => 'Asia/Novosibirsk',
+    '44' => 'Pacific/Auckland',
+    '45' => 'Canada/Newfoundland',
+    '46' => 'Asia/Irkutsk',
+    '47' => 'Asia/Kabul',
+    '48' => 'America/Anchorage',
+    '49' => 'Asia/Riyadh',
+    '50' => 'Asia/Krasnoyarsk',
+    '51' => 'America/Santiago',
+    '52' => 'America/Los_Angeles',
+    '53' => 'Europe/Brussels',
+    '54' => 'Europe/Moscow',
+    '55' => 'America/Argentina/Buenos_Aires',
+    '56' => 'America/Bogota',
+    '57' => 'America/La_Paz',
+    '58' => 'Pacific/Samoa',
+    '59' => 'Asia/Bangkok',
+    '60' => 'Asia/Kuala_Lumpur',
+    '61' => 'Africa/Blantyre',
+    '62' => 'Asia/Colombo',
+    '63' => 'Asia/Taipei',
+    '64' => 'Australia/Hobart',
+    '65' => 'Asia/Tokyo',
+    '67' => 'America/Indiana/Indianapolis',
+    '68' => 'America/Phoenix',
+    '69' => 'Asia/Vladivostok',
+    '70' => 'Australia/Perth',
+    '71' => 'Africa/Algiers',
+    '72' => 'Europe/Amsterdam',
+    '73' => 'Asia/Karachi',
+    '74' => 'Pacific/Guam',
+    '75' => 'Asia/Yakutsk',
+    '76' => 'America/Caracas',
+    '77' => 'Asia/Seoul',
+    '83' => 'Asia/Amman',
+    '84' => 'Asia/Beirut',
+    '86' => 'Africa/Windhoek',
+    '87' => 'Asia/Tbilisi',
+    '88' => 'Asia/Baku',
+    '89' => 'Indian/Mauritius',
+    '90' => 'Asia/Karachi',
+    '91' => 'Asia/Kathmandu',
+    '94' => 'America/Argentina/Buenos_Aires',
+    '95' => 'America/Montevideo',
+    '96' => 'America/Manaus',
+    '104' => 'America/Tijuana',
+    '105' => 'America/New_York'
 );
+
 /**
  * Defines the features that are supported by braincert.
  *
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, false if not, null if doesn't know
  */
-function braincert_supports($feature)
-{
-    switch ($feature) {
-        case FEATURE_GROUPS:
-            return true;
-        case FEATURE_GROUPINGS:
-            return true;
-        case FEATURE_GROUPMEMBERSONLY:
-            return true;
-        case FEATURE_MOD_INTRO:
-            return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS:
-            return true;
-        case FEATURE_COMPLETION_HAS_RULES:
-            return true;
-        case FEATURE_GRADE_HAS_GRADE:
-            return true;
-        case FEATURE_GRADE_OUTCOMES:
-            return true;
-        case FEATURE_BACKUP_MOODLE2:
-            return true;
-        default:
-            return null;
+function braincert_supports($feature) {
+    $feature = array(FEATURE_GROUPS, FEATURE_GROUPINGS, FEATURE_GROUPMEMBERSONLY, FEATURE_MOD_INTRO,
+        FEATURE_COMPLETION_TRACKS_VIEWS, FEATURE_COMPLETION_HAS_RULES, FEATURE_GRADE_HAS_GRADE,
+        FEATURE_GRADE_OUTCOMES, FEATURE_BACKUP_MOODLE2
+    );
+    if (in_array($feature, $feature)) {
+        return true;
     }
+    return null;
 }
 
 /**
@@ -197,102 +182,23 @@ function braincert_supports($feature)
  * @param object $braincert
  * @return bool|int
  */
-function braincert_add_instance($braincert)
-{
+function braincert_add_instance($braincert) {
     global $DB, $CFG, $defaulttimezone;
 
     $timezone = $defaulttimezone[$braincert->braincert_timezone];
-
     $startdate = date('Y-m-d', $braincert->start_date);
-    $startdatetime = new DateTime($startdate.' '.$braincert->start_time, new DateTimeZone($timezone));
+    $startdatetime = new DateTime($startdate . ' ' . $braincert->start_time, new DateTimeZone($timezone));
     $startdatetimestamp = $startdatetime->getTimestamp();
 
-    $data['task']           = BRAINCERT_TASK_SCHEDULE;
-    $data['title']          = urlencode($braincert->name);
-    $data['timezone']       = $braincert->braincert_timezone;
-    $data['date']           = date('Y-m-d', $startdatetimestamp);
-    $data['start_time']     = strtoupper($braincert->start_time);
-    $data['end_time']       = strtoupper($braincert->end_time);
-    $data['ispaid']         = $braincert->class_type;
-    if (($braincert->class_type == 1) && isset($braincert->currency)) {
-        $data['currency']   = $braincert->currency;
-    }
-    $data['is_recurring']   = $braincert->is_recurring;
-    if (($braincert->is_recurring == 1) && isset($braincert->class_repeats)) {
-        $data['repeat']     = $braincert->class_repeats;
-        $data['end_classes_count'] = $braincert->end_classes_count;
-        if (($braincert->class_repeats == 6) && isset($braincert->weekdays)) {
-            $data['weekdays']   = implode(",", $braincert->weekdays);
-        }
-    }
-    $data['isBoard']        = $braincert->classroomtype;
-    if ($braincert->change_language == 0) {
-        $data['isLang']     = $braincert->bc_interface_language;
-    } else {
-        $data['isLang']     = 0;
-    }
-    $data['isRegion']       = $braincert->is_region;
-    $data['isvideo']       = $braincert->isvideo;
-    $data['isCorporate']    = $braincert->is_corporate;
-    $data['isScreenshare']  = $braincert->screen_sharing;
-    $data['isPrivateChat']  = $braincert->private_chat;
-    $data['seat_attendees'] = $braincert->maxattendees;
-    $data['record']         = $braincert->record_type;
-    $data['isRecordingLayout']         = $braincert->recording_layout;
-
-    $getschedule = braincert_get_curl_info($data);
+    $getschedule = get_scheduled_class($braincert, $startdatetimestamp);
 
     if ($getschedule['status'] == BRAINCERT_STATUS_OK) {
-        $braincertclass = new stdClass();
-        $braincertclass->course                = $braincert->course;
-        $braincertclass->name                  = $braincert->name;
-        $braincertclass->class_id              = $getschedule['class_id'];
-        $braincertclass->intro                 = $braincert->intro;
-        $braincertclass->introformat           = $braincert->introformat;
-        $braincertclass->braincert_timezone    = $braincert->braincert_timezone;
-        $braincertclass->default_timezone      = $timezone;
-        $braincertclass->start_date            = $startdatetimestamp;
-        $braincertclass->start_time            = $braincert->start_time;
-        $braincertclass->end_time              = $braincert->end_time;
-        $braincertclass->is_region             = $braincert->is_region;
-        $braincertclass->is_recurring          = $braincert->is_recurring;
-        if (isset($braincert->class_repeats)) {
-            $braincertclass->class_repeats     = $braincert->class_repeats;
-        }
-        if (isset($braincert->weekdays)) {
-            $braincertclass->weekdays          = implode(",", $braincert->weekdays);
-        }
-        $braincertclass->end_classes_count     = $braincert->end_classes_count;
-        $braincertclass->change_language       = $braincert->change_language;
-        if ($braincert->change_language == 0) {
-            $braincertclass->bc_interface_language = $braincert->bc_interface_language;
-        } else {
-            $braincertclass->bc_interface_language = 0;
-        }
-        $braincertclass->record_type           = $braincert->record_type;
-        $braincertclass->classroomtype         = $braincert->classroomtype;
-        $braincertclass->is_corporate          = $braincert->is_corporate;
-        $braincertclass->isvideo               = $braincert->isvideo;
-        $braincertclass->screen_sharing        = $braincert->screen_sharing;
-        $braincertclass->private_chat          = $braincert->private_chat;
-        $braincertclass->class_type            = $braincert->class_type;
-        if (isset($braincert->currency)) {
-            $braincertclass->currency          = $braincert->currency;
-        }
-        $braincertclass->maxattendees          = $braincert->maxattendees;
-        $braincertclass->groupingid            = $braincert->groupingid;
-        $braincertclass->timemodified          = time();
-        $braincertclass->recording_layout      = $braincert->recording_layout;
-
+        $braincertclass = set_braincert_object($braincert, $timezone, $startdatetimestamp, $getschedule['class_id']);
         $bcid = $DB->insert_record("braincert", $braincertclass);
-
         if ($CFG->version >= 2017051500) {
-            $completiontimeexpected = !empty($braincert->completionexpected) ? $braincert->completionexpected : null;
+            $completiontime = !empty($braincert->completionexpected) ? $braincert->completionexpected : null;
             \core_completion\api::update_completion_date_event(
-                $braincert->coursemodule,
-                'braincert',
-                $bcid,
-                $completiontimeexpected
+                $braincert->coursemodule, 'braincert', $bcid, $completiontime
             );
         }
         return $bcid;
@@ -309,133 +215,40 @@ function braincert_add_instance($braincert)
  * @param object $braincert
  * @return bool
  */
-function braincert_update_instance($braincert)
-{
+function braincert_update_instance($braincert) {
     global $DB, $CFG, $defaulttimezone;
 
     $timezone = $defaulttimezone[$braincert->braincert_timezone];
     $braincertclass = $DB->get_record('braincert', array('id' => $braincert->instance), '*', MUST_EXIST);
-    $classid = $braincertclass->class_id;
-
-    $classdata['task']   = BRAINCERT_TASK_CLASS_LIST;
+    $classdata['task'] = BRAINCERT_TASK_CLASS_LIST;
     $classdata['search'] = preg_replace('/\s+/', '', $braincertclass->name);
     $getclassdetails = braincert_get_curl_info($classdata);
 
     $startdate = date('Y-m-d', $braincert->start_date);
-    $startdatetime = new DateTime($startdate.' '.$braincert->start_time, new DateTimeZone($timezone));
+    $startdatetime = new DateTime($startdate . ' ' . $braincert->start_time, new DateTimeZone($timezone));
     $startdatetimestamp = $startdatetime->getTimestamp();
 
     foreach ($getclassdetails['classes'] as $getclassdetail) {
         if ($getclassdetail['id'] == $braincertclass->class_id) {
             if ($getclassdetail['status'] == BRAINCERT_STATUS_UPCOMING) {
-                $data['task']           = BRAINCERT_TASK_SCHEDULE;
-                $data['cid']            = $getclassdetail['id'];
-                $data['title']          = preg_replace('/\s+/', '', $braincert->name);
-                $data['timezone']       = $braincert->braincert_timezone;
-                $data['date']           = date('Y-m-d', $startdatetimestamp);
-                $data['start_time']     = strtoupper($braincert->start_time);
-                $data['end_time']       = strtoupper($braincert->end_time);
-                $data['ispaid']         = $braincert->class_type;
-                if (($braincert->class_type == 1) && isset($braincert->currency)) {
-                    $data['currency']   = $braincert->currency;
-                }
-                $data['is_recurring']   = $braincert->is_recurring;
-                if (($braincert->is_recurring == 1) && isset($braincert->class_repeats)) {
-                    $data['repeat']     = $braincert->class_repeats;
-                    $data['end_classes_count'] = $braincert->end_classes_count;
-                    if (($braincert->class_repeats == 6) && isset($braincert->weekdays)) {
-                        $data['weekdays']   = implode(",", $braincert->weekdays);
-                    }
-                }
-                $data['isBoard']        = $braincert->classroomtype;
-                if ($braincert->change_language == 0) {
-                    $data['isLang']     = $braincert->bc_interface_language;
-                } else {
-                    $data['isLang']     = 0;
-                }
-                $data['isRegion']       = $braincert->is_region;
-                $data['isvideo']        = $braincert->isvideo;
-                $data['isCorporate']    = $braincert->is_corporate;
-                $data['isScreenshare']  = $braincert->screen_sharing;
-                $data['isPrivateChat']  = $braincert->private_chat;
-                $data['seat_attendees'] = $braincert->maxattendees;
-                $data['record']         = $braincert->record_type;
-                $data['isRecordingLayout']    = $braincert->recording_layout;
-
-                $getschedule = braincert_get_curl_info($data);
+                $getschedule = get_scheduled_class($braincert, $startdatetimestamp, $getclassdetail['id']);
             }
-            if (isset($getschedule['status']) && ($getschedule['status'] == BRAINCERT_STATUS_OK)
-                && ($getschedule['method'] == BRAINCERT_METHOD_CLASS_UPDATE)) {
-                $classid = $getschedule['class_id'];
-                $braincertclass = new stdClass();
-                $braincertclass->id                    = $braincert->instance;
-                $braincertclass->course                = $braincert->course;
-                $braincertclass->name                  = $braincert->name;
-                $braincertclass->class_id              = $classid;
-                $braincertclass->intro                 = $braincert->intro;
-                $braincertclass->introformat           = $braincert->introformat;
-                $braincertclass->braincert_timezone    = $braincert->braincert_timezone;
-                $braincertclass->default_timezone      = $timezone;
-                $braincertclass->start_date            = $startdatetimestamp;
-                $braincertclass->start_time            = $braincert->start_time;
-                $braincertclass->end_time              = $braincert->end_time;
-                $braincertclass->is_region             = $braincert->is_region;
-                $braincertclass->is_recurring          = $braincert->is_recurring;
-                if (isset($braincert->class_repeats)) {
-                    $braincertclass->class_repeats     = $braincert->class_repeats;
-                } else {
-                    $braincertclass->class_repeats     =  '';
-                }
-                if (isset($braincert->weekdays)) {
-                    if ($braincert->class_repeats == 6) {
-                        $braincertclass->weekdays      = implode(",", $braincert->weekdays);
-                    } else {
-                        $braincertclass->weekdays      = '';
-                    }
-                } else {
-                    $braincertclass->weekdays          =  '';
-                }
-
-                $braincertclass->end_classes_count     = $braincert->end_classes_count;
-
-                $braincertclass->change_language       = $braincert->change_language;
-                
-                if ($braincert->change_language == 0) {
-                    $braincertclass->bc_interface_language = $braincert->bc_interface_language;
-                } else {
-                    $braincertclass->bc_interface_language = '';
-                }
-                
-                $braincertclass->record_type           = $braincert->record_type;
-                $braincertclass->classroomtype         = $braincert->classroomtype;
-                $braincertclass->is_corporate          = $braincert->is_corporate;
-                $braincertclass->isvideo               = $braincert->isvideo;
-                $braincertclass->screen_sharing        = $braincert->screen_sharing;
-                $braincertclass->private_chat          = $braincert->private_chat;
-                $braincertclass->class_type            = $braincert->class_type;
-                if (isset($braincert->currency)) {
-                    $braincertclass->currency          = $braincert->currency;
-                } else {
-                    $braincertclass->currency          = '';
-                }
-                $braincertclass->maxattendees          = $braincert->maxattendees;
-                $braincertclass->groupingid            = $braincert->groupingid;
-                $braincertclass->timemodified          = time();
-                $braincertclass->recording_layout      = $braincert->recording_layout;
+            if (
+                isset($getschedule['status']) && ($getschedule['status'] == BRAINCERT_STATUS_OK) &&
+                ($getschedule['method'] == BRAINCERT_METHOD_CLASS_UPDATE)
+                ) {
+                $braincertclass = set_braincert_object($braincert, $timezone, $startdatetimestamp, $getschedule['class_id']);
 
                 if ($CFG->version >= 2017051500) {
-                    $completiontimeexpected = !empty($braincert->completionexpected) ?
+                    $completiontime = !empty($braincert->completionexpected) ?
                         $braincert->completionexpected : null;
                     \core_completion\api::update_completion_date_event(
-                        $braincert->coursemodule,
-                        'braincert',
-                        $braincertclass->id,
-                        $completiontimeexpected
+                        $braincert->coursemodule, 'braincert', $braincertclass->id, $completiontime
                     );
                 }
                 return $DB->update_record("braincert", $braincertclass);
             } else {
-                return $getclassdetail['status'].' '. get_string('cannotupdated', 'braincert');
+                return $getclassdetail['status'] . ' ' . get_string('cannotupdated', 'braincert');
             }
         }
     }
@@ -449,18 +262,17 @@ function braincert_update_instance($braincert)
  * @param int $id
  * @return bool
  */
-function braincert_delete_instance($id)
-{
-    global $DB;
+function braincert_delete_instance($id) {
+    global $DB, $CFG;
 
-    if (! $braincert = $DB->get_record("braincert", array("id" => $id))) {
+    if (!$braincert = $DB->get_record("braincert", array("id" => $id))) {
         return false;
     }
     $result = true;
 
     if (isset($braincert->class_id)) {
-        $removedata['task']  = BRAINCERT_TASK_REMOVE_CLASS;
-        $removedata['cid']   = $braincert->class_id;
+        $removedata['task'] = BRAINCERT_TASK_REMOVE_CLASS;
+        $removedata['cid'] = $braincert->class_id;
 
         $getremovestatus = braincert_get_curl_info($removedata);
         if ($getremovestatus['status'] == BRAINCERT_STATUS_OK) {
@@ -472,7 +284,7 @@ function braincert_delete_instance($id)
         $cm = get_coursemodule_from_instance('braincert', $id);
         \core_completion\api::update_completion_date_event($cm->id, 'braincert', $braincert->id, null);
     }
-    if (! $DB->delete_records("braincert", array("id" => $braincert->id))) {
+    if (!$DB->delete_records("braincert", array("id" => $braincert->id))) {
         $result = false;
     }
 
@@ -488,8 +300,7 @@ function braincert_delete_instance($id)
  * @param object $coursemodule
  * @return cached_cm_info|null
  */
-function braincert_get_coursemodule_info($coursemodule)
-{
+function braincert_get_coursemodule_info($coursemodule) {
     global $DB;
 
     if ($braincert = $DB->get_record('braincert', array(
@@ -502,7 +313,7 @@ function braincert_get_coursemodule_info($coursemodule)
         $info = new cached_cm_info();
         // No filtering hre because this info is cached and filtered later.
         $info->content = format_module_intro('braincert', $braincert, $coursemodule->id, false);
-        $info->name  = $braincert->name;
+        $info->name = $braincert->name;
         return $info;
     } else {
         return null;
@@ -514,7 +325,113 @@ function braincert_get_coursemodule_info($coursemodule)
  *
  * @return array
  */
-function braincert_get_extra_capabilities()
-{
+function braincert_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
+}
+
+/**
+ *
+ * @param object $braincert
+ * @param integer $startdatetimestamp
+ * @param integer $classid
+ * @return array $getschedule
+ */
+function get_scheduled_class($braincert, $startdatetimestamp, $classid = null) {
+    $data['task'] = BRAINCERT_TASK_SCHEDULE;
+    $data['title'] = urlencode($braincert->name);
+    if ($classid) {
+        $data['cid'] = $classid;
+        $data['title'] = preg_replace('/\s+/', '', $braincert->name);
+    }
+
+    $data['timezone'] = $braincert->braincert_timezone;
+    $data['date'] = date('Y-m-d', $startdatetimestamp);
+    $data['start_time'] = strtoupper($braincert->start_time);
+    $data['end_time'] = strtoupper($braincert->end_time);
+    $data['ispaid'] = $braincert->class_type;
+    if (($braincert->class_type == 1) && isset($braincert->currency)) {
+        $data['currency'] = $braincert->currency;
+    }
+    $data['is_recurring'] = $braincert->is_recurring;
+
+    if (($braincert->is_recurring == 1) && isset($braincert->class_repeats)) {
+        $data['repeat'] = $braincert->class_repeats;
+        $data['end_classes_count'] = $braincert->end_classes_count;
+        if (($braincert->class_repeats == 6) && isset($braincert->weekdays)) {
+            $data['weekdays'] = implode(",", $braincert->weekdays);
+        }
+    }
+    $data['isBoard'] = $braincert->classroomtype;
+    if ($braincert->change_language == 0) {
+        $data['isLang'] = $braincert->bc_interface_language;
+    } else {
+        $data['isLang'] = 0;
+    }
+    $data['isRegion'] = $braincert->is_region;
+    $data['isvideo'] = $braincert->isvideo;
+    $data['isCorporate'] = $braincert->is_corporate;
+    $data['isScreenshare'] = $braincert->screen_sharing;
+    $data['isPrivateChat'] = $braincert->private_chat;
+    $data['seat_attendees'] = $braincert->maxattendees;
+    $data['record'] = $braincert->record_type;
+    $data['isRecordingLayout'] = $braincert->recording_layout;
+    return braincert_get_curl_info($data);
+}
+
+/**
+ *
+ * @param object $braincert
+ * @param string $timezone
+ * @param integer $startdatetimestamp
+ * @param integer $classid
+ * @return \stdClass $braincertclass
+ */
+function set_braincert_object($braincert, $timezone, $startdatetimestamp, $classid) {
+    $braincertclass = new stdClass();
+    if ($braincert->instance) {
+        $braincertclass->id = $braincert->instance;
+    }
+    $braincertclass->course = $braincert->course;
+    $braincertclass->name = $braincert->name;
+    $braincertclass->class_id = $classid;
+    $braincertclass->intro = $braincert->intro;
+    $braincertclass->introformat = $braincert->introformat;
+    $braincertclass->braincert_timezone = $braincert->braincert_timezone;
+    $braincertclass->default_timezone = $timezone;
+    $braincertclass->start_date = $startdatetimestamp;
+    $braincertclass->start_time = $braincert->start_time;
+    $braincertclass->end_time = $braincert->end_time;
+    $braincertclass->is_region = $braincert->is_region;
+    $braincertclass->is_recurring = $braincert->is_recurring;
+    $braincertclass->class_repeats = '';
+    if (isset($braincert->class_repeats)) {
+        $braincertclass->class_repeats = $braincert->class_repeats;
+    }
+    $braincertclass->weekdays = '';
+    if (isset($braincert->weekdays) && $braincert->class_repeats == 6) {
+        $braincertclass->weekdays = implode(",", $braincert->weekdays);
+    }
+
+    $braincertclass->end_classes_count = $braincert->end_classes_count;
+    $braincertclass->change_language = $braincert->change_language;
+    $braincertclass->bc_interface_language = 0;
+    if ($braincert->change_language == 0) {
+        $braincertclass->bc_interface_language = $braincert->bc_interface_language;
+    }
+    $braincertclass->record_type = $braincert->record_type;
+    $braincertclass->classroomtype = $braincert->classroomtype;
+    $braincertclass->is_corporate = $braincert->is_corporate;
+    $braincertclass->isvideo = $braincert->isvideo;
+    $braincertclass->screen_sharing = $braincert->screen_sharing;
+    $braincertclass->private_chat = $braincert->private_chat;
+    $braincertclass->class_type = $braincert->class_type;
+    $braincertclass->currency = '';
+    if (isset($braincert->currency)) {
+        $braincertclass->currency = $braincert->currency;
+    }
+    $braincertclass->maxattendees = $braincert->maxattendees;
+    $braincertclass->groupingid = $braincert->groupingid;
+    $braincertclass->timemodified = time();
+    $braincertclass->recording_layout = $braincert->recording_layout;
+    return $braincertclass;
 }

@@ -24,6 +24,7 @@
  */
 
 require_once("../../config.php");
+require_once($CFG->dirroot.'/mod/braincert/locallib.php');
 
 $bcid = required_param('bcid', PARAM_INT);   // Virtual Class ID.
 
@@ -62,19 +63,7 @@ if ($groupids) {
     list($insql, $params) = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, 'groupid', false);
     $sql = "SELECT * FROM {groups_members} WHERE groupid {$insql}";
     $groupusers = $DB->get_records_sql($sql, $params);
-    $module = $DB->get_record('modules', array('name' => 'braincert'));
-    $cm = $DB->get_record('course_modules', array('instance' => $braincertrec->id,
-                          'course' => $COURSE->id, 'module' => $module->id));
-    $starttime = new DateTime($braincertrec->start_time);
-    $endtime = new DateTime($braincertrec->end_time);
-    $interval = $starttime->diff($endtime);
-    $durationinmin = ($interval->h * 60) + $interval->i;
-    $find = array('{owner_name}', '{class_name}', '{class_date_time}',
-        '{class_time_zone}', '{class_duration}', '{class_join_url}');
-    $replace = array($USER->firstname.' '.$USER->lastname, $braincertrec->name,
-                     date('d-m-Y', $braincertrec->start_date), $braincertrec->default_timezone,
-                     $durationinmin, $CFG->wwwroot.'/mod/braincert/view.php?id='.$cm->id);
-    $getbody->emailmessage = str_replace($find, $replace, $getbody->emailmessage);
+    $getbody->emailmessage = invitation_email_body($braincertrec, $getbody->emailmessage);
     foreach ($groupusers as $groupuserskey => $groupusersval) {
         if ($emailuserrec = $DB->get_record('user', array('id' => $groupusersval->userid))) {
             $emailuser = $emailuserrec;

@@ -26,6 +26,7 @@
 require_once("../../config.php");
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/mod/braincert/classes/invite_by_email_form.php');
+require_once($CFG->dirroot.'/mod/braincert/locallib.php');
 
 global $USER, $CFG, $COURSE;
 
@@ -52,20 +53,7 @@ echo $OUTPUT->heading(get_string('inviteemail', 'braincert'));
 $mform = new invite_by_email_form($CFG->wwwroot.'/mod/braincert/inviteemail.php?bcid='.$bcid);
 
 if ($invitebyemail = $mform->get_data()) {
-    $module = $DB->get_record('modules', array('name' => 'braincert'));
-    $cm = $DB->get_record('course_modules', array('instance' => $braincertrec->id,
-                          'course' => $COURSE->id,
-                          'module' => $module->id));
-    $starttime = new DateTime($braincertrec->start_time);
-    $endtime = new DateTime($braincertrec->end_time);
-    $interval = $starttime->diff($endtime);
-    $durationinmin = ($interval->h * 60) + $interval->i;
-    $find = array('{owner_name}', '{class_name}', '{class_date_time}', '{class_time_zone}',
-        '{class_duration}', '{class_join_url}');
-    $replace = array($USER->firstname.' '.$USER->lastname, $braincertrec->name,
-                     date('d-m-Y', $braincertrec->start_date), $braincertrec->default_timezone,
-                     $durationinmin, $CFG->wwwroot.'/mod/braincert/view.php?id='.$cm->id);
-    $emailmessage = str_replace($find, $replace, $invitebyemail->emailmessage['text']);
+    $emailmessage = invitation_email_body($braincertrec, $invitebyemail->emailmessage['text']);
     $emaillists = explode(",", $invitebyemail->emailto);
     foreach ($emaillists as $emailid) {
         if ($emailuserrec = $DB->get_record('user', array('email' => $emailid))) {

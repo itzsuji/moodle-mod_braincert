@@ -22,14 +22,13 @@
  * @copyright  BrainCert (https://www.braincert.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 define('BRAINCERT_MINIMUM_DURATION', 30);
 define('BRAINCERT_MAXIMUM_DURATION', 600);
 define('BRAINCERT_MAXIMUM_ATTENDEES', 300);
 
-require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
 $PAGE->requires->css('/mod/braincert/css/styles.css', true);
 
 /**
@@ -39,18 +38,231 @@ $PAGE->requires->css('/mod/braincert/css/styles.css', true);
  */
 class mod_braincert_mod_form extends moodleform_mod
 {
+
     /**
      * Define add discount form
      */
-    public function definition()
-    {
+    public function definition() {
         global $PAGE, $CFG;
 
         if ($CFG->version >= 2016120500) {
             $PAGE->force_settings_menu();
         }
 
-        $bctimezoneoptions = array(
+        $bctimezoneoptions = $this->timezone_options();
+        $bcregionoptions = $this->region_options();
+
+        $bcrepeatoptions = $this->weekly_options();
+        $bcweekdaysoptions = array('1' => 'Sunday', '2' => 'Monday', '3' => 'Tuesday', '4' => 'Wednesday',
+            '5' => 'Thursday', '6' => 'Friday', '7' => 'Saturday');
+
+        $bctimeoptions = $this->time_options();
+        $dtoption = array('startyear' => 1970, 'stopyear' => 2020, 'timezone' => 99);
+
+        $mform = $this->_form;
+        // Adding the "general" fieldset.
+        $mform->addElement('header', 'general', get_string('general', 'form'));
+
+        $mform->addElement('text', 'name', get_string('title', 'braincert'), array('size' => '64'));
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('name', PARAM_TEXT);
+        } else {
+            $mform->setType('name', PARAM_ALPHANUMEXT);
+        }
+
+        $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('name', 'title', 'braincert');
+
+        $mform->addElement('hidden', 'lasteditorid', "");
+        $mform->setType('lasteditorid', PARAM_INT);
+
+        if ($CFG->version >= 2015051100) {
+            $this->standard_intro_elements();
+        } else {
+            $this->add_intro_editor(true, get_string('description', 'braincert'));
+        }
+
+        // Adding the required braincert settings, spreeading all them into this fieldset.
+        // or adding more fieldsets ('header' elements) if needed for better logic.
+        $mform->addElement('header', 'braincertdatetimesetting', get_string('braincertdatetimesetting', 'braincert'));
+
+        $mform->addElement('select', 'braincert_timezone', get_string('bc_timezone', 'braincert'), $bctimezoneoptions);
+        $mform->addHelpButton('braincert_timezone', 'bc_timezone', 'braincert');
+        $mform->addRule('braincert_timezone', get_string('timezone_required', 'braincert'), 'required', null, 'client', true);
+        $mform->setDefault('braincert_timezone', 28);
+
+        $mform->addElement('date_selector', 'start_date', get_string('start_date', 'braincert'), $dtoption);
+        $mform->addHelpButton('start_date', 'start_date', 'braincert');
+
+        $mform->addElement('select', 'start_time', get_string('bc_starttime', 'braincert'), $bctimeoptions);
+        $mform->addHelpButton('start_time', 'bc_starttime', 'braincert');
+
+        $mform->addElement('select', 'end_time', get_string('bc_endtime', 'braincert'), $bctimeoptions);
+        $mform->addHelpButton('end_time', 'bc_endtime', 'braincert');
+
+        // Adding the rest of braincert settings.
+        $mform->addElement('header', 'braincertclasssettings', get_string('braincertclasssettings', 'braincert'));
+
+        $mform->addElement('select', 'is_region', get_string('setregion', 'braincert'), $bcregionoptions);
+        $mform->addHelpButton('is_region', 'setregion', 'braincert');
+        $mform->addRule('is_region', get_string('region_required', 'braincert'), 'required', null, 'client', true);
+        // For Recurring Class.
+        $checkrecurring = array();
+        $checkrecurring[] = $mform->createElement('radio', 'is_recurring', '', get_string('yes', 'braincert'), 1);
+        $checkrecurring[] = $mform->createElement('radio', 'is_recurring', '', get_string('no', 'braincert'), 0);
+        $mform->addGroup($checkrecurring, 'recurring_class', get_string('recurring_class', 'braincert'), array(' '), false);
+        $mform->addHelpButton('recurring_class', 'recurring_class', 'braincert');
+        $mform->setDefault('is_recurring', 0);
+
+        $mform->addElement('select', 'class_repeats', get_string('repeat_class', 'braincert'), $bcrepeatoptions);
+        $mform->disabledIf('class_repeats', 'is_recurring', 'checked', 0);
+
+        $mform->addElement('text', 'end_classes_count', get_string('end_classes', 'braincert'), array('size' => '10'));
+        $mform->setType('end_classes_count', PARAM_INT);
+        $mform->disabledIf('end_classes_count', 'is_recurring', 'checked', 0);
+        $mform->setDefault('end_classes_count', 10);
+        $mform->addRule('end_classes_count', get_string('max_number', 'braincert'), 'numeric', null, 'client');
+
+        $mform->addElement('select', 'weekdays', get_string('weekday', 'braincert'), $bcweekdaysoptions);
+        $mform->disabledIf('weekdays', 'class_repeats', 'neq', 6);
+        $mform->getElement('weekdays')->setMultiple(true);
+
+        // Other form fields.
+        $this->other_form_fields($mform);
+
+        // Add standard elements, common to all modules.
+        $this->standard_coursemodule_elements();
+        // Add standard buttons, common to all modules.
+        $this->add_action_buttons();
+    }
+
+    private function lang_video_record_field(&$mform) {
+        // Change Langanguage.
+        $allowtochangelang = array();
+        $allowtochangelang[] = $mform->createElement('radio', 'change_language', '', get_string('yes', 'braincert'), 1);
+        $allowtochangelang[] = $mform->createElement('radio', 'change_language', '', get_string('no', 'braincert'), 0);
+        $mform->addGroup(
+            $allowtochangelang, 'allow_to_change_lang', get_string('change_language', 'braincert'), array(' '), false
+        );
+        $mform->addHelpButton('allow_to_change_lang', 'change_language', 'braincert');
+        $mform->setDefault('change_language', 1);
+
+        $mform->addElement(
+            'select', 'bc_interface_language', get_string('set_language', 'braincert'), $this->lang_options()
+        );
+
+        $mform->addHelpButton('bc_interface_language', 'set_language', 'braincert');
+        $mform->disabledIf('bc_interface_language', 'change_language', 'checked', 1);
+        $mform->setDefault('bc_interface_language', 11);
+
+                // Class Record Types.
+        $recordclass = array();
+        $recordclass[] = $mform->createElement('radio', 'record_type', '', get_string('no', 'braincert'), 0);
+        $recordclass[] = $mform->createElement(
+            'radio', 'record_type', '', get_string('record_manually', 'braincert'), 1
+        );
+        $recordclass[] = $mform->createElement(
+            'radio', 'record_type', '', get_string('record_automatically', 'braincert'), 2
+        );
+        $recordclass[] = $mform->createElement(
+            'radio', 'record_type', '', get_string('record_disable_rec_btn', 'braincert'), 3
+        );
+        $mform->addGroup($recordclass, 'record_class', get_string('record_class', 'braincert'), array(' '), false);
+        $mform->addHelpButton('record_class', 'record_class', 'braincert');
+        $mform->setDefault('record_type', 0);
+
+        $viewoptions = array(get_string('standard_view', 'braincert'), get_string('enhanced_view', 'braincert'));
+        $mform->addElement('select', 'recording_layout', get_string('recording_layout', 'braincert'), $viewoptions);
+        $mform->addHelpButton('recording_layout', 'recording_layout', 'braincert');
+        $mform->setDefault('recording_layout', 0);
+        $mform->setType('recording_layout', PARAM_INTEGER);
+        $mform->hideIf('recording_layout', 'record_type', 'checked', 0);
+        $mform->disabledIf('recording_layout', 'record_type', 'checked', 0);
+
+    }
+    private function other_form_fields(&$mform) {
+        $this->lang_video_record_field($mform);
+
+        // Video Delivery.
+        $videodelivery = array();
+        $videodelivery[] = $mform->createElement(
+            'radio', 'isvideo', '', get_string('singlevideofile', 'braincert'), 1
+        );
+        $videodelivery[] = $mform->createElement(
+            'radio', 'isvideo', '', get_string('multiplevideofile', 'braincert'), 0
+        );
+        $mform->addGroup(
+            $videodelivery, 'videodelivery_group', get_string('isvideo', 'braincert'), array(' '), false
+        );
+        $mform->addHelpButton('videodelivery_group', 'videodelivery_group', 'braincert');
+        $mform->setDefault('isvideo', 1);
+
+        $classroomtype = array();
+        $classroomtype[] = $mform->createElement(
+            'radio', 'classroomtype', '', get_string('classroom_type_zero', 'braincert'), 0
+        );
+        $classroomtype[] = $mform->createElement(
+            'radio', 'classroomtype', '', get_string('classroom_type_one', 'braincert'), 1
+        );
+        $classroomtype[] = $mform->createElement(
+            'radio', 'classroomtype', '', get_string('classroom_type_two', 'braincert'), 2
+        );
+        $mform->addGroup(
+            $classroomtype, 'classroom_type', get_string('classroom_type', 'braincert'), array(' '), false
+        );
+        $mform->addHelpButton('classroom_type', 'classroom_type', 'braincert');
+        $mform->setDefault('classroomtype', 0);
+
+        $iscorporate = array();
+        $iscorporate[] = $mform->createElement('radio', 'is_corporate', '', get_string('yes', 'braincert'), 1);
+        $iscorporate[] = $mform->createElement('radio', 'is_corporate', '', get_string('no', 'braincert'), 0);
+        $mform->addGroup(
+            $iscorporate, 'enable_webcam_microphone', get_string('is_corporate', 'braincert'), array(' '), false
+        );
+        $mform->addHelpButton('enable_webcam_microphone', 'is_corporate', 'braincert');
+        $mform->setDefault('is_corporate', 0);
+
+        $isscreenshare = array();
+        $isscreenshare[] = $mform->createElement('radio', 'screen_sharing', '', get_string('yes', 'braincert'), 1);
+        $isscreenshare[] = $mform->createElement('radio', 'screen_sharing', '', get_string('no', 'braincert'), 0);
+        $mform->addGroup(
+            $isscreenshare, 'enable_screen_sharing', get_string('screen_sharing', 'braincert'), array(' '), false
+        );
+        $mform->addHelpButton('enable_screen_sharing', 'screen_sharing', 'braincert');
+        $mform->setDefault('screen_sharing', 1);
+
+        $isprivatechat = array();
+        $isprivatechat[] = $mform->createElement('radio', 'private_chat', '', get_string('yes', 'braincert'), 0);
+        $isprivatechat[] = $mform->createElement('radio', 'private_chat', '', get_string('no', 'braincert'), 1);
+        $mform->addGroup(
+            $isprivatechat, 'enable_private_chat', get_string('private_chat', 'braincert'), array(' '), false
+        );
+        $mform->setDefault('private_chat', 1);
+        $mform->addHelpButton('enable_private_chat', 'private_chat', 'braincert');
+
+        $classtype = array();
+        $classtype[] = $mform->createElement('radio', 'class_type', '', get_string('free', 'braincert'), 0);
+        $classtype[] = $mform->createElement('radio', 'class_type', '', get_string('paid', 'braincert'), 1);
+        $mform->addGroup($classtype, 'type_of_class', get_string('class_type', 'braincert'), array(' '), false);
+        $mform->addHelpButton('type_of_class', 'class_type', 'braincert');
+        $mform->setDefault('class_type', 0);
+
+        $bccurrencyoptions = array(
+            'aud' => 'AUD', 'cad' => 'CAD', 'eur' => 'EUR', 'gbp' => 'GBP', 'nzd' => 'NZD', 'usd' => 'USD'
+        );
+        $mform->addElement('select', 'currency', get_string('currency', 'braincert'), $bccurrencyoptions);
+        $mform->disabledIf('currency', 'class_type', 'checked', 0);
+
+        $mform->addElement('text', 'maxattendees', get_string('max_attendees', 'braincert'));
+        $mform->setType('maxattendees', PARAM_INT);
+        $mform->addRule('maxattendees', get_string('max_number', 'braincert'), 'numeric', null, 'client');
+        $mform->setDefault('maxattendees', 25);
+        $mform->addHelpButton('maxattendees', 'max_attendees', 'braincert');
+    }
+
+    private function timezone_options() {
+        return array(
             '28' => '(GMT) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London',
             '30' => '(GMT) Monrovia, Reykjavik',
             '72' => '(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
@@ -66,15 +278,15 @@ class mod_braincert_mod_form extends moodleform_mod
             '21' => '(GMT+02:00) Minsk',
             '86' => '(GMT+02:00) Windhoek',
             '31' => '(GMT+03:00) Athens, Istanbul, Minsk',
-            '2'  => '(GMT+03:00) Baghdad',
+            '2' => '(GMT+03:00) Baghdad',
             '49' => '(GMT+03:00) Kuwait, Riyadh',
             '54' => '(GMT+03:00) Moscow, St. Petersburg, Volgograd',
             '19' => '(GMT+03:00) Nairobi',
             '87' => '(GMT+03:00) Tbilisi',
             '34' => '(GMT+03:30) Tehran',
-            '1'  => '(GMT+04:00) Abu Dhabi, Muscat',
+            '1' => '(GMT+04:00) Abu Dhabi, Muscat',
             '88' => '(GMT+04:00) Baku',
-            '9'  => '(GMT+04:00) Baku, Tbilisi, Yerevan',
+            '9' => '(GMT+04:00) Baku, Tbilisi, Yerevan',
             '89' => '(GMT+04:00) Port Louis',
             '47' => '(GMT+04:30) Kabul',
             '25' => '(GMT+05:00) Ekaterinburg',
@@ -97,17 +309,17 @@ class mod_braincert_mod_form extends moodleform_mod
             '77' => '(GMT+09:00) Seoul',
             '75' => '(GMT+09:00) Yakutsk',
             '10' => '(GMT+09:30) Adelaide',
-            '4'  => '(GMT+09:30) Darwin',
+            '4' => '(GMT+09:30) Darwin',
             '20' => '(GMT+10:00) Brisbane',
-            '5'  => '(GMT+10:00) Canberra, Melbourne, Sydney',
+            '5' => '(GMT+10:00) Canberra, Melbourne, Sydney',
             '74' => '(GMT+10:00) Guam, Port Moresby',
             '64' => '(GMT+10:00) Hobart',
             '69' => '(GMT+10:00) Vladivostok',
             '15' => '(GMT+11:00) Magadan, Solomon Is., New Caledonia',
             '44' => '(GMT+12:00) Auckland, Wellington',
             '26' => '(GMT+12:00) Fiji, Kamchatka, Marshall Is.',
-            '6'  => '(GMT-01:00) Azores',
-            '8'  => '(GMT-01:00) Cape Verde Is.',
+            '6' => '(GMT-01:00) Azores',
+            '8' => '(GMT-01:00) Cape Verde Is.',
             '39' => '(GMT-02:00) Mid-Atlantic',
             '22' => '(GMT-03:00) Brasilia',
             '94' => '(GMT-03:00) Buenos Aires',
@@ -115,7 +327,7 @@ class mod_braincert_mod_form extends moodleform_mod
             '29' => '(GMT-03:00) Greenland',
             '95' => '(GMT-03:00) Montevideo',
             '45' => '(GMT-03:30) Newfoundland',
-            '3'  => '(GMT-04:00) Atlantic Time (Canada)',
+            '3' => '(GMT-04:00) Atlantic Time (Canada)',
             '57' => '(GMT-04:00) Georgetown, La Paz, San Juan',
             '96' => '(GMT-04:00) Manaus',
             '51' => '(GMT-04:00) Santiago',
@@ -126,7 +338,7 @@ class mod_braincert_mod_form extends moodleform_mod
             '11' => '(GMT-06:00) Central America',
             '16' => '(GMT-06:00) Central Time (US & Canada)',
             '37' => '(GMT-06:00) Guadalajara, Mexico City, Monterrey',
-            '7'  => '(GMT-06:00) Saskatchewan',
+            '7' => '(GMT-06:00) Saskatchewan',
             '68' => '(GMT-07:00) Arizona',
             '38' => '(GMT-07:00) Chihuahua, La Paz, Mazatlan',
             '40' => '(GMT-07:00) Mountain Time (US & Canada)',
@@ -139,7 +351,10 @@ class mod_braincert_mod_form extends moodleform_mod
             '105' => '(GMT-4:00) Eastern Daylight Time (US & Canada)',
             '13' => '(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague'
         );
-        $bcregionoptions = array(
+    }
+
+    private function region_options() {
+        return array(
             '1' => 'US East (Dallas, TX)',
             '2' => 'US West (Los Angeles, CA)',
             '3' => 'US East (New York)',
@@ -155,16 +370,19 @@ class mod_braincert_mod_form extends moodleform_mod
             '13' => 'Europe (Paris, France)',
             '14' => 'Asia Pacific (Beijing, China)'
         );
-        $bclangoptions = array(
-            '1'  => 'Arabic',
-            '2'  => 'Bosnian',
-            '3'  => 'Bulgarian',
-            '4'  => 'Catalan',
-            '5'  => 'Chinese-simplified',
-            '6'  => 'Chinese-traditional',
-            '7'  => 'Croatian',
-            '8'  => 'Czech',
-            '9'  => 'Danish',
+    }
+
+    private function lang_options() {
+        return array(
+            '1' => 'Arabic',
+            '2' => 'Bosnian',
+            '3' => 'Bulgarian',
+            '4' => 'Catalan',
+            '5' => 'Chinese-simplified',
+            '6' => 'Chinese-traditional',
+            '7' => 'Croatian',
+            '8' => 'Czech',
+            '9' => 'Danish',
             '10' => 'Dutch',
             '11' => 'English',
             '12' => 'Estonian',
@@ -207,7 +425,10 @@ class mod_braincert_mod_form extends moodleform_mod
             '49' => 'Vietnamese',
             '50' => 'Welsh'
         );
-        $bcrepeatoptions = array(
+    }
+
+    private function weekly_options() {
+        return array(
             '1' => 'Daily (all 7 days)',
             '2' => '6 Days(Mon-Sat)',
             '3' => '5 Days(Mon-Fri)',
@@ -215,333 +436,59 @@ class mod_braincert_mod_form extends moodleform_mod
             '5' => 'Once every month',
             '6' => 'On selected days'
         );
-        $bcweekdaysoptions = array(
-            '1' => 'Sunday',
-            '2' => 'Monday',
-            '3' => 'Tuesday',
-            '4' => 'Wednesday',
-            '5' => 'Thursday',
-            '6' => 'Friday',
-            '7' => 'Saturday'
-        );
-        $bccurrencyoptions = array(
-            'aud'  => 'AUD',
-            'cad'  => 'CAD',
-            'eur'  => 'EUR',
-            'gbp'  => 'GBP',
-            'nzd'  => 'NZD',
-            'usd'  => 'USD'
-        );
-        $bctimeoptions = array(
+    }
+
+    private function time_options() {
+        return array(
             '12:00am' => '12:00AM',
             '12:30am' => '12:30AM',
-            '1:00am'  => '1:00AM',
-            '1:30am'  => '1:30AM',
-            '2:00am'  => '2:00AM',
-            '2:30am'  => '2:30AM',
-            '3:00am'  => '3:00AM',
-            '3:30am'  => '3:30AM',
-            '4:00am'  => '4:00AM',
-            '4:30am'  => '4:30AM',
-            '5:00am'  => '5:00AM',
-            '5:30am'  => '5:30AM',
-            '6:00am'  => '6:00AM',
-            '6:30am'  => '6:30AM',
-            '7:00am'  => '7:00AM',
-            '7:30am'  => '7:30AM',
-            '8:00am'  => '8:00AM',
-            '8:30am'  => '8:30AM',
-            '9:00am'  => '9:00AM',
-            '9:30am'  => '9:30AM',
+            '1:00am' => '1:00AM',
+            '1:30am' => '1:30AM',
+            '2:00am' => '2:00AM',
+            '2:30am' => '2:30AM',
+            '3:00am' => '3:00AM',
+            '3:30am' => '3:30AM',
+            '4:00am' => '4:00AM',
+            '4:30am' => '4:30AM',
+            '5:00am' => '5:00AM',
+            '5:30am' => '5:30AM',
+            '6:00am' => '6:00AM',
+            '6:30am' => '6:30AM',
+            '7:00am' => '7:00AM',
+            '7:30am' => '7:30AM',
+            '8:00am' => '8:00AM',
+            '8:30am' => '8:30AM',
+            '9:00am' => '9:00AM',
+            '9:30am' => '9:30AM',
             '10:00am' => '10:00AM',
             '10:30am' => '10:30AM',
             '11:00am' => '11:00AM',
             '11:30am' => '11:30AM',
             '12:00pm' => '12:00PM',
             '12:30pm' => '12:30PM',
-            '1:00pm'  => '1:00PM',
-            '1:30pm'  => '1:30PM',
-            '2:00pm'  => '2:00PM',
-            '2:30pm'  => '2:30PM',
-            '3:00pm'  => '3:00PM',
-            '3:30pm'  => '3:30PM',
-            '4:00pm'  => '4:00PM',
-            '4:30pm'  => '4:30PM',
-            '5:00pm'  => '5:00PM',
-            '5:30pm'  => '5:30PM',
-            '6:00pm'  => '6:00PM',
-            '6:30pm'  => '6:30PM',
-            '7:00pm'  => '7:00PM',
-            '7:30pm'  => '7:30PM',
-            '8:00pm'  => '8:00PM',
-            '8:30pm'  => '8:30PM',
-            '9:00pm'  => '9:00PM',
-            '9:30pm'  => '9:30PM',
+            '1:00pm' => '1:00PM',
+            '1:30pm' => '1:30PM',
+            '2:00pm' => '2:00PM',
+            '2:30pm' => '2:30PM',
+            '3:00pm' => '3:00PM',
+            '3:30pm' => '3:30PM',
+            '4:00pm' => '4:00PM',
+            '4:30pm' => '4:30PM',
+            '5:00pm' => '5:00PM',
+            '5:30pm' => '5:30PM',
+            '6:00pm' => '6:00PM',
+            '6:30pm' => '6:30PM',
+            '7:00pm' => '7:00PM',
+            '7:30pm' => '7:30PM',
+            '8:00pm' => '8:00PM',
+            '8:30pm' => '8:30PM',
+            '9:00pm' => '9:00PM',
+            '9:30pm' => '9:30PM',
             '10:00pm' => '10:00PM',
             '10:30pm' => '10:30PM',
             '11:00pm' => '11:00PM',
             '11:30pm' => '11:30PM'
         );
-        $dtoption = array(
-            'startyear' => 1970,
-            'stopyear'  => 2020,
-            'timezone'  => 99
-        );
-
-        $mform = $this->_form;
-        // Adding the "general" fieldset.
-        $mform->addElement('header', 'general', get_string('general', 'form'));
-
-        $mform->addElement('text', 'name', get_string('title', 'braincert'), array('size' => '64'));
-        if (!empty($CFG->formatstringstriptags)) {
-            $mform->setType('name', PARAM_TEXT);
-        } else {
-            $mform->setType('name', PARAM_ALPHANUMEXT);
-        }
-
-        $mform->addRule('name', null, 'required', null, 'client');
-        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('name', 'title', 'braincert');
-
-        $mform->addElement('hidden', 'lasteditorid', "");
-        $mform->setType('lasteditorid', PARAM_INT);
-
-        if ($CFG->version >= 2015051100) {
-            $this->standard_intro_elements();
-        } else {
-            $this->add_intro_editor(true, get_string('description', 'braincert'));
-        }
-
-        // Adding the required braincert settings, spreeading all them into this fieldset.
-        // or adding more fieldsets ('header' elements) if needed for better logic.
-        $mform->addElement('header', 'braincertdatetimesetting', get_string('braincertdatetimesetting', 'braincert'));
-
-        $mform->addElement('select', 'braincert_timezone', get_string('bc_timezone', 'braincert'), $bctimezoneoptions);
-        $mform->addHelpButton('braincert_timezone', 'bc_timezone', 'braincert');
-        $mform->addRule(
-            'braincert_timezone',
-            get_string('timezone_required', 'braincert'),
-            'required',
-            null,
-            'client',
-            true
-        );
-        $mform->setDefault('braincert_timezone', 28);
-
-        $mform->addElement('date_selector', 'start_date', get_string('start_date', 'braincert'), $dtoption);
-        $mform->addHelpButton('start_date', 'start_date', 'braincert');
-
-        $mform->addElement('select', 'start_time', get_string('bc_starttime', 'braincert'), $bctimeoptions);
-        $mform->addHelpButton('start_time', 'bc_starttime', 'braincert');
-
-        $mform->addElement('select', 'end_time', get_string('bc_endtime', 'braincert'), $bctimeoptions);
-        $mform->addHelpButton('end_time', 'bc_endtime', 'braincert');
-
-        // Adding the rest of braincert settings.
-        $mform->addElement('header', 'braincertclasssettings', get_string('braincertclasssettings', 'braincert'));
-
-        $mform->addElement('select', 'is_region', get_string('setregion', 'braincert'), $bcregionoptions);
-        $mform->addHelpButton('is_region', 'setregion', 'braincert');
-        $mform->addRule('is_region', get_string('region_required', 'braincert'), 'required', null, 'client', true);
-        // For Recurring Class.
-        $checkrecurring = array();
-        $checkrecurring[] = $mform->createElement('radio', 'is_recurring', '', get_string('yes', 'braincert'), 1);
-        $checkrecurring[] = $mform->createElement('radio', 'is_recurring', '', get_string('no', 'braincert'), 0);
-        $mform->addGroup(
-            $checkrecurring,
-            'recurring_class',
-            get_string('recurring_class', 'braincert'),
-            array(' '),
-            false
-        );
-        $mform->addHelpButton('recurring_class', 'recurring_class', 'braincert');
-        $mform->setDefault('is_recurring', 0);
-
-        $mform->addElement('select', 'class_repeats', get_string('repeat_class', 'braincert'), $bcrepeatoptions);
-        $mform->disabledIf('class_repeats', 'is_recurring', 'checked', 0);
-
-        $mform->addElement('text', 'end_classes_count', get_string('end_classes', 'braincert'), array('size' => '10'));
-        $mform->setType('end_classes_count', PARAM_INT);
-        $mform->disabledIf('end_classes_count', 'is_recurring', 'checked', 0);
-        $mform->setDefault('end_classes_count', 10);
-        $mform->addRule('end_classes_count', get_string('max_number', 'braincert'), 'numeric', null, 'client');
-
-        $mform->addElement('select', 'weekdays', get_string('weekday', 'braincert'), $bcweekdaysoptions);
-        $mform->disabledIf('weekdays', 'class_repeats', 'neq', 6);
-        $mform->getElement('weekdays')->setMultiple(true);
-
-        // Change Langanguage.
-        $allowtochangelang = array();
-        $allowtochangelang[] = $mform->createElement('radio', 'change_language', '', get_string('yes', 'braincert'), 1);
-        $allowtochangelang[] = $mform->createElement('radio', 'change_language', '', get_string('no', 'braincert'), 0);
-        $mform->addGroup(
-            $allowtochangelang,
-            'allow_to_change_lang',
-            get_string('change_language', 'braincert'),
-            array(' '),
-            false
-        );
-        $mform->addHelpButton('allow_to_change_lang', 'change_language', 'braincert');
-        $mform->setDefault('change_language', 1);
-
-        $mform->addElement('select', 'bc_interface_language', get_string('set_language', 'braincert'), $bclangoptions);
-        $mform->addHelpButton('bc_interface_language', 'set_language', 'braincert');
-        $mform->disabledIf('bc_interface_language', 'change_language', 'checked', 1);
-        $mform->setDefault('bc_interface_language', 11);
-
-        // Class Record Types.
-        $recordclass = array();
-        $recordclass[] = $mform->createElement('radio', 'record_type', '', get_string('no', 'braincert'), 0);
-        $recordclass[] = $mform->createElement(
-            'radio',
-            'record_type',
-            '',
-            get_string('record_manually', 'braincert'),
-            1
-        );
-        $recordclass[] = $mform->createElement(
-            'radio',
-            'record_type',
-            '',
-            get_string('record_automatically', 'braincert'),
-            2
-        );
-        $recordclass[] = $mform->createElement(
-            'radio',
-            'record_type',
-            '',
-            get_string('record_disable_rec_btn', 'braincert'),
-            3
-        );
-        $mform->addGroup($recordclass, 'record_class', get_string('record_class', 'braincert'), array(' '), false);
-        $mform->addHelpButton('record_class', 'record_class', 'braincert');
-        $mform->setDefault('record_type', 0);
-        
-        $view_options = array(get_string('standard_view', 'braincert'), get_string('enhanced_view', 'braincert'));
-        $mform->addElement('select', 'recording_layout', get_string('recording_layout', 'braincert'), $view_options);
-        $mform->addHelpButton('recording_layout', 'recording_layout', 'braincert');
-        $mform->setDefault('recording_layout', 0);
-        $mform->setType('recording_layout', PARAM_INTEGER);
-        $mform->hideIf('recording_layout', 'record_type', 'checked', 0);
-        $mform->disabledIf('recording_layout', 'record_type', 'checked', 0);
-
-        // Video Delivery.
-        $videodelivery = array();
-        $videodelivery[] = $mform->createElement(
-            'radio',
-            'isvideo',
-            '',
-            get_string('singlevideofile', 'braincert'),
-            1
-        );
-        $videodelivery[] = $mform->createElement(
-            'radio',
-            'isvideo',
-            '',
-            get_string('multiplevideofile', 'braincert'),
-            0
-        );
-        $mform->addGroup(
-            $videodelivery,
-            'videodelivery_group',
-            get_string('isvideo', 'braincert'),
-            array(' '),
-            false
-        );
-        $mform->addHelpButton('videodelivery_group', 'videodelivery_group', 'braincert');
-        $mform->setDefault('isvideo', 1);
-
-        $classroomtype = array();
-        $classroomtype[] = $mform->createElement(
-            'radio',
-            'classroomtype',
-            '',
-            get_string('classroom_type_zero', 'braincert'),
-            0
-        );
-        $classroomtype[] = $mform->createElement(
-            'radio',
-            'classroomtype',
-            '',
-            get_string('classroom_type_one', 'braincert'),
-            1
-        );
-        $classroomtype[] = $mform->createElement(
-            'radio',
-            'classroomtype',
-            '',
-            get_string('classroom_type_two', 'braincert'),
-            2
-        );
-        $mform->addGroup(
-            $classroomtype,
-            'classroom_type',
-            get_string('classroom_type', 'braincert'),
-            array(' '),
-            false
-        );
-        $mform->addHelpButton('classroom_type', 'classroom_type', 'braincert');
-        $mform->setDefault('classroomtype', 0);
-
-        $iscorporate = array();
-        $iscorporate[] = $mform->createElement('radio', 'is_corporate', '', get_string('yes', 'braincert'), 1);
-        $iscorporate[] = $mform->createElement('radio', 'is_corporate', '', get_string('no', 'braincert'), 0);
-        $mform->addGroup(
-            $iscorporate,
-            'enable_webcam_microphone',
-            get_string('is_corporate', 'braincert'),
-            array(' '),
-            false
-        );
-        $mform->addHelpButton('enable_webcam_microphone', 'is_corporate', 'braincert');
-        $mform->setDefault('is_corporate', 0);
-
-        $isscreenshare = array();
-        $isscreenshare[] = $mform->createElement('radio', 'screen_sharing', '', get_string('yes', 'braincert'), 1);
-        $isscreenshare[] = $mform->createElement('radio', 'screen_sharing', '', get_string('no', 'braincert'), 0);
-        $mform->addGroup(
-            $isscreenshare,
-            'enable_screen_sharing',
-            get_string('screen_sharing', 'braincert'),
-            array(' '),
-            false
-        );
-        $mform->addHelpButton('enable_screen_sharing', 'screen_sharing', 'braincert');
-        $mform->setDefault('screen_sharing', 1);
-
-        $isprivatechat = array();
-        $isprivatechat[] = $mform->createElement('radio', 'private_chat', '', get_string('yes', 'braincert'), 0);
-        $isprivatechat[] = $mform->createElement('radio', 'private_chat', '', get_string('no', 'braincert'), 1);
-        $mform->addGroup(
-            $isprivatechat,
-            'enable_private_chat',
-            get_string('private_chat', 'braincert'),
-            array(' '),
-            false
-        );
-        $mform->setDefault('private_chat', 1);
-        $mform->addHelpButton('enable_private_chat', 'private_chat', 'braincert');
-
-        $classtype = array();
-        $classtype[] = $mform->createElement('radio', 'class_type', '', get_string('free', 'braincert'), 0);
-        $classtype[] = $mform->createElement('radio', 'class_type', '', get_string('paid', 'braincert'), 1);
-        $mform->addGroup($classtype, 'type_of_class', get_string('class_type', 'braincert'), array(' '), false);
-        $mform->addHelpButton('type_of_class', 'class_type', 'braincert');
-        $mform->setDefault('class_type', 0);
-
-        $mform->addElement('select', 'currency', get_string('currency', 'braincert'), $bccurrencyoptions);
-        $mform->disabledIf('currency', 'class_type', 'checked', 0);
-
-        $mform->addElement('text', 'maxattendees', get_string('max_attendees', 'braincert'));
-        $mform->setType('maxattendees', PARAM_INT);
-        $mform->addRule('maxattendees', get_string('max_number', 'braincert'), 'numeric', null, 'client');
-        $mform->setDefault('maxattendees', 25);
-        $mform->addHelpButton('maxattendees', 'max_attendees', 'braincert');
-
-        // Add standard elements, common to all modules.
-        $this->standard_coursemodule_elements();
-        // Add standard buttons, common to all modules.
-        $this->add_action_buttons();
     }
 
     /**
@@ -552,8 +499,7 @@ class mod_braincert_mod_form extends moodleform_mod
      *
      * @return string $errors
      */
-    public function validation($data, $files)
-    {
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         global $defaulttimezone;
 
@@ -572,15 +518,15 @@ class mod_braincert_mod_form extends moodleform_mod
             $enddate = date('Y-m-d', $data['start_date']);
         }
 
-        $enddatetime = new DateTime($enddate.' '.$data['end_time'], new DateTimeZone($defaulttimezone[$timezone]));
+        $enddatetime = new DateTime($enddate . ' ' . $data['end_time'], new DateTimeZone($defaulttimezone[$timezone]));
         $enddatetimestamp = $enddatetime->getTimestamp();
 
         if ($currenttime > $enddatetimestamp) {
             $errors['start_date'] = get_string('wrongtime', 'braincert');
         }
 
-        $starttime = new DateTime($startdate.' '.$strttime11);
-        $endtime = new DateTime($enddate.' '.$endtime11);
+        $starttime = new DateTime($startdate . ' ' . $strttime11);
+        $endtime = new DateTime($enddate . ' ' . $endtime11);
         $interval = $starttime->diff($endtime);
         $durationinmin = ($interval->h * 60) + $interval->i;
 
