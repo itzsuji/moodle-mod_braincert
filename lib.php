@@ -238,6 +238,7 @@ function braincert_add_instance($braincert)
     $data['isPrivateChat']  = $braincert->private_chat;
     $data['seat_attendees'] = $braincert->maxattendees;
     $data['record']         = $braincert->record_type;
+    $data['isRecordingLayout']         = $braincert->recording_layout;
 
     $getschedule = braincert_get_curl_info($data);
 
@@ -281,6 +282,7 @@ function braincert_add_instance($braincert)
         $braincertclass->maxattendees          = $braincert->maxattendees;
         $braincertclass->groupingid            = $braincert->groupingid;
         $braincertclass->timemodified          = time();
+        $braincertclass->recording_layout      = $braincert->recording_layout;
 
         $bcid = $DB->insert_record("braincert", $braincertclass);
 
@@ -358,16 +360,16 @@ function braincert_update_instance($braincert)
                 $data['isPrivateChat']  = $braincert->private_chat;
                 $data['seat_attendees'] = $braincert->maxattendees;
                 $data['record']         = $braincert->record_type;
+                $data['isRecordingLayout']    = $braincert->recording_layout;
 
                 $getschedule = braincert_get_curl_info($data);
             }
             if (isset($getschedule['status']) && ($getschedule['status'] == BRAINCERT_STATUS_OK)
                 && ($getschedule['method'] == BRAINCERT_METHOD_CLASS_UPDATE)) {
                 $classid = $getschedule['class_id'];
-
                 $braincertclass = new stdClass();
                 $braincertclass->id                    = $braincert->instance;
-                $braincertclass->course                = $braincertclass->course;
+                $braincertclass->course                = $braincert->course;
                 $braincertclass->name                  = $braincert->name;
                 $braincertclass->class_id              = $classid;
                 $braincertclass->intro                 = $braincert->intro;
@@ -382,7 +384,7 @@ function braincert_update_instance($braincert)
                 if (isset($braincert->class_repeats)) {
                     $braincertclass->class_repeats     = $braincert->class_repeats;
                 } else {
-                    $braincertclass->class_repeats     = $braincertclass->class_repeats;
+                    $braincertclass->class_repeats     =  '';
                 }
                 if (isset($braincert->weekdays)) {
                     if ($braincert->class_repeats == 6) {
@@ -391,18 +393,19 @@ function braincert_update_instance($braincert)
                         $braincertclass->weekdays      = '';
                     }
                 } else {
-                    $braincertclass->weekdays          = $braincertclass->weekdays;
+                    $braincertclass->weekdays          =  '';
                 }
 
                 $braincertclass->end_classes_count     = $braincert->end_classes_count;
 
                 $braincertclass->change_language       = $braincert->change_language;
-
+                
                 if ($braincert->change_language == 0) {
                     $braincertclass->bc_interface_language = $braincert->bc_interface_language;
                 } else {
-                    $braincertclass->bc_interface_language = $braincertclass->bc_interface_language;
+                    $braincertclass->bc_interface_language = '';
                 }
+                
                 $braincertclass->record_type           = $braincert->record_type;
                 $braincertclass->classroomtype         = $braincert->classroomtype;
                 $braincertclass->is_corporate          = $braincert->is_corporate;
@@ -413,11 +416,12 @@ function braincert_update_instance($braincert)
                 if (isset($braincert->currency)) {
                     $braincertclass->currency          = $braincert->currency;
                 } else {
-                    $braincertclass->currency          = $braincertclass->currency;
+                    $braincertclass->currency          = '';
                 }
                 $braincertclass->maxattendees          = $braincert->maxattendees;
                 $braincertclass->groupingid            = $braincert->groupingid;
                 $braincertclass->timemodified          = time();
+                $braincertclass->recording_layout      = $braincert->recording_layout;
 
                 if ($CFG->version >= 2017051500) {
                     $completiontimeexpected = !empty($braincert->completionexpected) ?

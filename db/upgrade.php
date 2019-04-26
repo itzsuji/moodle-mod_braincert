@@ -22,7 +22,6 @@
  * @copyright  BrainCert (https://www.braincert.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -32,7 +31,19 @@ defined('MOODLE_INTERNAL') || die();
  */
 function xmldb_braincert_upgrade($oldversion)
 {
-    global $CFG, $DB;
+    global $DB;
     $dbman = $DB->get_manager();
+    if ($oldversion < 2019012202) {
+        // Define new fields to be added to braincert.
+        $table = new xmldb_table('braincert');
+
+        $field = new xmldb_field('recording_layout', XMLDB_TYPE_INTEGER, '1', null, null, null, 0);
+        // Conditionally launch add field recording_layout.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Braincert savepoint reached.
+        upgrade_mod_savepoint(true, 2019012202, 'braincert');
+    }
     return true;
 }

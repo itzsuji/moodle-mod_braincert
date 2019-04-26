@@ -416,6 +416,14 @@ class mod_braincert_mod_form extends moodleform_mod
         $mform->addGroup($recordclass, 'record_class', get_string('record_class', 'braincert'), array(' '), false);
         $mform->addHelpButton('record_class', 'record_class', 'braincert');
         $mform->setDefault('record_type', 0);
+        
+        $view_options = array(get_string('standard_view', 'braincert'), get_string('enhanced_view', 'braincert'));
+        $mform->addElement('select', 'recording_layout', get_string('recording_layout', 'braincert'), $view_options);
+        $mform->addHelpButton('recording_layout', 'recording_layout', 'braincert');
+        $mform->setDefault('recording_layout', 0);
+        $mform->setType('recording_layout', PARAM_INTEGER);
+        $mform->hideIf('recording_layout', 'record_type', 'checked', 0);
+        $mform->disabledIf('recording_layout', 'record_type', 'checked', 0);
 
         // Video Delivery.
         $videodelivery = array();
