@@ -41,35 +41,29 @@ $string['indicator:socialbreadth_help'] = 'This indicator is based on the social
 $string['braincert:addinstance'] = 'Add a New BrainCert';
 $string['braincert:braincert_view'] = 'View BrainCert';
 $string['braincerttext'] = 'BrainCert Text';
-$string['modulename_help'] = 'BrainCert HTML5 Virtual Classroom is designed to deliver 
-    live classes, meetings, webinars, and collaborative group conferences 
-    to audience anywhere right from your Moodle site!<br><br>
-HTML5 Virtual Classroom features:<br>
-<ul>
-<li> WebRTC based Ultra HD audio and video conferencing with great resiliency and multiple full HD participants.</li>
-<li> Works across mobile, tablet and desktop devices without installing additional software or browser plugins. </li>
-<li> Support for WebRTC in macOS and iOS devices using Safari 11 browser. 
-Android support using Opera, Chrome and Samsung internet browsers. 
-Desktop support using Chrome and Firefox browsers.</li>
-<li> Available in 50 languages. Use API calls to force an interface language 
-or allow attendees to select a language.</li>
-<li> Cloud-based session recording without the need to install any other software or browser plugins. 
-Download recorded lessons as 720p HD file, share and play online for attendees. </li>
-<li> Server-side secure recording in the cloud. Record classes manually or automatically 
-and download multiple recordings in a session or combine all in to one file - all using a simple API call.</li>
-<li> Group HTML5-based HD Screen Sharing in tabbed interface. 
-Enhance your computer-based training classes by sharing entire screen or just a single application. 
-No software downloads or installations necessary.</li>
-<li> Multiple interactive whiteboards. The staple of all classroom instruction is the whiteboard that 
-supports drawing tool, LaTEX math equations, draw shapes & symbols, line tools, save snapshots, 
-and share documents in multiple tabs.</li>
-<li> Share documents & presentations. Stream Audio/Video files securely.</li>
-<li> Wolfram|Alpha gives you access to the world facts and data and calculates 
-answers across a range of topics, including science, engineering, mathematics.
-<li> Equations editor, group chat, and powerful annotation feature to 
-draw over uploaded documents & presentations. </li>
-<li> Responsive whiteboard fits any screen and browser resolution 
-for seamless same viewing experience by all attendees.</li></ul>';
+$string['modulename_help'] = 'BrainCert HTML5 Virtual Classroom is designed to deliver '
+    .'live classes, meetings, webinars, and collaborative group conferences '
+    .'to audience anywhere right from your Moodle site!<br><br>HTML5 Virtual Classroom features:<br>'
+    .'<ul><li> WebRTC based Ultra HD audio and video conferencing with great resiliency and multiple '
+    .'full HD participants.</li><li> Works across mobile, tablet and desktop devices without installing '
+    .'additional software or browser plugins. </li><li> Support for WebRTC in macOS and iOS devices using '
+    .'Safari 11 browser. Android support using Opera, Chrome and Samsung internet browsers. '
+    .'Desktop support using Chrome and Firefox browsers.</li><li> Available in 50 languages. Use API calls '
+    .'to force an interface language or allow attendees to select a language.</li><li> Cloud-based session '
+    .'recording without the need to install any other software or browser plugins. Download recorded lessons'
+    .' as 720p HD file, share and play online for attendees.</li><li> Server-side secure recording in '
+    .'the cloud. Record classes manually or automatically and download multiple recordings in a session or '
+    .'combine all in to one file - all using a simple API call.</li><li> Group HTML5-based HD Screen '
+    .'Sharing in tabbed interface. Enhance your computer-based training classes by sharing entire screen '
+    .'or just a single application. No software downloads or installations necessary.</li>'
+    .'<li> Multiple interactive whiteboards. The staple of all classroom instruction is the whiteboard that '
+    .'supports drawing tool, LaTEX math equations, draw shapes & symbols, line tools, save snapshots, '
+    .'and share documents in multiple tabs.</li><li> Share documents & presentations. Stream Audio/Video'
+    .' files securely.</li><li> Wolfram|Alpha gives you access to the world facts and data and calculates '
+    .'answers across a range of topics, including science, engineering, mathematics.</li>'
+    .'<li> Equations editor, group chat, and powerful annotation feature to draw over uploaded '
+    .'documents & presentations. </li><li> Responsive whiteboard fits any screen and browser resolution '
+    .'for seamless same viewing experience by all attendees.</li></ul>';
 $string['modulename_link'] = 'mod/braincert/view';
 $string['modulenameplural'] = 'BrainCert';
 $string['pluginadministration'] = 'Virtual Classroom administration';

@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Custom uninstallation procedure
  */
-function xmldb_braincert_uninstall()
-{
+function xmldb_braincert_uninstall() {
     return true;
 }

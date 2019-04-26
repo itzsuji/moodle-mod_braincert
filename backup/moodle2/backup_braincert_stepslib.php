@@ -37,8 +37,7 @@ class backup_braincert_activity_structure_step extends backup_activity_structure
      *
      * @return string
      */
-    protected function define_structure()
-    {
+    protected function define_structure() {
         // To know if we are including userinfo.
 
         // Define each element separated.

@@ -99,7 +99,6 @@ var init = function (options) {
 
     });
 
-
 };
 function returnMoney(number)
 {

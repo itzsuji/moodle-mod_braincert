@@ -35,8 +35,7 @@ class managetemplate_form extends moodleform
     /**
      * Define add discount form
      */
-    public function definition()
-    {
+    public function definition() {
 
         global $DB, $bcid;
         $getbody = $DB->get_record('braincert_manage_template', array('bcid' => $bcid));

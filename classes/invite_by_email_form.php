@@ -36,8 +36,7 @@ class invite_by_email_form extends moodleform
     /**
      * Define add discount form
      */
-    public function definition()
-    {
+    public function definition() {
 
         global $DB, $bcid;
 
@@ -68,8 +67,7 @@ class invite_by_email_form extends moodleform
      * @param array $files
      * @return array
      */
-    public function validation($data, $files)
-    {
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         $emaillists = explode(",", $data['emailto']);
         foreach ($emaillists as $emaillist) {

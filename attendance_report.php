@@ -142,14 +142,11 @@ $colorarray = array("#ce0704", "#0315ab", "#7d2020",
     labels: [
 <?php
 for ($i = 1; $i < $count; $i++) {
-    ?>
-    '<?php echo $i * 5; ?>-<?php echo $i * 5 + 5; ?>'
-    <?php if ($i != $count) {
-        ?>,<?php
+    echo '"'.($i * 5).'-'.($i * 5 + 5).'"';
+    if ($i != $count) {
+        echo ',';
     }
-}
-
-?>],
+}?>],
                 datasets: [
 <?php
 $m = 0;

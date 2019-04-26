@@ -135,13 +135,18 @@ foreach ($thiscourseclassid as $getclasslist) {
         }
         echo html_writer::start_tag('div', array('class' => 'row'));
         echo html_writer::start_tag('div', array('class' => 'class_list'));
-        echo action_list($getclasslist, $id, $braincertrec, $cm, $isteacher, $isstudent);
+        if ($isteacher) {
+            echo action_menu_list(teacher_action_list($getclasslist, $braincertrec, $cm), $getclasslist['id']);
+        } else if ($isstudent) {
+            echo action_menu_list(view_recording_button($getclasslist['id']), $getclasslist['id']);
+        }
+
         echo html_writer::start_tag('div', array('class' => 'class_div cl_list span6'));
-        //class name
+        // Class name.
         dispaly_class_name_info($braincertrec, $getclasslist, $class);
-        //class info
+        // Class info.
         display_class_info($getclasslist, $duration);
-        
+
         if (($getclasslist['ispaid'] == 1) &&
             ($getclasslist['status'] != BRAINCERT_STATUS_PAST) &&
             ($isteacher == 0) && !$getuserpaymentdetails) {
