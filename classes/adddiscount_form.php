@@ -74,7 +74,7 @@ class adddiscount_form extends moodleform
                             }
                         }
                     }
-                } elseif (isset($discountlists['status']) && ($discountlists['status'] == BRAINCERT_STATUS_ERROR)) {
+                } else if (isset($discountlists['status']) && ($discountlists['status'] == BRAINCERT_STATUS_ERROR)) {
                     echo $discountlists['error'];
                 }
             }

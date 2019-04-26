@@ -63,7 +63,7 @@ $getclassattendees = braincert_get_curl_info($data);
 
 if (isset($getclassattendees['status']) && ($getclassattendees['status'] == BRAINCERT_STATUS_ERROR)) {
     echo '<div class="alert alert-danger"><strong>' . $getclassattendees['error'] . '</strong></div>';
-} elseif (isset($getclassattendees['Report'])) {
+} else if (isset($getclassattendees['Report'])) {
     echo '<div class="alert alert-danger"><strong>' . $getclassattendees['Report'] . '</strong></div>';
 } else {
     if (isset($getclassattendees['0']['classId'])) {

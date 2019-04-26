@@ -64,17 +64,17 @@ function braincert_get_curl_info($data)
         if (isset($data['cid'])) {
             $initurl = $initurl . "&cid=" . $data['cid'];
         }
-    } elseif ($data['task'] == BRAINCERT_TASK_GET_CLASS_LAUNCH) {
+    } else if ($data['task'] == BRAINCERT_TASK_GET_CLASS_LAUNCH) {
         $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&userId=" . $data['userId'] . "&userName="
             . urlencode($data['userName']) . "&isTeacher=" . $data['isTeacher'] . "&courseName="
             . $data['courseName'] . "&lessonName=" . $data['lessonName'];
-    } elseif ($data['task'] == BRAINCERT_TASK_CLASS_LIST) {
+    } else if ($data['task'] == BRAINCERT_TASK_CLASS_LIST) {
         $initurl = $urlfirstpart;
-    } elseif ($data['task'] == BRAINCERT_TASK_REMOVE_CLASS) {
+    } else if ($data['task'] == BRAINCERT_TASK_REMOVE_CLASS) {
         $initurl = $urlfirstpart . "&cid=" . $data['cid'];
-    } elseif ($data['task'] == BRAINCERT_TASK_CANCEL_CLASS) {
+    } else if ($data['task'] == BRAINCERT_TASK_CANCEL_CLASS) {
         $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&isCancel=" . $data['isCancel'];
-    } elseif ($data['task'] == BRAINCERT_TASK_ADD_SCHEMES) {
+    } else if ($data['task'] == BRAINCERT_TASK_ADD_SCHEMES) {
         $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&price=" . $data['price'] . "&scheme_days="
             . $data['scheme_days'] . "&times=" . $data['times'];
         if (isset($data['numbertimes'])) {
@@ -83,11 +83,11 @@ function braincert_get_curl_info($data)
         if (isset($data['id'])) {
             $initurl = $initurl . "&id=" . $data['id'];
         }
-    } elseif ($data['task'] == BRAINCERT_TASK_REMOVE_PRICE) {
+    } else if ($data['task'] == BRAINCERT_TASK_REMOVE_PRICE) {
         $initurl = $urlfirstpart . "&id=" . $data['id'];
-    } elseif (($data['task'] == BRAINCERT_TASK_LIST_SCHEMES) || ($data['task'] == BRAINCERT_TASK_LIST_DISCOUNT)) {
+    } else if (($data['task'] == BRAINCERT_TASK_LIST_SCHEMES) || ($data['task'] == BRAINCERT_TASK_LIST_DISCOUNT)) {
         $initurl = $urlfirstpart . "&class_id=" . $data['class_id'];
-    } elseif ($data['task'] == BRAINCERT_TASK_ADD_SPECIALS) {
+    } else if ($data['task'] == BRAINCERT_TASK_ADD_SPECIALS) {
         $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&discount=" . $data['discount']
             . "&start_date=" . $data['start_date'] . "&discount_type=" . $data['discount_type'];
         if (isset($data['end_date'])) {
@@ -100,13 +100,13 @@ function braincert_get_curl_info($data)
         if (isset($data['discountid'])) {
             $initurl = $initurl . "&discountid=" . $data['discountid'];
         }
-    } elseif ($data['task'] == BRAINCERT_TASK_REMOVE_DISCOUNT) {
+    } else if ($data['task'] == BRAINCERT_TASK_REMOVE_DISCOUNT) {
         $initurl = $urlfirstpart . "&discountid=" . $data['discountid'];
-    } elseif ($data['task'] == BRAINCERT_TASK_GET_CLASS_REPORT) {
+    } else if ($data['task'] == BRAINCERT_TASK_GET_CLASS_REPORT) {
         $initurl = $urlfirstpart . "&classId=" . $data['classId'];
-    } elseif ($data['task'] == BRAINCERT_TASK_GET_CLASS_RECORDING) {
+    } else if ($data['task'] == BRAINCERT_TASK_GET_CLASS_RECORDING) {
         $initurl = $urlfirstpart . "&class_id=" . $data['class_id'];
-    } elseif (($data['task'] == BRAINCERT_TASK_CHANGE_STATUS_RECORDING) ||
+    } else if (($data['task'] == BRAINCERT_TASK_CHANGE_STATUS_RECORDING) ||
         ($data['task'] == BRAINCERT_TASK_REMOVE_CLASS_RECORDING)) {
         $initurl = $urlfirstpart . "&id=" . $data['rid'];
     } else {
@@ -122,7 +122,7 @@ function braincert_get_curl_info($data)
     $postData = '';
     if ($data['task'] == BRAINCERT_TASK_GET_PAYMENT_INFO) {
         $postData = 'task=getPaymentInfo&apikey=' . $key;
-    } elseif ($data['task'] == BRAINCERT_TASK_GET_PLAN) {
+    } else if ($data['task'] == BRAINCERT_TASK_GET_PLAN) {
         $postData = 'task=getplan&apikey=' . $key;
     }
 
@@ -573,7 +573,7 @@ function get_launch_button(
                 }
             }
         }
-    } elseif ($getlaunchurl['status'] == BRAINCERT_STATUS_ERROR) {
+    } else if ($getlaunchurl['status'] == BRAINCERT_STATUS_ERROR) {
         $output .= "<strong>" . $getlaunchurl["error"] . "</strong>";
     }
     return $output;
