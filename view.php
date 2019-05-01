@@ -104,6 +104,7 @@ $isadmin = false;
 foreach ($admins as $admin) {
     if ($USER->id == $admin->id) {
         $isadmin = true;
+        $SESSION->persona = PERSONA_ADMIN;
         break;
     }
 }
@@ -115,8 +116,10 @@ if ($isadmin) {
     foreach ($roles as $role) {
         if (!$isteacher && (($role->shortname == 'editingteacher') || ($role->shortname == 'teacher'))) {
             $isteacher = 1;
+            $SESSION->persona = PERSONA_TEACHER;
         } else if (!$isstudent && $role->shortname == 'student') {
             $isstudent = 1;
+            $SESSION->persona = PERSONA_STUDENT;
         }
     }
 }
@@ -136,6 +139,7 @@ if ($getclassdetail["ispaid"] == 1 && !$isteacher) {
 if (!empty($braincertclass)) {
     $currencysymbol = '';
     $currencycode = '';
+    $lauchbutton = dispaly_luanch_button($getclassdetail, $course->id, $cm, $getuserpaymentdetails, $isteacher);
     $duration = $getclassdetail['duration'] / 60;
     if ($getclassdetail['status'] == BRAINCERT_STATUS_PAST) {
         $class = "bc-alert bc-alert-danger";
@@ -180,7 +184,7 @@ if (!empty($braincertclass)) {
         // Displaying action menu for the calss.
         echo html_writer::start_div('class_list');
         if ($isteacher) {
-           echo action_menu_list(teacher_action_list($getclassdetail, $braincertclass, $cm), $getclassdetail['id']); 
+            echo action_menu_list(teacher_action_list($getclassdetail, $braincertclass, $cm), $getclassdetail['id']);
         } else if ($isstudent) {
             echo action_menu_list(view_recording_button($getclassdetail['id']), $getclassdetail['id']);
         }
@@ -190,23 +194,7 @@ if (!empty($braincertclass)) {
         echo html_writer::start_div('class_div cl_list');
         dispaly_class_name_info($braincertclass, $getclassdetail, $class);
         display_class_info($getclassdetail, $duration);
-        if (($getclassdetail['ispaid'] == 1) &&
-            ($getclassdetail['status'] != BRAINCERT_STATUS_PAST) &&
-            ($isteacher == 0) && !$getuserpaymentdetails
-        ) {
-            dispaly_buy_button($cm, $getclassdetail['id']);
-        }
-        if (($getclassdetail['status'] == BRAINCERT_STATUS_LIVE) ||
-            ($isteacher && $getclassdetail['status'] != BRAINCERT_STATUS_PAST)) {
-            echo get_launch_button(
-                $braincertclass,
-                $cm,
-                $getuserpaymentdetails,
-                $getclassdetail['ispaid'],
-                $isadmin,
-                $isteacher
-            );
-        }
+        echo $lauchbutton;
         echo html_writer::end_div();
         // End of dispalying class details.
     }

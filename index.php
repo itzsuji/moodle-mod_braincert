@@ -72,6 +72,7 @@ $isadmin = false;
 foreach ($admins as $admin) {
     if ($USER->id == $admin->id) {
         $isadmin = true;
+        $SESSION->persona = PERSONA_ADMIN;
         break;
     }
 }
@@ -83,8 +84,10 @@ if ($isadmin) {
     foreach ($roles as $role) {
         if (!$isteacher && (($role->shortname == 'editingteacher') || ($role->shortname == 'teacher'))) {
             $isteacher = 1;
+            $SESSION->persona = PERSONA_TEACHER;
         } else if (!$isstudent && $role->shortname == 'student') {
             $isstudent = 1;
+            $SESSION->persona = PERSONA_STUDENT;
         }
     }
 }
@@ -126,6 +129,7 @@ foreach ($thiscourseclassid as $getclasslist) {
             $getuserpaymentdetails = false;
         }
         $duration = $getclasslist['duration'] / 60;
+        $lauchbutton = dispaly_luanch_button($getclasslist, $id, $cm, $getuserpaymentdetails, $isteacher, false);
         if ($getclasslist['status'] == BRAINCERT_STATUS_PAST) {
             $class = "bc-alert bc-alert-danger";
         } else if ($getclasslist['status'] == BRAINCERT_STATUS_LIVE) {
@@ -147,65 +151,8 @@ foreach ($thiscourseclassid as $getclasslist) {
         // Class info.
         display_class_info($getclasslist, $duration);
 
-        if (($getclasslist['ispaid'] == 1) &&
-            ($getclasslist['status'] != BRAINCERT_STATUS_PAST) &&
-            ($isteacher == 0) && !$getuserpaymentdetails) {
-            $getbraincertgroup = $DB->get_records('groupings_groups', array('groupingid' => $cm->groupingid));
-            if ($getbraincertgroup) {
-                foreach ($getbraincertgroup as $getbraincertgroupkey => $getbraincertgroupval) {
-                    $getgroupmembers = $DB->get_records('groups_members', array(
-                        'groupid' => $getbraincertgroupval->groupid,
-                        'userid' => $USER->id));
-                    if ($getgroupmembers) {
-                        echo '<a target="_blank" class="btn btn-primary" id="buy-btn"
-                           href="' . $CFG->wwwroot . '/mod/braincert/view.php?id="' . $cm->id . '" return false;>
-                           <i class="fa fa-shopping-cart" aria-hidden="true"></i>'
-                        . get_string('buy', 'braincert') . '
-                        </a>';
-                    }
-                }
-            } else {
-                echo '<a target="_blank" class="btn btn-primary" id="buy-btn"
-                           href="' . $CFG->wwwroot . '/mod/braincert/view.php?id="' . $cm->id . '" return false;>
-                           <i class="fa fa-shopping-cart" aria-hidden="true"></i>'
-                . get_string('buy', 'braincert') . '
-                        </a>';
-            }
-        }
-        if ($getclasslist['status'] == BRAINCERT_STATUS_LIVE) {
-            $braincertclass = $DB->get_record('braincert', array('course' => $id, 'class_id' => $getclasslist['id']));
-            if (!empty($braincertclass) && ($getclasslist['ispaid'] == 0 || $getclasslist['ispaid'] == 1)) {
-                echo get_launch_button(
-                    $braincertclass,
-                    $cm,
-                    $getuserpaymentdetails,
-                    $getclasslist['ispaid'],
-                    $isadmin,
-                    $isteacher
-                );
-            }
-        } else if ($isteacher && $getclasslist['status'] != BRAINCERT_STATUS_PAST) {
-            $braincertclass = $DB->get_record('braincert', array('course' => $id, 'class_id' => $getclasslist['id']));
-            if (!empty($braincertclass)) {
-                $data['task'] = BRAINCERT_TASK_GET_CLASS_LAUNCH;
-                $data['userId'] = $USER->id;
-                $data['userName'] = $USER->firstname;
-                $data['lessonName'] = preg_replace('/\s+/', '', $braincertclass->name);
-                $data['courseName'] = preg_replace('/\s+/', '', $braincertclass->name);
-                $data['isTeacher'] = $isteacher;
-                $data['class_id'] = $braincertclass->class_id;
-                echo get_launch_button(
-                    $braincertclass,
-                    $cm,
-                    $getuserpaymentdetails,
-                    $getclasslist['ispaid'],
-                    $isadmin,
-                    $isteacher,
-                    $data
-                );
-            }
-        }
-
+        // Launch button.
+        echo $lauchbutton;
 
         echo html_writer::end_tag('div');
         echo html_writer::end_tag('div');
