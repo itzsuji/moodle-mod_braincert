@@ -270,3 +270,5 @@ $string['recording_layout'] = 'Recorded videos layout';
 $string['recording_layout_help'] = 'Set your recorded videos layout for class';
 $string['standard_view'] = 'Standard view (Whiteboard, Videos and Chat view with no icons)';
 $string['enhanced_view'] = 'Enhanced view (Entire browser tab with all the icons)';
+$string['invalidclassid'] = 'Invalid class id.';
+$string['prepareclass'] = 'Enter to prepare class';
