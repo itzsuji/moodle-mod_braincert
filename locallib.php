@@ -616,10 +616,10 @@ function dispaly_luanch_button(&$getclasslist, $id, $cm, $paymentdetails, $istea
  * @return string
  */
 function teacher_lunch_button(&$getclasslist, $launchurl) {
-
     if ($getclasslist['status'] == BRAINCERT_STATUS_LIVE) {
         return create_launch_button($launchurl);
     } else if ($getclasslist['status'] = BRAINCERT_STATUS_UPCOMING ) {
+        date_default_timezone_set($getclasslist['timezone_country']);
         $afterminutes = (strtotime($getclasslist['date'].' '.$getclasslist['start_time']) - time()) / 60;
         if ($afterminutes > 0 && $afterminutes <= 30) {
             $getclasslist['status'] = BRAINCERT_STATUS_LIVE;
