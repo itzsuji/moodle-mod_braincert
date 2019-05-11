@@ -45,7 +45,7 @@ function braincert_get_curl_info($data) {
     if (($data['task'] == BRAINCERT_TASK_GET_PAYMENT_INFO) || ($data['task'] == BRAINCERT_TASK_GET_PLAN)) {
         $location = $baseurl;
     } else {
-        $location = braincert_post_url($data, $urlfirstpart);
+        $location = braincert_post_url($urlfirstpart, $data);
     }
 
     $postdata = '';
@@ -142,15 +142,12 @@ function task_scheduler_params($urlfirstpart, $data) {
 
 /**
  *
- * @param array $data
  * @param string $urlfirstpart
+ * @param array $data
  * @return string
  */
-function braincert_post_url($data, $urlfirstpart) {
+function braincert_post_url($urlfirstpart, $data) {
     switch ($data['task']) {
-        case BRAINCERT_TASK_SCHEDULE:
-            $initurl = task_scheduler_params($urlfirstpart, $data);
-            break;
         case BRAINCERT_TASK_GET_CLASS_LAUNCH:
             $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&userId=" . $data['userId'] . "&userName="
             . urlencode($data['userName']) . "&isTeacher=" . $data['isTeacher'] . "&courseName="
@@ -165,38 +162,43 @@ function braincert_post_url($data, $urlfirstpart) {
         case BRAINCERT_TASK_CANCEL_CLASS:
             $initurl = $urlfirstpart . "&class_id=" . $data['class_id'] . "&isCancel=" . $data['isCancel'];
             break;
-        case BRAINCERT_TASK_ADD_SCHEMES:
-            $initurl = task_add_scheme_params($urlfirstpart, $data);
-            break;
+
         case BRAINCERT_TASK_REMOVE_PRICE:
             $initurl = $urlfirstpart . "&id=" . $data['id'];
             break;
-        case BRAINCERT_TASK_LIST_SCHEMES:
-        case BRAINCERT_TASK_LIST_DISCOUNT:
-            $initurl = $urlfirstpart . "&class_id=" . $data['class_id'];
-            break;
-        case BRAINCERT_TASK_ADD_SPECIALS:
-            $initurl = task_add_special_params($urlfirstpart, $data);
-            break;
+
         case BRAINCERT_TASK_REMOVE_DISCOUNT:
             $initurl = $urlfirstpart . "&discountid=" . $data['discountid'];
             break;
         case BRAINCERT_TASK_GET_CLASS_REPORT:
             $initurl = $urlfirstpart . "&classId=" . $data['classId'];
             break;
-        case BRAINCERT_TASK_GET_CLASS_RECORDING:
-            $initurl = $urlfirstpart . "&class_id=" . $data['class_id'];
-            break;
-        case BRAINCERT_TASK_CHANGE_STATUS_RECORDING:
-        case BRAINCERT_TASK_REMOVE_CLASS_RECORDING:
-             $initurl = $urlfirstpart . "&id=" . $data['rid'];
-            break;
+
         default:
-            $initurl = $urlfirstpart;
+            $initurl = set_braincert_url($urlfirstpart, $data);
             break;
     }
     return $initurl;
 }
+
+function set_braincert_url($urlfirstpart, $data) {
+    if ($data['task'] == BRAINCERT_TASK_GET_CLASS_RECORDING) {
+        return $urlfirstpart . "&class_id=" . $data['class_id'];
+    } else if ($data['task'] == BRAINCERT_TASK_CHANGE_STATUS_RECORDING || $data['task'] == BRAINCERT_TASK_REMOVE_CLASS_RECORDING) {
+        return $urlfirstpart . "&id=" . $data['rid'];
+    } else if ($data['task'] == BRAINCERT_TASK_SCHEDULE) {
+        return task_scheduler_params($urlfirstpart, $data);
+    } else if ($data['task'] == BRAINCERT_TASK_ADD_SCHEMES) {
+        return task_add_scheme_params($urlfirstpart, $data);
+    } else if ($data['task'] == BRAINCERT_TASK_ADD_SPECIALS) {
+        return task_add_special_params($urlfirstpart, $data);
+    } else if ($data['task'] == BRAINCERT_TASK_LIST_SCHEMES || $data['task'] == BRAINCERT_TASK_LIST_DISCOUNT) {
+        return $urlfirstpart . "&class_id=" . $data['class_id'];
+    } else {
+        return $urlfirstpart;
+    }
+}
+
 /**
  * braincert_get_plan.
  *
@@ -574,10 +576,10 @@ function view_recording_button ($classid) {
  * @param object $cm
  * @param array $paymentdetails
  * @param boolean $isteacher
- * @param boolean $butybutton
+ * @param string $buttontype - button | link
  * @return string
  */
-function dispaly_luanch_button(&$getclasslist, $id, $cm, $paymentdetails, $isteacher=0, $butybutton = true) {
+function dispaly_luanch_button(&$getclasslist, $id, $cm, $paymentdetails, $isteacher=0, $buttontype = 'button') {
     global $USER, $SESSION, $DB;
     if ($getclasslist['status'] == BRAINCERT_STATUS_PAST) {
         return '';
@@ -599,7 +601,7 @@ function dispaly_luanch_button(&$getclasslist, $id, $cm, $paymentdetails, $istea
             case 2:
                 return teacher_lunch_button($getclasslist, $getlaunchurl['launchurl']);
             case 3:
-                return student_lunch_button($getclasslist, $cm, $paymentdetails, $getlaunchurl['launchurl'], $butybutton);
+                return student_lunch_button($getclasslist, $cm, $paymentdetails, $getlaunchurl['launchurl'], $buttontype);
             default:
                 break;
         }
@@ -637,14 +639,14 @@ function teacher_lunch_button(&$getclasslist, $launchurl) {
  * @param object $cm
  * @param array $paymentdetails
  * @param string $launchurl
- * @param boolean $buybutton
+ * @param string $buttontype - button | link
  * @return string
  */
-function student_lunch_button($getclasslist, $cm, $paymentdetails, $launchurl, $buybutton = true) {
+function student_lunch_button($getclasslist, $cm, $paymentdetails, $launchurl, $buttontype = 'button') {
     $launch = '';
 
     if ($getclasslist['ispaid'] == 1 && !$paymentdetails) {
-        $launch = dispaly_buy_button($cm, $getclasslist['id'], $buybutton);
+        $launch = dispaly_buy_button($cm, $getclasslist['id'], $buttontype);
     } else if ($getclasslist['status'] == BRAINCERT_STATUS_LIVE) {
         $launch = get_lauch_button($cm, $launchurl);
     }
@@ -750,38 +752,23 @@ function get_vaiw_all_class_link($course) {
 
 /**
  *
- * @param int $classid
- * @param boolean $isteacher
+ * @global global $SESSION
+ * @param type $classid
  */
-function display_class_recording($classid, $isteacher = false) {
+function display_class_recording($classid) {
+    global $SESSION;
     $getrecordinglist = braincert_get_class_recording($classid);
     if (!isset($getrecordinglist['Recording']) &&
         isset($getrecordinglist['status']) && ($getrecordinglist['status'] != BRAINCERT_STATUS_ERROR)
     ) {
-        if ($isteacher) {
+        if ($SESSION->persona == PERSONA_ADMIN || $SESSION->persona == PERSONA_TEACHER) {
             $table = new html_table();
             $table->head = array();
             $table->head[] = get_string('colno', 'braincert');
             $table->head[] = get_string('name', 'braincert');
             $table->head[] = get_string('datetime', 'braincert');
             $table->head[] = get_string('action', 'braincert');
-            $i = 1;
-            foreach ($getrecordinglist as $recordinglist) {
-                if ($recordinglist['status'] == 1) {
-                    $row = array();
-                    $row[] = $i;
-                    if (!empty($recordinglist['fname'])) {
-                        $row[] = $recordinglist['fname'];
-                    } else {
-                        $row[] = $recordinglist['name'];
-                    }
-                    $row[] = $recordinglist['date_recorded'];
-                    $row[] = '<a href="javascript:void(0)" data-rpath="' . $recordinglist['record_path'] .
-                        '" class="viewrecording">' . get_string('viewclassrecording', 'braincert') . '</a>';
-                    $table->data[] = $row;
-                    $i++;
-                }
-            }
+            $table->data = get_class_recording_rows($getrecordinglist);
             if (!empty($table->data)) {
                 echo html_writer::start_tag('div', array('class' => 'no-overflow display-table'));
                 echo html_writer::table($table);
@@ -794,6 +781,33 @@ function display_class_recording($classid, $isteacher = false) {
                 ));
         }
     }
+}
+
+/**
+ *
+ * @param type $getrecordinglist
+ * @return array
+ */
+function get_class_recording_rows($getrecordinglist) {
+    $rows = [];
+    $i = 1;
+    foreach ($getrecordinglist as $recordinglist) {
+        if ($recordinglist['status'] == 1) {
+            $row = array();
+            $row[] = $i;
+            if (!empty($recordinglist['fname'])) {
+                $row[] = $recordinglist['fname'];
+            } else {
+                $row[] = $recordinglist['name'];
+            }
+            $row[] = $recordinglist['date_recorded'];
+            $row[] = '<a href="javascript:void(0)" data-rpath="' . $recordinglist['record_path'] .
+                '" class="viewrecording">' . get_string('viewclassrecording', 'braincert') . '</a>';
+            $rows[] = $row;
+            $i++;
+        }
+    }
+    return $rows;
 }
 
 /**
@@ -828,15 +842,17 @@ function paypal_payment_form($baseurl) {
  * @global global $USER
  * @param object $cm
  * @param int $classid
- * @param boolean $button
+ * @param string $buttontype - button or link
  * @return string
  */
-function dispaly_buy_button($cm, $classid, $button=true) {
+function dispaly_buy_button($cm, $classid, $buttontype = 'button') {
     global $DB, $USER;
     $getbraincertgroup = $DB->get_records(
         'groupings_groups',
         array('groupingid' => $cm->groupingid)
     );
+    $param = $buttontype == 'button' ? $classid : $cm->id;
+    $method = 'get_buy_'.$buttontype;
     if ($getbraincertgroup) {
         foreach ($getbraincertgroup as $getbraincertgroupval) {
             $getgroupmembers = $DB->get_records(
@@ -846,41 +862,44 @@ function dispaly_buy_button($cm, $classid, $button=true) {
                 )
             );
             if ($getgroupmembers) {
-                return get_buy_button($classid, $cm->id, $button);
+                return $method($param);
                 break;
             }
         }
     } else {
-        return get_buy_button($classid, $cm->id, $button);
+        return $method($param);
     }
 }
 
 /**
  *
- * @global global $CFG
  * @param int $classid
- * @param int $moduleid
- * @param boolean $button
  * @return string
  */
-function get_buy_button($classid, $moduleid=null, $button = true) {
+function get_buy_button($classid) {
+    $button = html_writer::start_tag('button', array(
+            'class' => 'btn btn-danger btn-sm',
+            'onclick' => 'buyingbtn(' . $classid . ')', 'id' => 'buy-btn'
+    ));
+    $button .= html_writer::start_tag('h4');
+    $button .= html_writer::tag('i', '', array('class' => 'fa fa-shopping-cart', 'aria-hidden' => 'true'));
+    $button .= get_string('buy', 'braincert');
+    $button .= html_writer::end_tag('h4');
+    $button .= html_writer::end_tag('button');
+    return $button;
+}
+
+/**
+ *
+ * @global global $CFG
+ * @param int $moduleid
+ * @return string
+ */
+function get_buy_link($moduleid) {
     global $CFG;
-    if ($button) {
-        $button = html_writer::start_tag('button', array(
-                'class' => 'btn btn-danger btn-sm',
-                'onclick' => 'buyingbtn(' . $classid . ')', 'id' => 'buy-btn'
-        ));
-        $button .= html_writer::start_tag('h4');
-        $button .= html_writer::tag('i', '', array('class' => 'fa fa-shopping-cart', 'aria-hidden' => 'true'));
-        $button .= get_string('buy', 'braincert');
-        $button .= html_writer::end_tag('h4');
-        $button .= html_writer::end_tag('button');
-        return $button;
-    } else {
         return '<a target="_blank" class="btn btn-primary" id="buy-btn" '
         . 'href="' . $CFG->wwwroot . '/mod/braincert/view.php?id=' . $moduleid . '" return false;>'
             . '<i class="fa fa-shopping-cart" aria-hidden="true"></i>'. get_string('buy', 'braincert') . '</a>';
-    }
 }
 
 /**
@@ -938,6 +957,9 @@ function display_class_pricing_table($pricelist, $currencysymbol) {
     echo html_writer::start_tag('tbody');
     $xx = 0;
     if (!isset($pricelist['Price'])) {
+        echo html_writer::script('jQuery(document).ready(function () {
+            jQuery("#pricescheme0").trigger("click");
+            });');
         foreach ($pricelist as $value) {
             $price = $value['scheme_price'];
             $optionid = $value['id'];
@@ -966,12 +988,6 @@ function display_class_pricing_table($pricelist, $currencysymbol) {
             echo html_writer::tag('td', $duration);
             echo html_writer::tag('td', $times);
             echo html_writer::end_tag('tr');
-
-            if ($xx == 0) {
-                echo html_writer::script('jQuery(document).ready(function () {
-                                            jQuery("#pricescheme' . $xx . '").trigger("click");
-                                        });');
-            }
             $xx++;
         }
     }

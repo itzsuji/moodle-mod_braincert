@@ -200,7 +200,7 @@ if (!empty($braincertclass)) {
     }
 }
 if (!empty($braincertclass)) {
-    display_class_recording($braincertclass->class_id, $isteacher);
+    display_class_recording($braincertclass->class_id);
 }
 $params = new stdClass();
 $params->plan_commission = $getplan['commission'];
@@ -215,8 +215,9 @@ if (strpos($baseurl, 'braincert.org') !== false) {
 }
 
 $PAGE->requires->js_function_call('init', array($params), false);
-
-echo paypal_form($baseurl, $paymentinfo['paypal_id'], $braincertclass->name, $currencycode, $url);
+if (isset($paymentinfo['paypal_id'])) {
+    echo paypal_form($baseurl, $paymentinfo['paypal_id'], $braincertclass->name, $currencycode, $url);
+}
 echo get_vaiw_all_class_link($course);
 
 echo $OUTPUT->footer();
