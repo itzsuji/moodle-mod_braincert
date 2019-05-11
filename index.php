@@ -129,7 +129,7 @@ foreach ($thiscourseclassid as $getclasslist) {
             $getuserpaymentdetails = false;
         }
         $duration = $getclasslist['duration'] / 60;
-        $lauchbutton = dispaly_luanch_button($getclasslist, $id, $cm, $getuserpaymentdetails, $isteacher, false);
+        $lauchbutton = dispaly_luanch_button($getclasslist, $id, $cm, $getuserpaymentdetails, $isteacher, 'link');
         if ($getclasslist['status'] == BRAINCERT_STATUS_PAST) {
             $class = "bc-alert bc-alert-danger";
         } else if ($getclasslist['status'] == BRAINCERT_STATUS_LIVE) {
