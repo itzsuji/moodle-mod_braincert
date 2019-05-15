@@ -123,7 +123,7 @@ foreach ($thiscourseclassid as $getclasslist) {
         $cm = $DB->get_record('course_modules', array(
             'instance' => $braincertrec->id, 'course' => $id, 'module' => $module->id));
         if ($getclasslist["ispaid"] == 1 && !$isteacher) {
-            $getuserpaymentdetails = $DB->get_record('virtualclassroom_purchase', array(
+            $getuserpaymentdetails = $DB->get_record('braincert_class_purchase', array(
                 'class_id' => $braincertrec->class_id, 'payer_id' => $USER->id));
         } else {
             $getuserpaymentdetails = false;

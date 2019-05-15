@@ -47,7 +47,7 @@ echo $OUTPUT->heading($payments);
 
 global $DB;
 
-$getpayments = $DB->get_records('virtualclassroom_purchase', array('class_id' => $bcid));
+$getpayments = $DB->get_records('braincert_class_purchase', array('class_id' => $bcid));
 if ($getpayments) {
     $table = new html_table();
     $table->head = array ();

@@ -20,7 +20,7 @@ php:
   
 branches:
   only:
-  - master
+  - feature/refactoring
 
 env:
  global:

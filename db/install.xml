@@ -55,7 +55,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="virtualclassroom_purchase" COMMENT="Virtual classroom purchase data">
+    <TABLE NAME="braincert_class_purchase" COMMENT="Virtual classroom purchase data">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="class_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
