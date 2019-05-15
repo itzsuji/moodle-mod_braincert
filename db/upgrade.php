@@ -13,20 +13,21 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  * Defines the capabilities for braincert module.
  *
- * @package    mod_braincert
- * @author BrainCert <support@braincert.com>
- * @copyright  BrainCert (https://www.braincert.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_braincert
+ * @author    BrainCert <support@braincert.com>
+ * @copyright BrainCert (https://www.braincert.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 
+
 /**
  * upgrade this braincert instance
- * @param int $oldversion The old version of the assign module
+ *
+ * @param  int $oldversion The old version of the assign module
  * @return bool
  */
 function xmldb_braincert_upgrade($oldversion) {
@@ -41,8 +42,24 @@ function xmldb_braincert_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+
         // Braincert savepoint reached.
         upgrade_mod_savepoint(true, 2019012202, 'braincert');
     }
+
+    if ($oldversion < 2019012203) {
+        // Get table.
+        $table = new xmldb_table('virtualclassroom_purchase');
+
+        if ($dbman->table_exists($table)) {
+            // Rename table.
+            $dbman->rename_table($table, 'braincert_class_purchase');
+        }
+
+        // Braincert savepoint reached.
+        upgrade_mod_savepoint(true, 2019012203, 'braincert');
+    }
+
     return true;
-}
+
+}//end xmldb_braincert_upgrade()

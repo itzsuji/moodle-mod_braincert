@@ -91,7 +91,7 @@ if ($task == "returnpayment") {
     $record->payer_id = $USER->id;
     $record->payment_mode = $paymentmode;
     $record->date_purchased = date('Y-m-d H:i:s', time());
-    $insert = $DB->insert_record('virtualclassroom_purchase', $record);
+    $insert = $DB->insert_record('braincert_class_purchase', $record);
     redirect($url);
 }
 echo $OUTPUT->header();
@@ -130,7 +130,7 @@ $pricelist = braincert_get_price_list($braincertclass->class_id);
 
 if ($getclassdetail["ispaid"] == 1 && !$isteacher) {
     $getuserpaymentdetails = $DB->get_record(
-        'virtualclassroom_purchase',
+        'braincert_class_purchase',
         array('class_id' => $braincertclass->class_id, 'payer_id' => $USER->id)
     );
 } else {
