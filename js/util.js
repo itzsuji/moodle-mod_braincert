@@ -1,6 +1,8 @@
-var init = function (options) {
-    jQuery(document).ready(function () {
-        jQuery("#btnCheckout").click(function (event) {
+/* eslint camelcase: 0*/
+/* eslint-env jquery*/
+var init = function(options) { // eslint-disable-line no-unused-vars
+    jQuery(document).ready(function() {
+        jQuery("#btnCheckout").click(function(event) { // eslint-disable-line no-unused-vars
             if (options.plan_commission == 0) {
                 jQuery('#paypal_form_one_time').submit();
                 return false;
@@ -31,7 +33,7 @@ var init = function (options) {
                     card_holder_name: card_holder_name, card_number: card_number,
                     card_cvc: card_cvc, card_expiry_month: card_expiry_month,
                     card_expiry_year: card_expiry_year, student_email: student_email},
-                success: function (result) {
+                success: function(result) {
                     var obj = jQuery.parseJSON(result);
 
                     if (obj.status == "error") {
@@ -57,7 +59,7 @@ var init = function (options) {
             });
         });
 
-        jQuery('input[name=pricescheme]').click(function (event) {
+        jQuery('input[name=pricescheme]').click(function(event) { // eslint-disable-line no-unused-vars
             var selval = jQuery(this).val();
             jQuery('#subvalue').text(options.currencysymbol + selval);
             var _amnt = returnMoney(selval);
@@ -77,12 +79,12 @@ var init = function (options) {
             jQuery("#class_price_id").val(_option_id);
         });
         jQuery("#recording-video").hide();
-        jQuery("#page-mod-braincert-view").find(".viewrecording").click(function () {
+        jQuery("#page-mod-braincert-view").find(".viewrecording").click(function() {
             jQuery("#recording-video").show();
 
             var videourl = jQuery(this).data("rpath");
             var sources = [{"type": "video/mp4", "src": videourl}];
-            var player = videojs('recording-video', {
+            var player = videojs('recording-video', {// eslint-disable-line no-undef
                 controls: true,
                 sources: sources,
                 techOrder: ['youtube', 'html5']
@@ -93,15 +95,20 @@ var init = function (options) {
             player.play();
         });
 
-        jQuery(".close").click(function (event) {
+        jQuery(".close").click(function(event) { // eslint-disable-line no-unused-vars
             jQuery(".modal").hide();
         });
 
     });
 
 };
-function returnMoney(number)
-{
+
+/**
+ * method will return money in specific format.
+ * @param {number} number which needs be converted in money format.
+ * @return {number} number.
+ */
+function returnMoney(number) {
     var nStr = '' + Math.round(parseFloat(number) * 100) / 100;
     var x = nStr.split('.');
     var x1 = x[0];
@@ -115,8 +122,12 @@ function returnMoney(number)
     return x1 + x2;
 }
 
-function buyingbtn(classid)
-{
+/**
+ * Display buy button.
+ * @param {classid} classid which needs to trigger.
+ * @return {boolean} false.
+ */
+function buyingbtn(classid) { // eslint-disable-line no-unused-vars
     jQuery("#modal-content-buying").show();
     jQuery("#pricescheme0").trigger("click");
 }

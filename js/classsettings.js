@@ -1,8 +1,13 @@
-/* When the user clicks on the button,
-toggle between hiding and showing the dropdown content */
-function dropdownmenu(id)
-{
-    jQuery(".class_list").find(".drop_fr_icon").find(".dropdown-content").each(function (index) {
+ /* eslint-env jquery*/
+
+/**
+ * When the user clicks on the button, toggle between hiding and showing the dropdown content.
+ * @param {id} id The dropdown number.
+ * @return {boolean} false.
+ */
+function dropdownmenu(id) { // eslint-disable-line no-unused-vars
+    jQuery(".class_list").find(".drop_fr_icon").find(".dropdown-content"
+	).each(function(index) { // eslint-disable-line no-unused-vars
         if (jQuery(this).attr("id") == "dropdown-" + id) {
             if (jQuery(this).hasClass("show")) {
                 jQuery(this).removeClass("show");
@@ -17,8 +22,12 @@ function dropdownmenu(id)
     });
 }
 
-// Close the dropdown if the user clicks outside of it.
-window.onclick = function (event) {
+/**
+ * Close the dropdown if the user clicks outside of it.
+ * @param {event} event click.
+ * @return {boolean} false.
+ */
+window.onclick = function(event) {
     if (!event.target.matches('.dropbtn')) {
         var dropdowns = document.getElementsByClassName("dropdown-content");
         var i;
@@ -29,4 +38,4 @@ window.onclick = function (event) {
             }
         }
     }
-}
+};
