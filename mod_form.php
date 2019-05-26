@@ -138,6 +138,7 @@ class mod_braincert_mod_form extends moodleform_mod
     }
 
     private function lang_video_record_field(&$mform) {
+        global $CFG;
         // Change Langanguage.
         $allowtochangelang = array();
         $allowtochangelang[] = $mform->createElement('radio', 'change_language', '', get_string('yes', 'braincert'), 1);
@@ -177,10 +178,13 @@ class mod_braincert_mod_form extends moodleform_mod
         $mform->addHelpButton('recording_layout', 'recording_layout', 'braincert');
         $mform->setDefault('recording_layout', 0);
         $mform->setType('recording_layout', PARAM_INTEGER);
-        $mform->hideIf('recording_layout', 'record_type', 'checked', 0);
-        $mform->disabledIf('recording_layout', 'record_type', 'checked', 0);
-
+        if ($CFG->version >= 2017111300) {
+            $mform->hideIf('recording_layout', 'record_type', 'checked', 0);
+        } else {
+            $mform->disabledIf('recording_layout', 'record_type', 'checked', 0);
+        }
     }
+
     private function other_form_fields(&$mform) {
         $this->lang_video_record_field($mform);
 
