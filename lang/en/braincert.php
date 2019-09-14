@@ -272,3 +272,4 @@ $string['standard_view'] = 'Standard view (Whiteboard, Videos and Chat view with
 $string['enhanced_view'] = 'Enhanced view (Entire browser tab with all the icons)';
 $string['invalidclassid'] = 'Invalid class id.';
 $string['prepareclass'] = 'Enter to prepare class';
+$string['unknownerror'] = 'System encountered an internal error';

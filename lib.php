@@ -206,8 +206,26 @@ function braincert_add_instance($braincert) {
         }
         return $bcid;
     } else {
-        return $getschedule['error'];
+        error_handler($getschedule['error']);
     }
+}
+
+/**
+ *
+ * @global object $OUTPUT
+ * @global object $COURSE
+ * @param string $message
+ */
+function error_handler($message = '') {
+    global $OUTPUT, $COURSE;
+    echo $OUTPUT->header();
+    $notification = $message ? $message : get_string('unknownerror', 'braincert');
+    echo $OUTPUT->notification($notification, 'notifyproblem');
+    $continueurl = new moodle_url('/course/view.php', array('id' => $COURSE->id));
+    $continuebutton = $OUTPUT->render(new single_button($continueurl, get_string('continue')));
+    echo html_writer::tag('div', $continuebutton, array('class' => 'mdl-align'));
+    echo $OUTPUT->footer();
+    exit;
 }
 
 /**
@@ -226,6 +244,10 @@ function braincert_update_instance($braincert) {
     $classdata['task'] = BRAINCERT_TASK_CLASS_LIST;
     $classdata['search'] = preg_replace('/\s+/', '', $braincertclass->name);
     $getclassdetails = braincert_get_curl_info($classdata);
+
+    if ($getclassdetails['status'] == BRAINCERT_STATUS_ERROR) {
+        error_handler($getclassdetails['error']);
+    }
 
     $startdate = date('Y-m-d', $braincert->start_date);
     $startdatetime = new DateTime($startdate . ' ' . $braincert->start_time, new DateTimeZone($timezone));
@@ -251,7 +273,7 @@ function braincert_update_instance($braincert) {
                 }
                 return $DB->update_record("braincert", $braincertclass);
             } else {
-                return $getclassdetail['status'] . ' ' . get_string('cannotupdated', 'braincert');
+                error_handler($getclassdetail['error']);
             }
         }
     }
