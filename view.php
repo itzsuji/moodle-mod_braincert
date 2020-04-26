@@ -30,10 +30,10 @@ $id = required_param('id', PARAM_INT); // Course Module ID.
 $braincertid = optional_param('bcid', 0, PARAM_INT); // Braincert ID.
 $all = optional_param('all', 1, PARAM_INT); // Cancel class details.
 $bcid = optional_param('bcid', 0, PARAM_INT); // Virtual Class ID.
-$task = optional_param('task', '', PARAM_RAW);
-$classid = optional_param('class_id', '', PARAM_RAW);
-$amount = optional_param('amount', '', PARAM_RAW);
-$paymentmode = optional_param('payment_mode', '', PARAM_RAW);
+$task = optional_param('task', '', PARAM_ALPHA);
+$classid = optional_param('class_id', '', PARAM_INT);
+$amount = optional_param('amount', '', PARAM_TEXT);
+$paymentmode = optional_param('payment_mode', '', PARAM_TEXT);
 if ($id) {
     if (!$cm = get_coursemodule_from_id('braincert', $id)) {
         print_error('invalidcoursemodule');
