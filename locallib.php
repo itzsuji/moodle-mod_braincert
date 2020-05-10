@@ -761,7 +761,7 @@ function display_class_recording($classid) {
     if (!isset($getrecordinglist['Recording']) &&
         isset($getrecordinglist['status']) && ($getrecordinglist['status'] != BRAINCERT_STATUS_ERROR)
     ) {
-        if ($SESSION->persona == PERSONA_ADMIN || $SESSION->persona == PERSONA_TEACHER) {
+        if ($SESSION->persona == BRAINCERT_MODE_PERSONA_ADMIN || $SESSION->persona == BRAINCERT_MODE_PERSONA_TEACHER) {
             $table = new html_table();
             $table->head = array();
             $table->head[] = get_string('colno', 'braincert');

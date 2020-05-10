@@ -72,7 +72,7 @@ $isadmin = false;
 foreach ($admins as $admin) {
     if ($USER->id == $admin->id) {
         $isadmin = true;
-        $SESSION->persona = PERSONA_ADMIN;
+        $SESSION->persona = BRAINCERT_MODE_PERSONA_ADMIN;
         break;
     }
 }
@@ -84,10 +84,10 @@ if ($isadmin) {
     foreach ($roles as $role) {
         if (!$isteacher && (($role->shortname == 'editingteacher') || ($role->shortname == 'teacher'))) {
             $isteacher = 1;
-            $SESSION->persona = PERSONA_TEACHER;
+            $SESSION->persona = BRAINCERT_MODE_PERSONA_TEACHER;
         } else if (!$isstudent && $role->shortname == 'student') {
             $isstudent = 1;
-            $SESSION->persona = PERSONA_STUDENT;
+            $SESSION->persona = BRAINCERT_MODE_PERSONA_STUDENT;
         }
     }
 }
