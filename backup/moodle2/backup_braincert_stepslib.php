@@ -38,7 +38,9 @@ class backup_braincert_activity_structure_step extends backup_activity_structure
      * @return string
      */
     protected function define_structure() {
+        global $DB;
         // To know if we are including userinfo.
+        $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated.
         $braincert = new backup_nested_element('braincert', array('id'), array(
@@ -48,10 +50,68 @@ class backup_braincert_activity_structure_step extends backup_activity_structure
             'weekdays', 'change_language', 'bc_interface_language', 'record_type',
             'classroomtype', 'is_corporate', 'screen_sharing', 'private_chat',
             'class_type', 'currency', 'maxattendees', 'groupingid',
-            'timemodified'));
+            'timemodified', 'recording_layout', 'isvideo'));
 
-        // Define sources.
-        $braincert->set_source_table('braincert', array('id' => backup::VAR_ACTIVITYID));
+
+        $classpurchases = new backup_nested_element('classpurchases');
+
+        $classpurchase = new backup_nested_element('classpurchase', array('id'),
+                                                array('class_id',
+                                                      'mc_gross',
+                                                      'payer_id',
+                                                      'payment_mode',
+                                                      'date_purchased'));
+
+        $managetemplates = new backup_nested_element('managetemplates');
+
+        $managetemplate = new backup_nested_element('managetemplate', array('id'),
+                                                array('bcid',
+                                                      'emailsubject',
+                                                      'emailmessage'));
+
+        $braincertrecord = $DB->get_record('braincert', ['id' => $this->task->get_activityid()]);
+
+        // Build the tree.
+        $braincert->add_child($classpurchases);
+        $classpurchases->add_child($classpurchase);
+
+        // $braincert->add_child($classpurchase);
+
+        $braincert->add_child($managetemplates);
+        $managetemplates->add_child($managetemplate);
+
+        // $braincert->add_child($managetemplate);
+
+        
+
+
+         // Define sources.
+        // $braincert->set_source_table('braincert', array('id' => backup::VAR_ACTIVITYID));
+        $braincert->set_source_array([$braincertrecord]);
+
+        // $classpurchase->set_source_table('braincert_class_purchase',
+        //                              array('class_id' => backup::VAR_PARENTID));
+
+        if ($userinfo) {
+          $params = [backup_helper::is_sqlparam($braincertrecord->class_id)];
+          $classpurchase->set_source_sql  ("SELECT id, class_id, mc_gross, payer_id, 
+            payment_mode, date_purchased FROM {braincert_class_purchase}
+                  WHERE class_id = ?", $params);
+        }
+
+        // $managetemplate->set_source_table('braincert',
+        //                              array('bcid' => backup::VAR_PARENTID)); 
+
+        $params = [backup_helper::is_sqlparam($braincertrecord->id)];
+        $managetemplate->set_source_sql("SELECT id, bcid, emailsubject, emailmessage
+         FROM {braincert_manage_template}
+                WHERE bcid = ?", $params);
+
+        // Define id annotations
+        $classpurchase->annotate_ids('braincert', 'class_id');
+        $classpurchase->annotate_ids('user', 'payer_id');
+        // $managetemplate->annotate_ids('braincert', 'bcid');
+        
 
         return $this->prepare_activity_structure($braincert);
     }

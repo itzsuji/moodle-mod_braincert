@@ -1,4 +1,4 @@
-<?php
+    <?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -38,7 +38,16 @@ class restore_braincert_activity_structure_step extends restore_activity_structu
      */
     protected function define_structure() {
         $paths = array();
+        
+        $userinfo = $this->get_setting_value('userinfo');
+
         $paths[] = new restore_path_element('braincert', '/activity/braincert');
+
+        if ($userinfo) {
+            $paths[] = new restore_path_element('classpurchase', '/activity/braincert/classpurchases/classpurchase');
+        }
+
+        $paths[] = new restore_path_element('managetemplate', '/activity/braincert/managetemplates/managetemplate');
         return $this->prepare_activity_structure($paths);
     }
     /**
@@ -51,6 +60,8 @@ class restore_braincert_activity_structure_step extends restore_activity_structu
 
         $data = (object)$data;
 
+        $oldid = $data->id;
+
         $data->course = $this->get_courseid();
 
         $data->timemodified = $this->apply_date_offset($data->timemodified);
@@ -60,6 +71,39 @@ class restore_braincert_activity_structure_step extends restore_activity_structu
         // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
     }
+
+    /**
+     * Processing manage_template classes.
+     *
+     * @param string $data
+     */
+
+    
+    protected function process_classpurchase($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        // Insert the braincert record.
+        $newitemid = $DB->insert_record('braincert_class_purchase', $data);
+        // Immediately after inserting "activity" record, call this.
+         $this->set_mapping('braincert_class_purchase', $oldid, $newitemid);
+
+    }
+
+    protected function process_managetemplate($data) {
+        global $DB;
+ 
+        $data = (object)$data;
+        $oldid = $data->id;
+ 
+        $data->bcid = $this->get_new_parentid('braincert');
+ 
+        $newitemid = $DB->insert_record('braincert_manage_template', $data);
+        $this->set_mapping('braincert_manage_template', $oldid, $newitemid);
+    }
+    
 
     /**
      * Processing events related to braincert.
