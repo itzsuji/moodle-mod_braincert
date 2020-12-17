@@ -41,6 +41,12 @@ if (!$course = $DB->get_record('course', array('id' => $braincertrec->course))) 
 }
 
 require_login($course);
+$coursecontext = context_course::instance($course->id);
+if (!has_capability('mod/braincert:addinstance', $coursecontext) &&
+        !has_capability('mod/braincert:braincert_view', $coursecontext)) {
+    throw new moodle_exception("permissiondeined", "mod_braincert");
+}
+
 $PAGE->set_pagelayout('incourse');
 $PAGE->navbar->add(get_string('pluginname', 'braincert'));
 $viewclassrecording = get_string('viewclassrecording', 'braincert');

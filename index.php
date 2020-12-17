@@ -65,7 +65,6 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('braincert_class', 'braincert'));
 
 $coursecontext = context_course::instance($id);
-$admins = get_admins();
 $isadmin = false;
 $isteacher = 0;
 $isstudent = 0;

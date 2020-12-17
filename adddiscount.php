@@ -40,6 +40,8 @@ if (!$course = $DB->get_record('course', array('id' => $braincertrec->course))) 
 }
 
 require_login($course);
+$coursecontext = context_course::instance($course->id);
+require_capability('mod/braincert:addinstance', $coursecontext);
 $PAGE->set_pagelayout('incourse');
 $PAGE->navbar->add(get_string('pluginname', 'braincert'));
 $adddiscount = get_string('adddiscount', 'braincert');

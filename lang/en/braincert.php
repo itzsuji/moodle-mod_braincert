@@ -418,3 +418,4 @@ $string["currencyeur"] = "EUR";
 $string["currencygbp"] = "GBP";
 $string["currencynzd"] = "NZD";
 $string["currencyusd"] = "USD";
+$string["permissiondeined"] = "Permission denied.";
