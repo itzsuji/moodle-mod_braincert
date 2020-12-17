@@ -28,8 +28,6 @@ require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/mod/braincert/classes/invite_by_email_form.php');
 require_once($CFG->dirroot.'/mod/braincert/locallib.php');
 
-global $USER, $CFG, $COURSE;
-
 $bcid = required_param('bcid', PARAM_INT);   // Virtual Class ID.
 
 $PAGE->set_url('/mod/braincert/inviteemail.php', array('bcid' => $bcid));

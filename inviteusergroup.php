@@ -98,7 +98,7 @@ if (!empty($getgroups)) {
           </div>
       </ul>
     </form>
-<?php
+    <?php
 } else {
     echo '<div class="alert alert-danger">'.get_string('nogroups', 'braincert').'</div>';
 }

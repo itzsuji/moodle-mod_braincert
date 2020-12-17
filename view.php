@@ -30,10 +30,10 @@ $id = required_param('id', PARAM_INT); // Course Module ID.
 $braincertid = optional_param('bcid', 0, PARAM_INT); // Braincert ID.
 $all = optional_param('all', 1, PARAM_INT); // Cancel class details.
 $bcid = optional_param('bcid', 0, PARAM_INT); // Virtual Class ID.
-$task = optional_param('task', '', PARAM_RAW);
-$classid = optional_param('class_id', '', PARAM_RAW);
-$amount = optional_param('amount', '', PARAM_RAW);
-$paymentmode = optional_param('payment_mode', '', PARAM_RAW);
+$task = optional_param('task', '', PARAM_ALPHA);
+$classid = optional_param('class_id', '', PARAM_INT);
+$amount = optional_param('amount', '', PARAM_TEXT);
+$paymentmode = optional_param('payment_mode', '', PARAM_TEXT);
 if ($id) {
     if (!$cm = get_coursemodule_from_id('braincert', $id)) {
         print_error('invalidcoursemodule');
@@ -104,7 +104,7 @@ $isadmin = false;
 foreach ($admins as $admin) {
     if ($USER->id == $admin->id) {
         $isadmin = true;
-        $SESSION->persona = PERSONA_ADMIN;
+        $SESSION->persona = BRAINCERT_MODE_PERSONA_ADMIN;
         break;
     }
 }
@@ -116,10 +116,10 @@ if ($isadmin) {
     foreach ($roles as $role) {
         if (!$isteacher && (($role->shortname == 'editingteacher') || ($role->shortname == 'teacher'))) {
             $isteacher = 1;
-            $SESSION->persona = PERSONA_TEACHER;
+            $SESSION->persona = BRAINCERT_MODE_PERSONA_TEACHER;
         } else if (!$isstudent && $role->shortname == 'student') {
             $isstudent = 1;
-            $SESSION->persona = PERSONA_STUDENT;
+            $SESSION->persona = BRAINCERT_MODE_PERSONA_STUDENT;
         }
     }
 }

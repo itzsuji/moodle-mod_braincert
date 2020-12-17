@@ -168,7 +168,7 @@ if (isset($getrecordinglist['Recording']) && ($getrecordinglist['Recording'] == 
         });
       });
     </script>
-<?php
+        <?php
     }
 }
 
