@@ -36,10 +36,10 @@ $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cogni
 $string['indicator:socialbreadth'] = 'BrainCert social';
 $string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth
     reached by the student in a BrainCert resource.';
-$string['braincert:addinstance'] = 'Add a New BrainCert';
+$string['braincert:addinstance'] = 'Add a new BrainCert';
 $string['braincert:braincert_view'] = 'View BrainCert';
-$string['braincerttext'] = 'BrainCert Text';
-$string['modulename_help'] = 'BrainCert HTML5 Virtual Classroom is designed to deliver    live classes, meetings, webinars, and collaborative group conferences    to audience anywhere right from your Moodle site!<br><br>HTML5 Virtual Classroom features:<br>
+$string['braincerttext'] = 'BrainCert text';
+$string['modulename_help'] = 'BrainCert HTML5 virtual classroom is designed to deliver    live classes, meetings, webinars, and collaborative group conferences    to audience anywhere right from your Moodle site!<br><br>HTML5 Virtual Classroom features:<br>
     <ul><li> WebRTC based Ultra HD audio and video conferencing with great resiliency and multiple    full HD participants.</li><li> Works across mobile, tablet and desktop devices without installing    additional software or browser plugins. </li><li> Support for WebRTC in macOS and iOS devices using    Safari 11 browser. Android support using Opera, Chrome and Samsung internet browsers.    Desktop support using Chrome and Firefox browsers.</li><li> Available in 50 languages. Use API calls    to force an interface language or allow attendees to select a language.</li><li> Cloud-based session    recording without the need to install any other software or browser plugins. Download recorded lessons
      as 720p HD file, share and play online for attendees.</li><li> Server-side secure recording in    the cloud. Record classes manually or automatically and download multiple recordings in a session or    combine all in to one file - all using a simple API call.</li><li> Group HTML5-based HD Screen    Sharing in tabbed interface. Enhance your computer-based training classes by sharing entire screen    or just a single application. No software downloads or installations necessary.</li>
     <li> Multiple interactive whiteboards. The staple of all classroom instruction is the whiteboard that    supports drawing tool, LaTEX math equations, draw shapes & symbols, line tools, save snapshots,    and share documents in multiple tabs.</li><li> Share documents & presentations. Stream Audio/Video
@@ -47,18 +47,18 @@ $string['modulename_help'] = 'BrainCert HTML5 Virtual Classroom is designed to d
     <li> Equations editor, group chat, and powerful annotation feature to draw over uploaded    documents & presentations. </li><li> Responsive whiteboard fits any screen and browser resolution    for seamless same viewing experience by all attendees.</li></ul>';
 $string['modulename_link'] = 'mod/braincert/view';
 $string['modulenameplural'] = 'BrainCert';
-$string['pluginadministration'] = 'Virtual Classroom administration';
-$string['pluginname'] = 'BrainCert Virtual Classroom';
-$string['modulename'] = 'BrainCert Virtual Classroom';
-$string['search:activity'] = 'BrainCert Virtual Classroom';
+$string['pluginadministration'] = 'Virtual classroom administration';
+$string['pluginname'] = 'BrainCert virtual classroom';
+$string['modulename'] = 'BrainCert virtual classroom';
+$string['search:activity'] = 'BrainCert virtual classroom';
 $string['generalconfig'] = 'General configuration';
-$string['explaingeneralconfig'] = 'API Credentials:- Required for authentication';
+$string['explaingeneralconfig'] = 'API credentials:- required for authentication';
 $string['apikey'] = 'BrainCert API key';
 $string['baseurl'] = 'BrainCert base URL';
 $string['configapikey'] = 'If this is your first time here, we recommend you    to <a href="https://www.braincert.com/app/virtualclassroom?_wpnonce=5efc93dcfe">
     signup for your API</a> key first.';
 $string['configbaseurl'] = 'Default base URL: https://api.braincert.com/v2';
-$string['braincert_class'] = 'BrainCert Class';
+$string['braincert_class'] = 'BrainCert class';
 $string['title'] = 'Title';
 $string['title_help'] = 'Your class title';
 $string['braincertdatetimesetting'] = 'Set timing of the class.';
@@ -88,10 +88,10 @@ $string['change_language_help'] = 'Allow attendees to change virtual classroom i
 $string['set_language'] = 'Force interface language';
 $string['set_language_help'] = 'Select the interface language';
 $string['record_class'] = 'Record this class';
-$string['record_manually'] = 'start recording manually';
-$string['record_automatically'] = 'start recording automatically';
-$string['record_disable_rec_btn'] = 'start recording automatically and disable recording button';
-$string['record_class_help'] = 'No - Disable recording.<br>Enable following recording options in    your live sessions and meetings.<ul><li>Instructor has to manually start/stop recording button.</li>
+$string['record_manually'] = 'Start recording manually';
+$string['record_automatically'] = 'Start recording automatically';
+$string['record_disable_rec_btn'] = 'Start recording automatically and disable recording button';
+$string['record_class_help'] = 'No - disable recording.<br>Enable following recording options in    your live sessions and meetings.<ul><li>Instructor has to manually start/stop recording button.</li>
     <li>Start recording automatically when class starts.</li>
     <li>Start recording automatically when class starts and disable instructor from managing the recording button.</li>
     Recording will be produced at the end of class time.</li></ul>';
@@ -112,8 +112,8 @@ $string['class_type_help'] = 'Set the price of your live class.    You can set t
 $string['free'] = 'Free';
 $string['paid'] = 'Paid';
 $string['currency'] = 'Currency';
-$string['max_attendees'] = 'Max. Attendees';
-$string['max_attendees_help'] = 'Max. Attendees';
+$string['max_attendees'] = 'Max. attendees';
+$string['max_attendees_help'] = 'Max. attendees';
 $string['wrongtime'] = 'Cannot schedule class for past time';
 $string['wrongduration'] = 'Duration should be between 30 minutes to 300 minutes';
 $string['end_classes'] = 'End after';

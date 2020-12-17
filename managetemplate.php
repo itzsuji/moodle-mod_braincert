@@ -27,8 +27,6 @@ require_once("../../config.php");
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/mod/braincert/classes/managetemplate_form.php');
 
-global $USER;
-
 $bcid = required_param('bcid', PARAM_INT);   // Virtual Class ID.
 
 $PAGE->set_url('/mod/braincert/managetemplate.php', array('bcid' => $bcid));

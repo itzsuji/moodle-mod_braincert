@@ -1,4 +1,4 @@
-    <?php
+<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ class restore_braincert_activity_structure_step extends restore_activity_structu
      */
     protected function define_structure() {
         $paths = array();
-        
+
         $userinfo = $this->get_setting_value('userinfo');
 
         $paths[] = new restore_path_element('braincert', '/activity/braincert');
@@ -60,8 +60,6 @@ class restore_braincert_activity_structure_step extends restore_activity_structu
 
         $data = (object)$data;
 
-        $oldid = $data->id;
-
         $data->course = $this->get_courseid();
 
         $data->timemodified = $this->apply_date_offset($data->timemodified);
@@ -78,7 +76,6 @@ class restore_braincert_activity_structure_step extends restore_activity_structu
      * @param string $data
      */
 
-    
     protected function process_classpurchase($data) {
         global $DB;
 
@@ -94,16 +91,16 @@ class restore_braincert_activity_structure_step extends restore_activity_structu
 
     protected function process_managetemplate($data) {
         global $DB;
- 
+
         $data = (object)$data;
         $oldid = $data->id;
- 
+
         $data->bcid = $this->get_new_parentid('braincert');
- 
+
         $newitemid = $DB->insert_record('braincert_manage_template', $data);
         $this->set_mapping('braincert_manage_template', $oldid, $newitemid);
     }
-    
+
 
     /**
      * Processing events related to braincert.
