@@ -96,32 +96,22 @@ if ($task == "returnpayment") {
 }
 echo $OUTPUT->header();
 $braincertclass = $DB->get_record('braincert', array('id' => $cm->instance));
-$contextid = context_course::instance($braincertclass->course);
-$roles = get_user_roles($contextid, $USER->id);
+$coursecontext = context_course::instance($braincertclass->course);
 $admins = get_admins();
 $sesskey = sesskey();
 $isadmin = false;
-foreach ($admins as $admin) {
-    if ($USER->id == $admin->id) {
-        $isadmin = true;
-        $SESSION->persona = BRAINCERT_MODE_PERSONA_ADMIN;
-        break;
-    }
-}
 $isteacher = 0;
 $isstudent = 0;
-if ($isadmin) {
+if (is_siteadmin($USER->id)) {
+    $isadmin = true;
+    $SESSION->persona = BRAINCERT_MODE_PERSONA_ADMIN;
     $isteacher = 1;
-} else {
-    foreach ($roles as $role) {
-        if (!$isteacher && (($role->shortname == 'editingteacher') || ($role->shortname == 'teacher'))) {
-            $isteacher = 1;
-            $SESSION->persona = BRAINCERT_MODE_PERSONA_TEACHER;
-        } else if (!$isstudent && $role->shortname == 'student') {
-            $isstudent = 1;
-            $SESSION->persona = BRAINCERT_MODE_PERSONA_STUDENT;
-        }
-    }
+} else if (has_capability('mod/braincert:addinstance', $coursecontext)) {
+    $isteacher = 1;
+    $SESSION->persona = BRAINCERT_MODE_PERSONA_TEACHER;
+} else if (has_capability('mod/braincert:braincert_view', $coursecontext)) {
+    $isstudent = 1;
+    $SESSION->persona = BRAINCERT_MODE_PERSONA_STUDENT;
 }
 $getplan = braincert_get_plan();
 $paymentinfo = braincert_get_payment_info();

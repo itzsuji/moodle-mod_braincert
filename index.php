@@ -48,7 +48,6 @@ if ($CFG->version < 2017051500) {
 }
 $PAGE->requires->js('/mod/braincert/js/jquery.min.js', true);
 $PAGE->requires->js('/mod/braincert/js/classsettings.js', true);
-
 ?>
 
 <?php
@@ -65,32 +64,23 @@ if ($bcid > 0) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('braincert_class', 'braincert'));
 
-$contextid = context_course::instance($id);
-$roles = get_user_roles($contextid, $USER->id);
+$coursecontext = context_course::instance($id);
 $admins = get_admins();
 $isadmin = false;
-foreach ($admins as $admin) {
-    if ($USER->id == $admin->id) {
-        $isadmin = true;
-        $SESSION->persona = BRAINCERT_MODE_PERSONA_ADMIN;
-        break;
-    }
-}
 $isteacher = 0;
 $isstudent = 0;
-if ($isadmin) {
+if (is_siteadmin($USER->id)) {
+    $isadmin = true;
+    $SESSION->persona = BRAINCERT_MODE_PERSONA_ADMIN;
     $isteacher = 1;
-} else {
-    foreach ($roles as $role) {
-        if (!$isteacher && (($role->shortname == 'editingteacher') || ($role->shortname == 'teacher'))) {
-            $isteacher = 1;
-            $SESSION->persona = BRAINCERT_MODE_PERSONA_TEACHER;
-        } else if (!$isstudent && $role->shortname == 'student') {
-            $isstudent = 1;
-            $SESSION->persona = BRAINCERT_MODE_PERSONA_STUDENT;
-        }
-    }
+} else if (has_capability('mod/braincert:addinstance', $coursecontext)) {
+    $isteacher = 1;
+    $SESSION->persona = BRAINCERT_MODE_PERSONA_TEACHER;
+} else if (has_capability('mod/braincert:braincert_view', $coursecontext)) {
+    $isstudent = 1;
+    $SESSION->persona = BRAINCERT_MODE_PERSONA_STUDENT;
 }
+
 
 $braincertclasses = $DB->get_records('braincert');
 $allclassid = array();
