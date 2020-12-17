@@ -23,7 +23,6 @@ php:
 branches:
   only:
   - master
-  - review_fixes_v1
 
 env:
  global:
@@ -34,6 +33,9 @@ env:
   - MOODLE_BRANCH=MOODLE_33_STABLE
   - MOODLE_BRANCH=MOODLE_34_STABLE
   - MOODLE_BRANCH=MOODLE_35_STABLE
+  - MOODLE_BRANCH=MOODLE_36_STABLE
+  - MOODLE_BRANCH=MOODLE_37_STABLE
+  - MOODLE_BRANCH=MOODLE_38_STABLE
  matrix:
   - DB=pgsql
 
