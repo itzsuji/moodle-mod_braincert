@@ -18,9 +18,11 @@ cache:
 
 php:
   - 7.1
+  - 7.2
   
 branches:
   only:
+  - master
   - review_fixes_v1
 
 env:
