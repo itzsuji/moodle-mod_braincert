@@ -59,7 +59,7 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 $PAGE->set_url('/mod/braincert/view.php', array('id' => $cm->id, 'bcid' => $braincertid));
 $url = $CFG->wwwroot . '/mod/braincert/view.php?id=' . $cm->id;
-$baseurl = $CFG->mod_braincert_baseurl;
+$baseurl = get_config('mod_braincert', 'baseurl');
 $PAGE->set_title(format_string($braincert->name));
 $pagetitle = get_string('braincert_class', 'braincert');
 $pagetitlename = $pagetitle . " " . $braincert->name;

@@ -36,9 +36,9 @@ defined('MOODLE_INTERNAL') || die();
 function braincert_get_curl_info($data) {
     global $CFG;
     require_once($CFG->libdir . '/filelib.php');
-
-    $key = $CFG->mod_braincert_apikey;
-    $baseurl = $CFG->mod_braincert_baseurl;
+    $config = get_config('mod_braincert');
+    $key = $config->apikey;
+    $baseurl = $config->baseurl;
 
     $urlfirstpart = $baseurl . "/" . $data['task'] . "?apikey=" . $key;
 
@@ -236,9 +236,9 @@ function braincert_get_class($classid) {
         'CURLOPT_SSL_VERIFYHOST' => false,
         'CURLOPT_SSL_VERIFYPEER' => false,
     );
-
-    $result = $curl->post($CFG->mod_braincert_baseurl, 'task=getclass&apikey='
-        . $CFG->mod_braincert_apikey . '&class_id=' . $classid, $options);
+    $config = get_config('mod_braincert');
+    $result = $curl->post($config->baseurl, 'task=getclass&apikey='
+        . $config->apikey. '&class_id=' . $classid, $options);
 
     $result = json_decode($result, true);
     if ($result) {

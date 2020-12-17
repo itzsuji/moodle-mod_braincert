@@ -32,7 +32,7 @@ if ($ADMIN->fulltree) {
     ));
 
     $settings->add(new admin_setting_configtext(
-        'mod_braincert_apikey',
+        'mod_braincert/apikey',
         get_string('apikey', 'braincert'),
         get_string('configapikey', 'braincert'),
         '',
@@ -41,7 +41,7 @@ if ($ADMIN->fulltree) {
     ));
 
     $settings->add(new admin_setting_configtext(
-        'mod_braincert_baseurl',
+        'mod_braincert/baseurl',
         get_string('baseurl', 'braincert'),
         get_string('configbaseurl', 'braincert'),
         'https://api.braincert.com/v2',
