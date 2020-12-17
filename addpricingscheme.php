@@ -68,7 +68,7 @@ $pricelistdata['task']     = BRAINCERT_TASK_LIST_SCHEMES;
 $pricelistdata['class_id'] = $bcid;
 $pricelists = braincert_get_curl_info($pricelistdata);
 
-$mform = new addpricingscheme_form($CFG->wwwroot.'/mod/braincert/addpricingscheme.php?bcid='.$bcid);
+$mform = new \mod_braincert\addpricingscheme_form($CFG->wwwroot.'/mod/braincert/addpricingscheme.php?bcid='.$bcid);
 
 if ($pricingscheme = $mform->get_data()) {
     $data['task']        = BRAINCERT_TASK_ADD_SCHEMES;

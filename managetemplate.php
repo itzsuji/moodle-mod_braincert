@@ -47,7 +47,7 @@ $PAGE->requires->css('/mod/braincert/css/styles.css', true);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('managetemplate', 'braincert'));
 
-$mform = new managetemplate_form($CFG->wwwroot.'/mod/braincert/managetemplate.php?bcid='.$bcid);
+$mform = new \mod_braincert\managetemplate_form($CFG->wwwroot.'/mod/braincert/managetemplate.php?bcid='.$bcid);
 
 if ($manageemailtemplate = $mform->get_data()) {
     $emailmessage = $manageemailtemplate->emailmessage['text'];

@@ -48,7 +48,7 @@ $PAGE->requires->css('/mod/braincert/css/styles.css', true);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('inviteemail', 'braincert'));
 
-$mform = new invite_by_email_form($CFG->wwwroot.'/mod/braincert/inviteemail.php?bcid='.$bcid);
+$mform = new \mod_braincert\invite_by_email_form($CFG->wwwroot.'/mod/braincert/inviteemail.php?bcid='.$bcid);
 
 if ($invitebyemail = $mform->get_data()) {
     $emailmessage = invitation_email_body($braincertrec, $invitebyemail->emailmessage['text']);

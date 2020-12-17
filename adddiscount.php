@@ -66,7 +66,7 @@ $dislistdata['class_id'] = $bcid;
 $discountlists = braincert_get_curl_info($dislistdata);
 
 
-$mform = new adddiscount_form($CFG->wwwroot.'/mod/braincert/adddiscount.php?bcid='.$bcid);
+$mform = new \mod_braincert\adddiscount_form($CFG->wwwroot.'/mod/braincert/adddiscount.php?bcid='.$bcid);
 
 if ($classdiscount = $mform->get_data()) {
     $discountstartdate = date('Y-m-d', $classdiscount->start_date);
