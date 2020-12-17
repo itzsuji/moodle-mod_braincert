@@ -129,7 +129,7 @@ foreach ($thiscourseclassid as $getclasslist) {
             $getuserpaymentdetails = false;
         }
         $duration = $getclasslist['duration'] / 60;
-        $lauchbutton = dispaly_luanch_button($getclasslist, $id, $cm, $getuserpaymentdetails, $isteacher, 'link');
+        $lauchbutton = braincert_dispaly_luanch_button($getclasslist, $id, $cm, $getuserpaymentdetails, $isteacher, 'link');
         if ($getclasslist['status'] == BRAINCERT_STATUS_PAST) {
             $class = "bc-alert bc-alert-danger";
         } else if ($getclasslist['status'] == BRAINCERT_STATUS_LIVE) {
@@ -140,16 +140,16 @@ foreach ($thiscourseclassid as $getclasslist) {
         echo html_writer::start_tag('div', array('class' => 'row'));
         echo html_writer::start_tag('div', array('class' => 'class_list'));
         if ($isteacher) {
-            echo action_menu_list(teacher_action_list($getclasslist, $braincertrec, $cm), $getclasslist['id']);
+            echo braincert_action_menu_list(braincert_teacher_action_list($getclasslist, $braincertrec, $cm), $getclasslist['id']);
         } else if ($isstudent) {
-            echo action_menu_list(view_recording_button($getclasslist['id']), $getclasslist['id']);
+            echo braincert_action_menu_list(braincert_view_recording_button($getclasslist['id']), $getclasslist['id']);
         }
 
         echo html_writer::start_tag('div', array('class' => 'class_div cl_list span6'));
         // Class name.
-        dispaly_class_name_info($braincertrec, $getclasslist, $class);
+        braincert_dispaly_class_name_info($braincertrec, $getclasslist, $class);
         // Class info.
-        display_class_info($getclasslist, $duration);
+        braincert_display_class_info($getclasslist, $duration);
 
         // Launch button.
         echo $lauchbutton;

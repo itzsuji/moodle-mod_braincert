@@ -63,7 +63,7 @@ if ($groupids) {
     list($insql, $params) = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, 'groupid', false);
     $sql = "SELECT * FROM {groups_members} WHERE groupid {$insql}";
     $groupusers = $DB->get_records_sql($sql, $params);
-    $getbody->emailmessage = invitation_email_body($braincertrec, $getbody->emailmessage);
+    $getbody->emailmessage = braincert_invitation_email_body($braincertrec, $getbody->emailmessage);
     foreach ($groupusers as $groupuserskey => $groupusersval) {
         if ($emailuserrec = $DB->get_record('user', array('id' => $groupusersval->userid))) {
             $emailuser = $emailuserrec;

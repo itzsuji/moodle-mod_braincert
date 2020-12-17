@@ -193,10 +193,10 @@ function braincert_add_instance($braincert) {
     $startdatetime = new DateTime($startdate . ' ' . $braincert->start_time, new DateTimeZone($timezone));
     $startdatetimestamp = $startdatetime->getTimestamp();
 
-    $getschedule = get_scheduled_class($braincert, $startdatetimestamp);
+    $getschedule = braincert_get_scheduled_class($braincert, $startdatetimestamp);
 
     if ($getschedule['status'] == BRAINCERT_STATUS_OK) {
-        $braincertclass = set_braincert_object($braincert, $timezone, $startdatetimestamp, $getschedule['class_id']);
+        $braincertclass = braincert_set_braincert_object($braincert, $timezone, $startdatetimestamp, $getschedule['class_id']);
         $bcid = $DB->insert_record("braincert", $braincertclass);
         if ($CFG->version >= 2017051500) {
             $completiontime = !empty($braincert->completionexpected) ? $braincert->completionexpected : null;
@@ -206,7 +206,7 @@ function braincert_add_instance($braincert) {
         }
         return $bcid;
     } else {
-        error_handler($getschedule['error']);
+        braincert_error_handler($getschedule['error']);
     }
 }
 
@@ -216,7 +216,7 @@ function braincert_add_instance($braincert) {
  * @global object $COURSE
  * @param string $message
  */
-function error_handler($message = '') {
+function braincert_error_handler($message = '') {
     global $OUTPUT, $COURSE;
     echo $OUTPUT->header();
     $notification = $message ? $message : get_string('unknownerror', 'braincert');
@@ -246,7 +246,7 @@ function braincert_update_instance($braincert) {
     $getclassdetails = braincert_get_curl_info($classdata);
 
     if ($getclassdetails['status'] == BRAINCERT_STATUS_ERROR) {
-        error_handler($getclassdetails['error']);
+        braincert_error_handler($getclassdetails['error']);
     }
 
     $startdate = date('Y-m-d', $braincert->start_date);
@@ -256,13 +256,14 @@ function braincert_update_instance($braincert) {
     foreach ($getclassdetails['classes'] as $getclassdetail) {
         if ($getclassdetail['id'] == $braincertclass->class_id) {
             if ($getclassdetail['status'] == BRAINCERT_STATUS_UPCOMING) {
-                $getschedule = get_scheduled_class($braincert, $startdatetimestamp, $getclassdetail['id']);
+                $getschedule = braincert_get_scheduled_class($braincert, $startdatetimestamp, $getclassdetail['id']);
             }
             if (
                 isset($getschedule['status']) && ($getschedule['status'] == BRAINCERT_STATUS_OK) &&
                 ($getschedule['method'] == BRAINCERT_METHOD_CLASS_UPDATE)
                 ) {
-                $braincertclass = set_braincert_object($braincert, $timezone, $startdatetimestamp, $getschedule['class_id']);
+                $braincertclass = braincert_set_braincert_object($braincert, $timezone,
+                        $startdatetimestamp, $getschedule['class_id']);
 
                 if ($CFG->version >= 2017051500) {
                     $completiontime = !empty($braincert->completionexpected) ?
@@ -273,7 +274,7 @@ function braincert_update_instance($braincert) {
                 }
                 return $DB->update_record("braincert", $braincertclass);
             } else {
-                error_handler($getclassdetail['error']);
+                braincert_error_handler($getclassdetail['error']);
             }
         }
     }
@@ -361,7 +362,7 @@ function braincert_get_extra_capabilities() {
  * @param integer $classid
  * @return array $getschedule
  */
-function get_scheduled_class($braincert, $startdatetimestamp, $classid = null) {
+function braincert_get_scheduled_class($braincert, $startdatetimestamp, $classid = null) {
     $data['task'] = BRAINCERT_TASK_SCHEDULE;
     $data['title'] = urlencode($braincert->name);
     if ($classid) {
@@ -411,7 +412,7 @@ function get_scheduled_class($braincert, $startdatetimestamp, $classid = null) {
  * @param integer $classid
  * @return \stdClass $braincertclass
  */
-function set_braincert_object($braincert, $timezone, $startdatetimestamp, $classid) {
+function braincert_set_braincert_object($braincert, $timezone, $startdatetimestamp, $classid) {
     $braincertclass = new stdClass();
     if ($braincert->instance) {
         $braincertclass->id = $braincert->instance;

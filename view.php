@@ -139,7 +139,8 @@ if ($getclassdetail["ispaid"] == 1 && !$isteacher) {
 if (!empty($braincertclass)) {
     $currencysymbol = '';
     $currencycode = '';
-    $lauchbutton = dispaly_luanch_button($getclassdetail, $course->id, $cm, $getuserpaymentdetails, $isteacher);
+    $lauchbutton = braincert_dispaly_luanch_button($getclassdetail, $course->id,
+            $cm, $getuserpaymentdetails, $isteacher);
     $duration = $getclassdetail['duration'] / 60;
     if ($getclassdetail['status'] == BRAINCERT_STATUS_PAST) {
         $class = "bc-alert bc-alert-danger";
@@ -172,35 +173,36 @@ if (!empty($braincertclass)) {
     $currencycode = strtoupper($getclassdetail['currency']);
     if ($getclassdetail["ispaid"] == 1) {
         if (isset($pricelist['Price']) && $pricelist['Price'] == BRAINCERT_STATUS_NO_PRICE && $isteacher) {
-            dispaly_no_price_modal($pricelist['Price']);
+            braincert_dispaly_no_price_modal($pricelist['Price']);
         } else {
             // Displaying payment methods in modal.
-            display_payment_modal($pricelist, $currencysymbol, $paymentinfo);
+            braincert_display_payment_modal($pricelist, $currencysymbol, $paymentinfo);
             // Ending of payment modal.
         }
-        paypal_payment_form($baseurl);
+        braincert_paypal_payment_form($baseurl);
     }
     if ($getclassdetail) {
         // Displaying action menu for the calss.
         echo html_writer::start_div('class_list');
         if ($isteacher) {
-            echo action_menu_list(teacher_action_list($getclassdetail, $braincertclass, $cm), $getclassdetail['id']);
+            echo braincert_action_menu_list(braincert_teacher_action_list($getclassdetail,
+                    $braincertclass, $cm), $getclassdetail['id']);
         } else if ($isstudent) {
-            echo action_menu_list(view_recording_button($getclassdetail['id']), $getclassdetail['id']);
+            echo braincert_action_menu_list(braincert_view_recording_button($getclassdetail['id']), $getclassdetail['id']);
         }
         echo html_writer::end_div();
         // End of action menu.
         // Dispalying class details.
         echo html_writer::start_div('class_div cl_list');
-        dispaly_class_name_info($braincertclass, $getclassdetail, $class);
-        display_class_info($getclassdetail, $duration);
+        braincert_dispaly_class_name_info($braincertclass, $getclassdetail, $class);
+        braincert_display_class_info($getclassdetail, $duration);
         echo $lauchbutton;
         echo html_writer::end_div();
         // End of dispalying class details.
     }
 }
 if (!empty($braincertclass)) {
-    display_class_recording($braincertclass->class_id);
+    braincert_display_class_recording($braincertclass->class_id);
 }
 $params = new stdClass();
 $params->plan_commission = $getplan['commission'];
@@ -216,8 +218,8 @@ if (strpos($baseurl, 'braincert.org') !== false) {
 
 $PAGE->requires->js_function_call('init', array($params), false);
 if (isset($paymentinfo['paypal_id'])) {
-    echo paypal_form($baseurl, $paymentinfo['paypal_id'], $braincertclass->name, $currencycode, $url);
+    echo braincert_paypal_form($baseurl, $paymentinfo['paypal_id'], $braincertclass->name, $currencycode, $url);
 }
-echo get_vaiw_all_class_link($course);
+echo braincert_get_vaiw_all_class_link($course);
 
 echo $OUTPUT->footer();

@@ -51,7 +51,7 @@ echo $OUTPUT->heading(get_string('inviteemail', 'braincert'));
 $mform = new \mod_braincert\invite_by_email_form($CFG->wwwroot.'/mod/braincert/inviteemail.php?bcid='.$bcid);
 
 if ($invitebyemail = $mform->get_data()) {
-    $emailmessage = invitation_email_body($braincertrec, $invitebyemail->emailmessage['text']);
+    $emailmessage = braincert_invitation_email_body($braincertrec, $invitebyemail->emailmessage['text']);
     $emaillists = explode(",", $invitebyemail->emailto);
     foreach ($emaillists as $emailid) {
         if ($emailuserrec = $DB->get_record('user', array('email' => $emailid))) {
