@@ -35,7 +35,7 @@
 .path-mod-braincert #fitem_id_end_classes_count .felement::after {
     content: "Classes";
     left: 110px;
-    position: absolute;
+    padding-left: 10px;
 }
 .path-mod-braincert #page-mod-braincert-inviteusergroup form,
 .path-mod-braincert #page-mod-braincert-inviteusergroup .submitdiv,
