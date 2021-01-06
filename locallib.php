@@ -852,7 +852,7 @@ function braincert_dispaly_buy_button($cm, $classid, $buttontype = 'button') {
         array('groupingid' => $cm->groupingid)
     );
     $param = $buttontype == 'button' ? $classid : $cm->id;
-    $method = 'get_buy_'.$buttontype;
+    $method = 'braincert_get_buy_'.$buttontype;
     if ($getbraincertgroup) {
         foreach ($getbraincertgroup as $getbraincertgroupval) {
             $getgroupmembers = $DB->get_records(
