@@ -59,7 +59,8 @@ class mod_braincert_mod_form extends moodleform_mod
             '7' => get_string('weeksaturday', 'braincert'));
 
         $bctimeoptions = $this->time_options();
-        $dtoption = array('startyear' => 1970, 'stopyear' => 2020, 'timezone' => 99);
+        //$dtoption = array('startyear' => 1970, 'stopyear' => 2020, 'timezone' => 99);
+        $dtoption = array('startyear' => 1970, 'stopyear' => date('Y', strtotime('+10 years')), 'timezone' => 99);
 
         $mform = $this->_form;
         // Adding the "general" fieldset.
@@ -365,7 +366,18 @@ class mod_braincert_mod_form extends moodleform_mod
     }
 
     private function region_options() {
-        return array(
+
+        //function braincert_get_regions($braincert) {
+    $data['task'] = BRAINCERT_TASK_GETSERVERS;
+    $datacenters = braincert_get_curl_info($data);
+    $final_result = array();
+    foreach ($datacenters as $datacenter) {
+       $final_result[$datacenter['id']] = $datacenter['name'];
+    }
+
+    return $final_result;
+
+       /* return array(
            "1" => get_string("region1", "braincert"),
            "2" => get_string("region2", "braincert"),
            "3" => get_string("region3", "braincert"),
@@ -374,13 +386,13 @@ class mod_braincert_mod_form extends moodleform_mod
            "6" => get_string("region6", "braincert"),
            "7" => get_string("region7", "braincert"),
            "8" => get_string("region8", "braincert"),
-           "9" => get_string("region9", "braincert"),
-           "10" => get_string("region10", "braincert"),
+           // "9" => get_string("region9", "braincert"),
+           // "10" => get_string("region10", "braincert"),
            "11" => get_string("region11", "braincert"),
-           "12" => get_string("region12", "braincert"),
-           "13" => get_string("region13", "braincert"),
+           // "12" => get_string("region12", "braincert"),
+           // "13" => get_string("region13", "braincert"),
            "14" => get_string("region14", "braincert"),
-        );
+        );*/
     }
 
     private function lang_options() {
