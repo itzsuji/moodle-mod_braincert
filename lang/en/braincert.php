@@ -419,3 +419,14 @@ $string["currencygbp"] = "GBP";
 $string["currencynzd"] = "NZD";
 $string["currencyusd"] = "USD";
 $string["permissiondeined"] = "Permission denied.";
+$string['privacy:metadata:braincert_class_purchase'] = 'Information about the user class subscription status.
+    This inlcudes when a user pay for the class';
+$string['privacy:metadata:braincert_class_purchase:payer_id'] = 'User id';
+$string['privacy:metadata:braincert_class_purchase:payment_mode'] = 'User id';
+$string['privacy:metadata:braincert_class_purchase:date_purchased'] = 'Date purchased';
+$string['privacy:metadata:braincert_class_purchase:mc_gross'] = 'Amount';
+$string['privacy:metadata:braincert_class_purchase:class_id'] = 'Class id';
+$string['privacy:metadata:braincert_client'] = 'Following user data is being exchanged with braincert account, so that you can get a seamless experience.';
+$string['privacy:metadata:braincert_client:userId'] = 'User id';
+$string['privacy:metadata:braincert_client:userName'] = 'First name';
+$string['privacy:metadata:braincert_client:class_id'] = 'Class id';
