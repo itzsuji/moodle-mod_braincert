@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright Dualcube (https://dualcube.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class adddiscount_form extends moodleform
+class adddiscount_form extends \moodleform
 {
 
     /**
@@ -106,8 +106,8 @@ class adddiscount_form extends moodleform
         $mform->setDefault('discount', $defaultdiscount);
 
         $dtoption = array(
-            'startyear' => 1970,
-            'stopyear' => 2020,
+            'startyear' => date("Y", strtotime("-1 year")),
+            'stopyear' => date("Y", strtotime("+2 year")),
             'timezone' => $braincertrec->braincert_timezone
         );
         $mform->addElement('date_selector', 'start_date', get_string('dis_startdate', 'braincert'), $dtoption);

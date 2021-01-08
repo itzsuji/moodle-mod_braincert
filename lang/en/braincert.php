@@ -429,4 +429,4 @@ $string['privacy:metadata:braincert_class_purchase:class_id'] = 'Class id';
 $string['privacy:metadata:braincert_client'] = 'Following user data is being exchanged with braincert account, so that you can get a seamless experience.';
 $string['privacy:metadata:braincert_client:userId'] = 'User id';
 $string['privacy:metadata:braincert_client:userName'] = 'First name';
-$string['privacy:metadata:braincert_client:class_id'] = 'Class id';
+$string['privacy:metadata:braincert_client:class_id'] = 'Class';
