@@ -623,11 +623,11 @@ function braincert_teacher_lunch_button(&$getclasslist, $launchurl) {
     } else if ($getclasslist['status'] = BRAINCERT_STATUS_UPCOMING ) {
         date_default_timezone_set($getclasslist['timezone_country']);
         $afterminutes = (strtotime($getclasslist['date'].' '.$getclasslist['start_time']) - time()) / 60;
-        if ($afterminutes > 0 && $afterminutes <= 30) {
+        if ($afterminutes > 0 && $afterminutes <= 15) {
             $getclasslist['status'] = BRAINCERT_STATUS_LIVE;
             return braincert_create_launch_button($launchurl, get_string('prepareclass', 'braincert'));
         } else {
-            return braincert_create_launch_button($launchurl);
+            return '';
         }
     }
     return '';
