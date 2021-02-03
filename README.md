@@ -5,7 +5,7 @@
 BrainCert's next-generation HTML5 Virtual Classroom is designed to deliver live classes, meetings, webinars, and collaborative group conferences to audience anywhere right from your Moodle site!
 
 ## Description
-BrainCert's next-generation [HTML5 Virtual Classroom](https://www.braincert.com/online-virtual-classroom) is designed for seamless synchronous and asynchronous collaboration capabilities between presenter (teacher) and attendees (students). BrainCert offers over 14 low-latency datacenter locations worldwide - the largest secure global infrastructure, enabling you to schedule and launch live virtual classroom sessions no matter where you or your attendees may be! 
+BrainCert's next-generation [HTML5 Virtual Classroom](https://www.braincert.com/online-virtual-classroom) is designed for seamless synchronous and asynchronous collaboration capabilities between presenter (teacher) and attendees (students). BrainCert offers over 10 low-latency datacenter locations worldwide (including China connectivity) - the largest secure global infrastructure, enabling you to schedule and launch live virtual classroom sessions no matter where you or your attendees may be! 
 
 To use this application, sign up for your free [BrainCert](https://www.braincert.com) account  and register your [API key](https://www.braincert.com/app/virtualclassroom). 
 
@@ -14,7 +14,7 @@ See [Developer documentation](https://www.braincert.com/docs/api/vc/) for more i
 
 ## HTML5 Virtual Classroom features:
 * WebRTC based Ultra HD audio and video conferencing with great resiliency and multiple full HD participants.
-* Support for WebRTC in macOS and iOS devices using Safari 11 browser. Android support using Opera and Chrome browser. Desktop support using Chrome and Firefox browsers.
+* Support for WebRTC in macOS and iOS devices using Safari 12+ browser. Android support using Opera and Chrome browser. Desktop support using Chrome and Firefox browsers.
 * Available in 50 languages. Use API calls to force an interface language or allow attendees to select a language.
 * Cloud-based session recording without the need to install any other software or browser plugins. Download recorded lessons as 720p HD file, share and play online for attendees. 
 * Record classes manually or automatically and download multiple recordings in a session or combine all in to one file - all using a simple API call.
