@@ -59,8 +59,8 @@ class mod_braincert_mod_form extends moodleform_mod
             '7' => get_string('weeksaturday', 'braincert'));
 
         $bctimeoptions = $this->time_options();
-        $dtoption = array('startyear' => date("Y", strtotime("-1 year")),
-            'stopyear' => date("Y", strtotime("+2 year")), 'timezone' => 99);
+        //$dtoption = array('startyear' => date("Y", strtotime("-1 year")), 'stopyear' => date("Y", strtotime("+2 year")), 'timezone' => 99);
+        $dtoption = array('startyear' => date("Y", strtotime("-1 year")), 'stopyear' => date('Y', strtotime('+10 years')), 'timezone' => 99);
 
         $mform = $this->_form;
         // Adding the "general" fieldset.
